@@ -17,7 +17,6 @@ public class RegisterActivity extends Activity {
 	public void registra(View view) {
 		Intent i = new Intent(this, AparkaYa.class );
 		startActivity(i);
-	}   
-//hola prueba hola prueba
+	}
 
 }
