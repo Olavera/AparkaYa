@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources><string name="usuario_login"></string>
+<string name="contraseña_login"></string>
+<string name="contraseña"></string>
+</resources>
