@@ -18,6 +18,6 @@ public class RegisterActivity extends Activity {
 		Intent i = new Intent(this, AparkaYa.class );
 		startActivity(i);
 	}   
-
+//hola
 
 }
