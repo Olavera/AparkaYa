@@ -28,17 +28,13 @@ public class HttpPostAux{
 		httppostconnect(parameters,urlwebserver);
 
 		if (is!=null){//si obtuvo una respuesta
-
 			getpostresponse();
 
 			return getjsonarray();
-
 		}else{
 
 			return null;
-
 		}
-
 	}
 
 
@@ -58,7 +54,6 @@ public class HttpPostAux{
 		}catch(Exception e){
 			Log.e("log_tag", "Error in http connection "+e.toString());
 		}
-
 	}
 
 	public void getpostresponse(){
@@ -91,8 +86,6 @@ public class HttpPostAux{
 			Log.e("log_tag", "Error parsing data "+e.toString());
 			return null;
 		}
-
 	}
-
 
 }

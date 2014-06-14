@@ -9,5 +9,7 @@
     <string name="Mapa">Mapa</string>
     <string name="Huecos ">Huecos cercanos</string>
     <string name="Opciones">Opciones</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
