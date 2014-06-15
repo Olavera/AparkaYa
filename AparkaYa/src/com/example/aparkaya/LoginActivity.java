@@ -44,7 +44,8 @@ public class LoginActivity extends Activity {
 	}
 
 	public void registrarUsuario(View v) {
-		
+		Intent i = new Intent(this, RegisterActivity.class );
+        startActivity(i);
 	}
 
 	private class asynclogin extends AsyncTask< String, String, String > {

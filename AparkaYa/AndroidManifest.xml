@@ -44,7 +44,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDPONJCtzdX2rNkYG0_gWnUViF8Ti3mzvY" />
+            android:value="AIzaSyDC2VjTP1VDG4xq321FpTESvrRUMuM9O7Y" />
 
         <activity
             android:name="com.example.aparkaya.AparkaYa"
