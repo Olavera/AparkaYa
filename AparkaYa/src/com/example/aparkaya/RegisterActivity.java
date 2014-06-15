@@ -40,13 +40,13 @@ public class RegisterActivity extends Activity {
 	public void Registra(View view) {
 
 		if (contrasenia1.getText().equals(contrasenia2.getText()) ) {
-			contrasenia2_texto.setTextColor(Color.RED);
+			contrasenia2_texto.setTextColor(Color.BLUE);
 			Toast.makeText(getApplicationContext(),
 					"Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
 		} else {//pasamos los posibles filtros tambien podemos comprobar si el usuario ya esta registrado
 			new asyncRegister().execute(usuario.getText().toString(),contrasenia1.getText().toString());
 		}
-//hola
+
 	}
 
 	private class asyncRegister extends AsyncTask<String, String, String> {
