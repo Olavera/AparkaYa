@@ -46,7 +46,7 @@ public class RegisterActivity extends Activity {
 		} else {//pasamos los posibles filtros tambien podemos comprobar si el usuario ya esta registrado
 			new asyncRegister().execute(usuario.getText().toString(),contrasenia1.getText().toString());
 		}
-
+//
 	}
 
 	private class asyncRegister extends AsyncTask<String, String, String> {
