@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -27,7 +28,8 @@ public class RegisterActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_register);
+		setContentView(R.layout.activity_register);		
+		post = new HttpPostAux();
 
 		usuario = (EditText) findViewById(R.id.usuario);
 		contrasenia1 = (EditText) findViewById(R.id.contrasenia1);
@@ -97,6 +99,23 @@ public class RegisterActivity extends Activity {
 			return "err"; // login invalido
 
 		}
+
+		protected void onPostExecute(String result) {
+
+			if (result.equals("ok")){
+				Toast.makeText(getApplicationContext(),"Registrado correctamente", Toast.LENGTH_SHORT).show();
+
+				//Inicia la actividad
+				Intent i = new Intent(RegisterActivity.this, AparkaYa.class);
+				startActivity(i);
+			} 
+			else if(result.equals("not")){
+				Toast.makeText(getApplicationContext(),"Nombre de usuario ya en uso", Toast.LENGTH_SHORT).show();
+			}
+			else{
+				Toast.makeText(getApplicationContext(),"No se pudo conectar con el servidor", Toast.LENGTH_SHORT).show();
+			}
+		}  
 
 	}
 }

@@ -94,7 +94,6 @@ public class LoginActivity extends Activity {
 
 		}
 
-
 		protected void onPostExecute(String result) {
 
 			if (result.equals("ok")){
