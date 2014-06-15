@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent" >
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -16,17 +16,18 @@
             android:id="@+id/TextView01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Contraseña" 
+            android:gravity="center_horizontal"
+            android:text="Contraseña"
             android:textSize="24sp"
-            android:textStyle="bold" 
-            android:gravity="center_horizontal"/>
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/EditText01"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="21dp"
-            android:ems="10" >
+            android:ems="10"
+            android:inputType="textPassword" >
 
             <requestFocus />
         </EditText>
@@ -49,7 +50,6 @@
         android:layout_below="@+id/textView3"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="18dp"
-     
         android:orientation="vertical" >
 
         <TextView
@@ -57,9 +57,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Usuario"
-            android:textStyle="bold"
-           
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <EditText
             android:id="@+id/editText1"
@@ -69,14 +68,40 @@
             android:ems="10" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/LinearLayout01"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button1"
+        android:layout_alignLeft="@+id/linearLayout2"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/TextView02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Confirma Contraseña"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/EditText02"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="21dp"
+            android:ems="10"
+            android:inputType="textPassword" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/linearLayout2"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
-        android:text="Registrarme"
-        android:onClick="registra" />
+        android:layout_marginBottom="16dp"
+        android:onClick="registra"
+        android:text="Registrarme" />
 
 </RelativeLayout>
