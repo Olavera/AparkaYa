@@ -6,7 +6,6 @@ import java.util.Vector;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,7 +24,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -199,11 +197,13 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
+			
 			View rootView = inflater.inflate(R.layout.fragment_mapa, container, false);
 			save = (Button) rootView.findViewById(R.id.btnguardar);
 			save.setOnClickListener(new btnGuardarListener());
 			initilizeMap();
 			iniciarTask();
+			
 			return rootView;
 		}
 
@@ -351,6 +351,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	            }
 	 
 	            public View getView(int position, View convertView, ViewGroup parent) {
+	            	
 	            LayoutInflater inflater = context.getLayoutInflater();
 	            View v = inflater.inflate(R.layout.vista_punto, null);
 	            
@@ -367,86 +368,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	            return v;
 	        }
 	    }
-		/*
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 			
-			View rootView = inflater.inflate(R.layout.fragment_main,container, false);
-   
-				/*
-			    ListView lv = (ListView)rootView.findViewById(R.id.listView1);
-			    lv.setAdapter(new ArrayAdapterListView(getActivity(), lista_puntos));
-			    lv.setEmptyView(findViewById(R.id.emptyListView));
-				lv.setOnItemClickListener(onclick_punto);
-		
-			    return rootView;
-			
-		}
-		
-		private class ArrayAdapterListView extends ArrayAdapter<Punto>{
-			
-			Activity context;
-			 
-			ArrayAdapterListView(Fragment context) {
-                super(context.getActivity(), R.layout.vista_punto, GetlistPuntos());
-                this.context = context.getActivity();
-            }
-			/*
-		    protected Activity activity;
-		    protected ArrayList<Punto> lista_puntos;
-		 
-		    public ArrayAdapterListView(Activity activity, ArrayList<Punto> lista_puntos) {
-		        this.activity = activity;
-		        this.lista_puntos = lista_puntos;
-		      }
-		 
-		    @Override
-		    public int getCount() {
-		        return lista_puntos.size();
-		    }
-		 		 
-		    @Override
-		    public View getView(int position, View convertView, ViewGroup parent) {
-		    	
-	            LayoutInflater inflater = context.getLayoutInflater();
-	            View v = inflater.inflate(R.layout.vista_punto, null);
-		    	/*
-		        // Generamos una convertView por motivos de eficiencia
-		        View v = convertView;
-		 
-		        //Asociamos el layout de la lista que hemos creado
-		        if(convertView == null){
-		            LayoutInflater inf = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		            v = inf.inflate(R.layout.vista_punto, null);
-		        }
-		 
-		        // Creamos un objeto directivo
-		        Punto punto = lista_puntos.get(position);
-		        
-		        /*
-		        //Rellenamos la fotograf�a
-		        ImageView foto = (ImageView) v.findViewById(R.id.imageView);
-		        foto.setImageDrawable(activity.getResources().getDrawable(punto.getImg()));
-		        
-		        //Rellenamos el nombre
-		        TextView nombre = (TextView) v.findViewById(R.id.textNameList);
-		        nombre.setText(punto.getNombre());
-		        //Rellenamos el cargo
-		        TextView coordenadas = (TextView) v.findViewById(R.id.textLatLng);
-		        coordenadas.setText(punto.getCords().toString());
-		 
-		        // Retornamos la vista
-		        return v;
-		    }
-
-			@Override
-			public long getItemId(int position) {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-	}*/
-		
-		
 		OnItemClickListener onclick_punto = new OnItemClickListener() 
 		{
 			
@@ -478,22 +400,24 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			
 			ArrayList<Punto> listap = new ArrayList<Punto>();
 
-		    Punto punto = new Punto();
+		    Punto punto1 = new Punto();
+		    Punto punto2 = new Punto();
+		    Punto punto3 = new Punto();
 
-		    punto.setNombre("punto1");
-		    punto.setCords(new LatLng(40,40));
-		    punto.setOcupado(0);
-		    listap.add(punto);
+		    punto1.setNombre("punto1");
+		    punto1.setCords(new LatLng(40,40));
+		    punto1.setOcupado(0);
+		    listap.add(punto1);
 
-		    punto.setNombre("punto2");
-		    punto.setCords(new LatLng(80,50));
-		    punto.setOcupado(1);
-		    listap.add(punto);
+		    punto2.setNombre("punto2");
+		    punto2.setCords(new LatLng(80,50));
+		    punto2.setOcupado(1);
+		    listap.add(punto2);
 
-		    punto.setNombre("punto3");
-		    punto.setCords(new LatLng(75,40));
-		    punto.setOcupado(0);
-		    listap.add(punto);
+		    punto3.setNombre("punto3");
+		    punto3.setCords(new LatLng(75,40));
+		    punto3.setOcupado(0);
+		    listap.add(punto3);
 
 		    return listap; 
 		    }   
