@@ -28,9 +28,9 @@ public class RegisterActivity extends Activity {
 		setContentView(R.layout.activity_register);		
 		post = new HttpPostAux();
 
-		usuario = (EditText) findViewById(R.id.usuario);
-		contrasenia1 = (EditText) findViewById(R.id.contrasenia1);
-		contrasenia2 = (EditText) findViewById(R.id.contrasenia2);
+		usuario = (EditText) findViewById(R.id.usuario_registro);
+		contrasenia1 = (EditText) findViewById(R.id.contrasenia_registro);
+		contrasenia2 = (EditText) findViewById(R.id.contrasenia2_registro);
 
 	}
 
