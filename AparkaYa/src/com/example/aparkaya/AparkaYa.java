@@ -7,6 +7,7 @@ import java.util.Vector;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -55,6 +56,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -193,6 +195,14 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		@SuppressLint("ValidFragment")
 		public FragmentoMapa() {
 		}
+		
+		// this method is only called once for this fragment
+	    @Override
+	    public void onCreate(Bundle savedInstanceState) {
+	        super.onCreate(savedInstanceState);
+	        // retain this fragment
+	        setRetainInstance(true);
+	    }
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -205,6 +215,14 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			iniciarTask();
 			
 			return rootView;
+		}
+		
+		
+
+		@Override
+		public void setRetainInstance(boolean retain) {
+			// TODO Auto-generated method stub
+			super.setRetainInstance(retain);
 		}
 
 		/** function to load map. 
@@ -325,12 +343,26 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		@SuppressLint("ValidFragment")
 		public FragmentoHuecos() {
 		}
+		
+		// this method is only called once for this fragment
+	    @Override
+	    public void onCreate(Bundle savedInstanceState) {
+	        super.onCreate(savedInstanceState);
+	        // retain this fragment
+	        setRetainInstance(true);
+	    }
 			 
 	    @Override
 	    public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState) {
 	 
 	        return inflater.inflate(R.layout.fragment_huecos, container, false);
 	    }
+	    
+	    @Override
+		public void setRetainInstance(boolean retain) {
+			// TODO Auto-generated method stub
+			super.setRetainInstance(retain);
+		}
 	 
 	    @Override
 	    public void onActivityCreated(Bundle state) {
