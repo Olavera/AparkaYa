@@ -5,6 +5,8 @@ import java.util.Locale;
 import java.util.Vector;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,8 +24,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -315,17 +320,61 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	public class FragmentoHuecos extends Fragment {
 		
 		 ArrayList<Punto> lista_puntos = GetlistPuntos();
+		 private ListView lstListado;
 		
 		@SuppressLint("ValidFragment")
 		public FragmentoHuecos() {
 		}
-
+			 
+	    @Override
+	    public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState) {
+	 
+	        return inflater.inflate(R.layout.fragment_huecos, container, false);
+	    }
+	 
+	    @Override
+	    public void onActivityCreated(Bundle state) {
+	        super.onActivityCreated(state);
+	 
+	        lstListado = (ListView)getView().findViewById(R.id.listView1);
+	 
+	        lstListado.setAdapter(new AdaptadorPuntos(this));
+	    }
+	 
+	    class AdaptadorPuntos extends ArrayAdapter<Punto> {
+	 
+	            Activity context;
+	 
+	            AdaptadorPuntos(Fragment context) {
+	                super(context.getActivity(), R.layout.vista_punto, GetlistPuntos());
+	                this.context = context.getActivity();
+	            }
+	 
+	            public View getView(int position, View convertView, ViewGroup parent) {
+	            LayoutInflater inflater = context.getLayoutInflater();
+	            View v = inflater.inflate(R.layout.vista_punto, null);
+	            
+	            // Creamos un objeto directivo
+		        Punto punto = lista_puntos.get(position);
+	 
+		      //Rellenamos el nombre
+		        TextView nombre = (TextView) v.findViewById(R.id.textNameList);
+		        nombre.setText(punto.getNombre());
+		        //Rellenamos el cargo
+		        TextView coordenadas = (TextView) v.findViewById(R.id.textLatLng);
+		        coordenadas.setText(punto.getCords().toString());
+	 
+	            return v;
+	        }
+	    }
+		/*
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 			
 			View rootView = inflater.inflate(R.layout.fragment_main,container, false);
    
-			    ListView lv = (ListView)getActivity().findViewById(R.id.listView1);
+				/*
+			    ListView lv = (ListView)rootView.findViewById(R.id.listView1);
 			    lv.setAdapter(new ArrayAdapterListView(getActivity(), lista_puntos));
 			    lv.setEmptyView(findViewById(R.id.emptyListView));
 				lv.setOnItemClickListener(onclick_punto);
@@ -333,6 +382,70 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			    return rootView;
 			
 		}
+		
+		private class ArrayAdapterListView extends ArrayAdapter<Punto>{
+			
+			Activity context;
+			 
+			ArrayAdapterListView(Fragment context) {
+                super(context.getActivity(), R.layout.vista_punto, GetlistPuntos());
+                this.context = context.getActivity();
+            }
+			/*
+		    protected Activity activity;
+		    protected ArrayList<Punto> lista_puntos;
+		 
+		    public ArrayAdapterListView(Activity activity, ArrayList<Punto> lista_puntos) {
+		        this.activity = activity;
+		        this.lista_puntos = lista_puntos;
+		      }
+		 
+		    @Override
+		    public int getCount() {
+		        return lista_puntos.size();
+		    }
+		 		 
+		    @Override
+		    public View getView(int position, View convertView, ViewGroup parent) {
+		    	
+	            LayoutInflater inflater = context.getLayoutInflater();
+	            View v = inflater.inflate(R.layout.vista_punto, null);
+		    	/*
+		        // Generamos una convertView por motivos de eficiencia
+		        View v = convertView;
+		 
+		        //Asociamos el layout de la lista que hemos creado
+		        if(convertView == null){
+		            LayoutInflater inf = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		            v = inf.inflate(R.layout.vista_punto, null);
+		        }
+		 
+		        // Creamos un objeto directivo
+		        Punto punto = lista_puntos.get(position);
+		        
+		        /*
+		        //Rellenamos la fotograf�a
+		        ImageView foto = (ImageView) v.findViewById(R.id.imageView);
+		        foto.setImageDrawable(activity.getResources().getDrawable(punto.getImg()));
+		        
+		        //Rellenamos el nombre
+		        TextView nombre = (TextView) v.findViewById(R.id.textNameList);
+		        nombre.setText(punto.getNombre());
+		        //Rellenamos el cargo
+		        TextView coordenadas = (TextView) v.findViewById(R.id.textLatLng);
+		        coordenadas.setText(punto.getCords().toString());
+		 
+		        // Retornamos la vista
+		        return v;
+		    }
+
+			@Override
+			public long getItemId(int position) {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+	}*/
+		
 		
 		OnItemClickListener onclick_punto = new OnItemClickListener() 
 		{
