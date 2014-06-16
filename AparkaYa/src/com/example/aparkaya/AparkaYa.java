@@ -1,19 +1,11 @@
 package com.example.aparkaya;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Vector;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,8 +20,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 @SuppressLint("ValidFragment")
 public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener {
@@ -308,6 +313,9 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	 * A placeholder fragment containing a simple view.
 	 */
 	public class FragmentoHuecos extends Fragment {
+		
+		 ArrayList<Punto> lista_puntos = GetlistPuntos();
+		
 		@SuppressLint("ValidFragment")
 		public FragmentoHuecos() {
 		}
@@ -316,9 +324,65 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
 			
 			View rootView = inflater.inflate(R.layout.fragment_main,container, false);
+   
+			    ListView lv = (ListView)getActivity().findViewById(R.id.listView1);
+			    lv.setAdapter(new ArrayAdapterListView(getActivity(), lista_puntos));
+			    lv.setEmptyView(findViewById(R.id.emptyListView));
+				lv.setOnItemClickListener(onclick_punto);
+		
+			    return rootView;
 			
-			return rootView;
 		}
-	}
-	
+		
+		OnItemClickListener onclick_punto = new OnItemClickListener() 
+		{
+			
+		
+			public void onItemClick(AdapterView<?> parent,View view, int position, long id)
+			{
+				
+				Intent i = new Intent(AparkaYa.this, LoginActivity.class);
+				
+				/*
+				Punto punto = lista_puntos.get(position);
+				
+				i.putExtra("name_dt", rst.getName());
+				i.putExtra("country_dt", rst.getCountry());
+				i.putExtra("city_dt", rst.getCity());
+		        i.putExtra("street_type_dt", rst.getStreet_type());
+		        i.putExtra("street_dt", rst.getStreet());
+		        i.putExtra("street_num_dt", String.valueOf(rst.getStreet_num()));
+		        i.putExtra("food_type_dt", rst.getTypeToString());
+		        i.putExtra("food_nac_dt", rst.getOrigen());
+		        i.putExtra("price_dt", String.valueOf(rst.getPrice()));
+		        i.putExtra("img_dt", String.valueOf(rst.getImg()));
+				*/
+		        startActivity(i);
+			}
+		};
+		
+		private ArrayList<Punto> GetlistPuntos(){
+			
+			ArrayList<Punto> listap = new ArrayList<Punto>();
+
+		    Punto punto = new Punto();
+
+		    punto.setNombre("punto1");
+		    punto.setCords(new LatLng(40,40));
+		    punto.setOcupado(0);
+		    listap.add(punto);
+
+		    punto.setNombre("punto2");
+		    punto.setCords(new LatLng(80,50));
+		    punto.setOcupado(1);
+		    listap.add(punto);
+
+		    punto.setNombre("punto3");
+		    punto.setCords(new LatLng(75,40));
+		    punto.setOcupado(0);
+		    listap.add(punto);
+
+		    return listap; 
+		    }   
+		}	
 }

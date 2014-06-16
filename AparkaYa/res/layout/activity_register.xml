@@ -1,38 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent" 
+    tools:context=".RegisterActivity" >
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/linearLayout1"
-        android:layout_below="@+id/linearLayout1"
-        android:layout_marginTop="34dp"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/contrasenia1_texto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="Contraseña"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/contrasenia1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="21dp"
-            android:ems="10"
-            android:inputType="textPassword" >
-
-            <requestFocus />
-        </EditText>
-    </LinearLayout>
-
+    
     <TextView
         android:id="@+id/Titulo"
         android:layout_width="wrap_content"
@@ -47,55 +19,89 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView3"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="18dp"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/usuario_texto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Usuario"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+    </LinearLayout>
+    
+     <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="18dp"
+        android:orientation="vertical" >
 
-        <EditText
-            android:id="@+id/usuario"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="21dp"
-            android:ems="10" />
+    </LinearLayout>
+    
+     <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="34dp"
+        android:orientation="vertical" >
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/LinearLayout01"
+        android:id="@+id/LinearLayout4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/button1"
         android:layout_alignLeft="@+id/linearLayout2"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/contrasenia2_texto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:text="Confirma Contraseña"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/contrasenia2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="21dp"
-            android:ems="10"
-            android:inputType="textPassword" />
     </LinearLayout>
+ 
+    <EditText
+        android:id="@+id/usuario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/email"
+        android:layout_below="@+id/linearLayout3"
+        android:layout_marginTop="28dp"
+        android:ems="10"
+        android:hint="Usuario"
+        android:inputType="text" >
 
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/contrasenia1"
+        android:layout_below="@+id/usuario"
+        android:layout_marginTop="40dp"
+        android:ems="10"
+        android:hint="Email"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/contrasenia1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/Titulo"
+        android:layout_centerVertical="true"
+        android:ems="10"
+        android:hint="Contraseña"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/contrasenia2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/contrasenia1"
+        android:layout_below="@+id/contrasenia1"
+        android:layout_marginTop="29dp"
+        android:ems="10"
+        android:hint="Confirmar contraseña"
+        android:inputType="textPassword" />
+    
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/boton_registro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

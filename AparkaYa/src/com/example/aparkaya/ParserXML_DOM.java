@@ -303,7 +303,7 @@ public class ParserXML_DOM{
 
 			}
 
-			result.add(new Punto(nombre, new LatLng(lat, lng)));
+			result.add(new Punto(nombre, new LatLng(lat, lng),0)); // MODIFICADO a 0 hay que cambiarlo
 
 		}
 

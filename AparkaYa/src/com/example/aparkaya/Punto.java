@@ -4,13 +4,30 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class Punto {
 	
-	String nombre;
-	LatLng cords;
+	private String nombre;
+	private LatLng cords;
+	private int ocupado;
 	
-	public Punto(String nombre, LatLng cords) {
+	public Punto(String nombre, LatLng cords,int ocupado) {
 		super();
 		this.nombre = nombre;
 		this.cords = cords;
+		this.ocupado=ocupado;
+	
+	}
+	
+
+	public Punto() {
+		super();
+	}
+
+
+	public int getOcupado() {
+		return ocupado;
+	}
+
+	public void setOcupado(int ocupado) {
+		this.ocupado = ocupado;
 	}
 
 	public String getNombre() {

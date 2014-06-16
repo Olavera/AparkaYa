@@ -10,18 +10,15 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class RegisterActivity extends Activity {
 
 	private EditText usuario, contrasenia1, contrasenia2;
-	private TextView usuario_texto, contrasenia2_texto;
 	HttpPostAux post;
 
 	@Override
@@ -34,15 +31,14 @@ public class RegisterActivity extends Activity {
 		usuario = (EditText) findViewById(R.id.usuario);
 		contrasenia1 = (EditText) findViewById(R.id.contrasenia1);
 		contrasenia2 = (EditText) findViewById(R.id.contrasenia2);
-		contrasenia2_texto = (TextView) findViewById(R.id.contrasenia2_texto);
+
 	}
 
 	public void Registra(View view) {
 
 		if (contrasenia1.getText().equals(contrasenia2.getText()) ) {
-			contrasenia2_texto.setTextColor(Color.BLUE);
-			Toast.makeText(getApplicationContext(),
-					"Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+		
+			Toast.makeText(getApplicationContext(),"Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
 		} else {//pasamos los posibles filtros tambien podemos comprobar si el usuario ya esta registrado
 			new asyncRegister().execute(usuario.getText().toString(),contrasenia1.getText().toString());
 		}
@@ -71,8 +67,7 @@ public class RegisterActivity extends Activity {
 			postparameters2send.add(new BasicNameValuePair("password", pass));
 
 			// realizamos una peticion y como respuesta obtenes un array JSON
-			JSONArray jdata = post.getserverdata(postparameters2send,
-					"http://padandroid.webcindario.com/index2.php");
+			JSONArray jdata = post.getserverdata(postparameters2send,"http://padandroid.webcindario.com/index2.php");
 
 			// si lo que obtuvimos no es null
 			if (jdata != null && jdata.length() > 0) {
