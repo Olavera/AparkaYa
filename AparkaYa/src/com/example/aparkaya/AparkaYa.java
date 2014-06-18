@@ -12,10 +12,17 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -67,6 +74,30 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	
 	private HttpPostAux post;
 	private String user, pass;
+
+    Messenger messenger = null;
+    
+
+	private Handler handler = new Handler() {
+		public void handleMessage(Message message) {
+			Bundle data = message.getData();
+			if (message.arg1 == RESULT_OK && data != null) {
+				String text = data.getString("");
+				Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+			}
+		}
+	};
+
+	private ServiceConnection conn = new ServiceConnection() {
+
+		public void onServiceConnected(ComponentName className, IBinder binder) {
+			messenger = new Messenger(binder);
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			messenger = null;
+		}
+	};
 	
 
 	@Override
@@ -148,6 +179,24 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	@Override
 	public void onTabReselected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
+	}
+	
+	protected void onResume() {
+		super.onResume();
+		Intent intent = null;
+		intent = new Intent(this, PointsRefreshService.class);
+		//Creamos un nuevo Messenger para la comunicación    
+		// Desde el Service al Activity
+		Messenger messenger = new Messenger(handler);
+		intent.putExtra("MESSENGER", messenger);
+
+		bindService(intent, conn, Context.BIND_AUTO_CREATE);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		unbindService(conn);
 	}
 
 	/**
@@ -441,11 +490,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 							e2.printStackTrace();
 						}
 					}              
-
-					//validamos el valor obtenido
-					if (auxpoints.size()>0){           
-						return "ok"; //lista de puntos obtenida correctamente
-					}
+					return "ok"; //lista de puntos obtenida correctamente
 
 				}     
 				return "err"; //error
