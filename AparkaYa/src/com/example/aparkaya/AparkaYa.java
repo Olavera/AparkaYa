@@ -342,6 +342,9 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 				/*Creamos un ArrayList del tipo nombre valor para agregar los datos recibidos por los parametros anteriores
 				 * y enviarlo mediante POST a nuestro sistema para relizar la validacion*/ 
 				ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
+
+				postparameters2send.add(new BasicNameValuePair("user",user));
+				postparameters2send.add(new BasicNameValuePair("password",pass));
 				postparameters2send.add(new BasicNameValuePair("id_usuario",p.getNombre()));
 				postparameters2send.add(new BasicNameValuePair("latitud",Double.toString(p.getCords().latitude)));
 				postparameters2send.add(new BasicNameValuePair("longitud",Double.toString(p.getCords().longitude)));
@@ -368,6 +371,10 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 					if (id == 1) {
 						return "ok"; //
 					}
+					else if (id == 2)
+					{
+						return "notUser";
+					}
 				}
 				return "err"; //
 
@@ -378,6 +385,9 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 				if (result.equals("ok")){
 					Toast.makeText(getApplicationContext(),"Punto enviado correctamente", Toast.LENGTH_SHORT).show();
 					loadPoints();
+				}
+				else if (result.equals("notUser")){
+					Toast.makeText(getApplicationContext(),"Usuario no reconocido", Toast.LENGTH_SHORT).show();
 				}
 				else{
 					Toast.makeText(getApplicationContext(),"Fallo al enviar el punto", Toast.LENGTH_SHORT).show();
@@ -394,7 +404,9 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 				/*Creamos un ArrayList del tipo nombre valor para agregar los datos recibidos por los parametros anteriores
 				 * y enviarlo mediante POST a nuestro sistema para relizar la validacion*/ 
 				ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
-
+				postparameters2send.add(new BasicNameValuePair("user",user));
+				postparameters2send.add(new BasicNameValuePair("password",pass));
+				
 				//realizamos una peticion y como respuesta obtenes un array JSON
 				JSONArray jdata=post.getserverdata(postparameters2send, "http://aparkaya.webcindario.com/obtenerPuntos.php");
 
@@ -415,6 +427,19 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 					catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						try {
+							JSONObject json_data = jdata.getJSONObject(0);
+																
+							int id = json_data.getInt("id");
+
+							if (id == 2)
+							{
+								return "notUser";
+							}
+						} catch (JSONException e2) {
+							// TODO Auto-generated catch block
+							e2.printStackTrace();
+						}
 					}              
 
 					//validamos el valor obtenido
@@ -451,7 +476,9 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 									.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 					}
 				}
-				else{
+				else if (result.equals("notUser")){
+					Toast.makeText(getApplicationContext(),"Usuario no reconocido", Toast.LENGTH_SHORT).show();
+				}else{
 					Toast.makeText(getApplicationContext(),"No se pudieron obtener los puntos", Toast.LENGTH_SHORT).show();
 				}
 			}

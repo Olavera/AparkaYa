@@ -119,6 +119,8 @@ public class LoginActivity extends Activity {
 
 				//Inicia la actividad
 				Intent i = new Intent(LoginActivity.this, AparkaYa.class);
+				i.putExtra("user", user);
+				i.putExtra("pass", pass);
 				startActivity(i);
 			} 
 			else if(result.equals("not")){
