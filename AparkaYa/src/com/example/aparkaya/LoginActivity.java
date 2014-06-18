@@ -85,7 +85,7 @@ public class LoginActivity extends Activity {
 			postparameters2send.add(new BasicNameValuePair("password",pass));
 
 			//realizamos una peticion y como respuesta obtenes un array JSON
-			JSONArray jdata=post.getserverdata(postparameters2send, "http://padandroid.webcindario.com/index2.php");
+			JSONArray jdata=post.getserverdata(postparameters2send, "http://aparkaya.webcindario.com/login.php");
 
 			//si lo que obtuvimos no es null
 			if (jdata!=null && jdata.length() > 0){

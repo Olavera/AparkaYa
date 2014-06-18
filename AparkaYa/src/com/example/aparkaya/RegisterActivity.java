@@ -55,19 +55,20 @@ public class RegisterActivity extends Activity {
 		
 			Toast.makeText(getApplicationContext(),"Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
 		} else {//pasamos los posibles filtros tambien podemos comprobar si el usuario ya esta registrado
-			new asyncRegister().execute(usuario.getText().toString(),contrasenia1.getText().toString());
+			new asyncRegister().execute("email",usuario.getText().toString(),contrasenia1.getText().toString());
 		}
 
 	}
 
 	private class asyncRegister extends AsyncTask<String, String, String> {
 
-		String user, pass;
+		String email, user, pass;
 
 		protected String doInBackground(String... params) {
 			// obtenemos user y pass
-			user = params[0];
-			pass = params[1];
+			email = params[0];
+			user = params[1];
+			pass = params[2];
 
 			int id = -1;
 
@@ -78,11 +79,12 @@ public class RegisterActivity extends Activity {
 			 */
 			ArrayList<NameValuePair> postparameters2send = new ArrayList<NameValuePair>();
 
+			postparameters2send.add(new BasicNameValuePair("email", email));
 			postparameters2send.add(new BasicNameValuePair("user", user));
 			postparameters2send.add(new BasicNameValuePair("password", pass));
 
 			// realizamos una peticion y como respuesta obtenes un array JSON
-			JSONArray jdata = post.getserverdata(postparameters2send,"http://padandroid.webcindario.com/index2.php");
+			JSONArray jdata = post.getserverdata(postparameters2send,"http://aparkaya.webcindario.com/registro.php");
 
 			// si lo que obtuvimos no es null
 			if (jdata != null && jdata.length() > 0) {
@@ -101,10 +103,11 @@ public class RegisterActivity extends Activity {
 				// validamos el valor obtenido
 				if (id == 1) {
 					return "ok"; // login valido
-				} else {
-					return "not"; // usuario no registrado
-				}
-
+				} else if (id == 2) {
+					return "userExist"; // usuario ya existe
+				} else if (id == 3) {
+					return "emailExist"; // email ya existe
+				} 
 			}
 			return "err"; // login invalido
 
@@ -119,7 +122,10 @@ public class RegisterActivity extends Activity {
 				Intent i = new Intent(RegisterActivity.this, AparkaYa.class);
 				startActivity(i);
 			} 
-			else if(result.equals("not")){
+			else if(result.equals("userExist")){
+				Toast.makeText(getApplicationContext(),"Email ya en uso", Toast.LENGTH_SHORT).show();
+			}
+			else if(result.equals("emailExist")){
 				Toast.makeText(getApplicationContext(),"Nombre de usuario ya en uso", Toast.LENGTH_SHORT).show();
 			}
 			else{
