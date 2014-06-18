@@ -13,7 +13,6 @@ public class Punto {
 		this.nombre = nombre;
 		this.cords = cords;
 		this.ocupado=ocupado;
-	
 	}
 	
 
