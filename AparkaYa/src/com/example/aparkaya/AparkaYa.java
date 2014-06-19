@@ -88,19 +88,14 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 
 	private Handler handler = new Handler() {
 		public void handleMessage(Message message) {
-			Bundle data = message.getData();
 			if (message.arg1 == Constants.RESULT_OK) {
 				points = localService.getVectorPoints();
-				Punto p = points.get(points.size()-1);
-				Toast.makeText(getApplicationContext(), 
-					p.getNombre() + " || " + p.getCords().latitude + " || " + p.getCords().longitude + " || " + p.getOcupado(),
-					Toast.LENGTH_SHORT).show();
+				repaintPoints(message.arg1);
 			}
 		}
 	};
 
 	private ServiceConnection mConnection = new ServiceConnection() {
-
 		public void onServiceConnected(ComponentName className, 
 				IBinder binder) {
 			PointsRefreshService.MyBinder b = (PointsRefreshService.MyBinder) binder;
@@ -111,19 +106,6 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			localService = null;
 		}
 	};
-	
-	/*
-	private BroadcastReceiver receiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			Bundle bundle = intent.getExtras();
-			if (bundle != null) {
-				String result = bundle.getString("RESULT");
-				Toast.makeText(AparkaYa.this, "Mensaje: " + result, Toast.LENGTH_SHORT).show();
-			}
-		}
-			
-	};*/
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -179,7 +161,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.SECOND, 10);
         pintent = PendingIntent.getService(this, 0, new Intent(this, PointsRefreshService.class), 0);
-        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 60000, pintent);
+        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), Constants.LOCALSERVER_TIME_REFRESH, pintent);
         
         Intent intent = new Intent(this, PointsRefreshService.class);
 		intent.putExtra("MESSENGER", messenger);
@@ -205,6 +187,27 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		super.onPause();
 		alarm.cancel(pintent);
 	    unbindService(mConnection);
+	}
+	
+	private void repaintPoints(int result){
+		if (result == Constants.RESULT_OK){
+			Toast.makeText(getApplicationContext(),"Puntos obtenidos correctamente", Toast.LENGTH_SHORT).show();
+			mapa.clear();
+
+			for (Punto punto : points) {
+					mapa.addMarker(new MarkerOptions()
+					.position(punto.getCords())
+					.title(punto.getNombre())
+					.snippet(punto.getNombre())
+					.icon(BitmapDescriptorFactory
+							.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+			}
+		}
+		else if (result == Constants.RESULT_NOTUSER){
+			Toast.makeText(getApplicationContext(),"Usuario no reconocido", Toast.LENGTH_SHORT).show();
+		}else if (result == Constants.RESULT_ERR){
+			Toast.makeText(getApplicationContext(),"No se pudieron obtener los puntos", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	@Override
@@ -323,8 +326,6 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			difundir.setOnClickListener(new btnDifundir());
 			
 			initilizeMap();
-			//iniciarTask();
-			loadPoints();
 			return rootView;
 		}
 		
@@ -372,12 +373,6 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			RetrieveFeed task = new RetrieveFeed();
 			task.execute();
 		}
-		
-		private void loadPoints(){
-			new asyncCallPoints().execute();
-		}
-
-		
 
 		@Override
 		public void onMapClick(LatLng puntoPulsado) {
@@ -477,7 +472,6 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 
 				if (result.equals("ok")){
 					Toast.makeText(getApplicationContext(),"Punto enviado correctamente", Toast.LENGTH_SHORT).show();
-					loadPoints();
 				}
 				else if (result.equals("notUser")){
 					Toast.makeText(getApplicationContext(),"Usuario no reconocido", Toast.LENGTH_SHORT).show();
