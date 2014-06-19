@@ -17,6 +17,7 @@ import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Message;
@@ -25,79 +26,48 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class PointsRefreshService extends Service{
-    
-  /*  //Este es el objeto que recibe interacciones de los clientes. 
-    private final IBinder mBinder = new LocalBinder();
-    
-    private static final long UPDATE_INTERVAL = 5000;
-	private String user, pass;
-	
-	private HttpPostAux post;
-
-    private Messenger outMessenger;
-    
-    //Clase de acceso para los clientes. 
-    //Como sabemos que este servicio siempre se ejecuta en el mismo proceso,
-    //no es necesario tratar con IPC
-    public class LocalBinder extends Binder{    
-    	PointsRefreshService getService(){
-            return PointsRefreshService.this;
-        }
-    }
-    
-    @Override
-    public void onCreate(){
-    	post = new HttpPostAux();
-    }
-    
-    @Override
-    public int onStartCommand(Intent intent, int flags,int startId){
-		user = intent.getStringExtra("user");;
-		pass = intent.getStringExtra("pass");;
-        //Queremos que el servicio continúe ejecutándose hasta que es explícitamente parado,
-		//así que devolvemos sticky
-        return START_STICKY;    
-    }
-
-    @Override
-    public IBinder onBind(Intent intent){
-    	Bundle extras = intent.getExtras();
-    	// Get messager from the Activity
-    	if (extras != null) {
-    		outMessenger = (Messenger) extras.get("MESSENGER");
-    	}
-        return mBinder; 
-    }*/
 
 	public static final String NOTIFICATION = "com.example.aparkaya";
+	private String user, pass;
 	private Messenger outMessenger;
 	private Vector<Punto> points;
+	private HttpPostAux post;
+	private final IBinder mBinder = new MyBinder();
+
+	public class MyBinder extends Binder {
+		PointsRefreshService getService() {
+			return PointsRefreshService.this;
+		}
+	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO: Return the communication channel to the service.
-		throw new UnsupportedOperationException("Not yet implemented");
+		Bundle extras = intent.getExtras();
+		// Get messager from the Activity
+		if (extras != null) {
+			outMessenger = (Messenger) extras.get("MESSENGER");
+			user = extras.getString("user");
+			pass = extras.getString("pass");
+		}
+		// Return our messenger to the Activity to get commands
+		return mBinder;
 	}
 
 	@Override
 	public void onCreate() {
+		post = new HttpPostAux();
 		Toast.makeText(getApplicationContext(), "Service Created", Toast.LENGTH_SHORT).show();
 		super.onCreate();
 	}
 
 	@Override
 	public void onDestroy() {
-		// TODO Auto-generated method stub
 		Toast.makeText(getApplicationContext(), "Service Destroy", Toast.LENGTH_SHORT).show();
 		super.onDestroy();
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Bundle extras = intent.getExtras();
-		if (extras!=null){
-			outMessenger = (Messenger) extras.get("MESSENGER");
-		}
 		Message backMsg = Message.obtain();
 		backMsg.arg1 = Activity.RESULT_OK;
 		Bundle bundle = new Bundle();
@@ -117,7 +87,7 @@ public class PointsRefreshService extends Service{
 	{
 		return points;
 	}
-	
+	/*
 	private class asyncCallPoints extends AsyncTask< Void, String, String > {
 		
 		Vector<Punto> auxpoints = new Vector<Punto>();
@@ -126,7 +96,7 @@ public class PointsRefreshService extends Service{
 
 			/*Creamos un ArrayList del tipo nombre valor para agregar los datos recibidos por los parametros anteriores
 			 * y enviarlo mediante POST a nuestro sistema para relizar la validacion*/ 
-			ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
+			/*ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
 			postparameters2send.add(new BasicNameValuePair("user",user));
 			postparameters2send.add(new BasicNameValuePair("password",pass));
 			
@@ -201,7 +171,7 @@ public class PointsRefreshService extends Service{
 				Toast.makeText(getApplicationContext(),"No se pudieron obtener los puntos", Toast.LENGTH_SHORT).show();
 			}
 		}
-	}
+	}*/
 	
 	
 	

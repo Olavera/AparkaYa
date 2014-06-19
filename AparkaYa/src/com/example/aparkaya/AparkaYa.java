@@ -82,14 +82,30 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	private AlarmManager alarm;
 	private PendingIntent pintent;
 	private Messenger messenger;
+	private PointsRefreshService localService;
+	private Vector<Punto> points;
 
 	private Handler handler = new Handler() {
 		public void handleMessage(Message message) {
 			Bundle data = message.getData();
 			if (message.arg1 == RESULT_OK && data != null) {
+				points = localService.getVectorPoints();
 				String text = data.getString("txt");
 				Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
 			}
+		}
+	};
+
+	private ServiceConnection mConnection = new ServiceConnection() {
+
+		public void onServiceConnected(ComponentName className, 
+				IBinder binder) {
+			PointsRefreshService.MyBinder b = (PointsRefreshService.MyBinder) binder;
+			localService = b.getService();
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			localService = null;
 		}
 	};
 	
@@ -159,14 +175,14 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		// Start service using AlarmManager
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.SECOND, 10);
-        Intent intent1 = new Intent(this, PointsRefreshService.class);
-		intent1.putExtra("MESSENGER", messenger);
-        pintent = PendingIntent.getService(this, 0, intent1, 0);
+        pintent = PendingIntent.getService(this, 0, new Intent(this, PointsRefreshService.class), 0);
         alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 10000, pintent);
         
-        Intent intent2 = new Intent(this, PointsRefreshService.class);
-		intent2.putExtra("MESSENGER", messenger);
-        startService(intent2);
+        Intent intent = new Intent(this, PointsRefreshService.class);
+		intent.putExtra("MESSENGER", messenger);
+		intent.putExtra("user", user);
+		intent.putExtra("pass", pass);
+		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         
 		/*registerReceiver(receiver, new IntentFilter(PointsRefreshService.NOTIFICATION));
 		
@@ -185,7 +201,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	protected void onPause() {
 		super.onPause();
 		alarm.cancel(pintent);
-		stopService(new Intent(getBaseContext(), PointsRefreshService.class));
+	    unbindService(mConnection);
 		/*alarm.cancel(pintent);
 		stopService(new Intent(getBaseContext(), PointsRefreshService.class));
 	    unregisterReceiver(receiver);*/
@@ -277,7 +293,6 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	public class FragmentoMapa extends Fragment implements OnMapClickListener, OnInfoWindowClickListener{
 
 		private GoogleMap mapa = null;
-		private Vector<Punto> points;
 		private Button save, difundir;
 
 		/**
