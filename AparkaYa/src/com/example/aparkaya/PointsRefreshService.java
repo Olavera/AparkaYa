@@ -19,10 +19,11 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Messenger;
+import android.widget.Toast;
 
 public class PointsRefreshService extends Service{
     
-    //Este es el objeto que recibe interacciones de los clientes. 
+  /*  //Este es el objeto que recibe interacciones de los clientes. 
     private final IBinder mBinder = new LocalBinder();
     
     private static final long UPDATE_INTERVAL = 5000;
@@ -63,6 +64,41 @@ public class PointsRefreshService extends Service{
     		outMessenger = (Messenger) extras.get("MESSENGER");
     	}
         return mBinder; 
+    }*/
+
+	public static final String NOTIFICATION = "com.example.aparkaya";
+    
+    @Override
+    public IBinder onBind(Intent intent) {
+           // TODO: Return the communication channel to the service.
+           throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public void onCreate() {
+           // TODO Auto-generated method stub
+
+           Toast.makeText(getApplicationContext(), "Service Created", Toast.LENGTH_SHORT).show();
+           super.onCreate();
+    }
+
+    @Override
+    public void onDestroy() {
+           // TODO Auto-generated method stub
+           Toast.makeText(getApplicationContext(), "Service Destroy", Toast.LENGTH_SHORT).show();
+           super.onDestroy();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+           publishResults("Prueba");
+           return super.onStartCommand(intent, flags, startId);
+    }
+    
+    private void publishResults(String result){
+    	Intent intent = new Intent(NOTIFICATION);
+    	intent.putExtra("RESULT", result);
+    	sendBroadcast(intent);
     }
  
 }  

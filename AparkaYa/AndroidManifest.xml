@@ -54,6 +54,7 @@
             android:name="com.example.aparkaya.RegisterActivity"
             android:label="@string/title_activity_register" >
         </activity>
+        <service android:name="PointsRefreshService"></service>
     </application>
 
 </manifest>
