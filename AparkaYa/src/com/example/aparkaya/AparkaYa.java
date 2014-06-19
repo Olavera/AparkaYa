@@ -183,7 +183,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
         Intent intent = new Intent(this, PointsRefreshService.class);
         pintent = PendingIntent.getService(this, 0, intent, 0);
        
-        alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 10000, pintent);
+        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 10000, pintent);
         startService(new Intent(getBaseContext(), PointsRefreshService.class));     
 	}
 
