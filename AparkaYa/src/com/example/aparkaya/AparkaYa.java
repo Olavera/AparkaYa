@@ -84,14 +84,17 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	private Messenger messenger;
 	private PointsRefreshService localService;
 	private Vector<Punto> points;
+	private GoogleMap mapa = null;
 
 	private Handler handler = new Handler() {
 		public void handleMessage(Message message) {
 			Bundle data = message.getData();
-			if (message.arg1 == RESULT_OK && data != null) {
+			if (message.arg1 == Constants.RESULT_OK) {
 				points = localService.getVectorPoints();
-				String text = data.getString("txt");
-				Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+				Punto p = points.get(points.size()-1);
+				Toast.makeText(getApplicationContext(), 
+					p.getNombre() + " || " + p.getCords().latitude + " || " + p.getCords().longitude + " || " + p.getOcupado(),
+					Toast.LENGTH_SHORT).show();
 			}
 		}
 	};
@@ -176,7 +179,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.SECOND, 10);
         pintent = PendingIntent.getService(this, 0, new Intent(this, PointsRefreshService.class), 0);
-        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 10000, pintent);
+        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 60000, pintent);
         
         Intent intent = new Intent(this, PointsRefreshService.class);
 		intent.putExtra("MESSENGER", messenger);
@@ -202,9 +205,6 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		super.onPause();
 		alarm.cancel(pintent);
 	    unbindService(mConnection);
-		/*alarm.cancel(pintent);
-		stopService(new Intent(getBaseContext(), PointsRefreshService.class));
-	    unregisterReceiver(receiver);*/
 	}
 
 	@Override
@@ -292,7 +292,6 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 
 	public class FragmentoMapa extends Fragment implements OnMapClickListener, OnInfoWindowClickListener{
 
-		private GoogleMap mapa = null;
 		private Button save, difundir;
 
 		/**

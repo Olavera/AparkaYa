@@ -9,11 +9,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -68,17 +65,7 @@ public class PointsRefreshService extends Service{
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		Message backMsg = Message.obtain();
-		backMsg.arg1 = Activity.RESULT_OK;
-		Bundle bundle = new Bundle();
-		bundle.putString("txt", "Prueba");
-		backMsg.setData(bundle);
-		try {
-			if (outMessenger != null)
-				outMessenger.send(backMsg);
-		} catch (android.os.RemoteException e1) {
-			Log.w(getClass().getName(), "Excepción enviando mensaje", e1);
-		}
+		new asyncCallPoints().execute();	
 		//publishResults("Prueba");
 		return super.onStartCommand(intent, flags, startId);
 	}
@@ -87,16 +74,16 @@ public class PointsRefreshService extends Service{
 	{
 		return points;
 	}
-	/*
-	private class asyncCallPoints extends AsyncTask< Void, String, String > {
+	
+	private class asyncCallPoints extends AsyncTask< Void, String, Integer > {
 		
 		Vector<Punto> auxpoints = new Vector<Punto>();
 
-		protected String doInBackground(Void... params) {
+		protected Integer doInBackground(Void... params) {
 
 			/*Creamos un ArrayList del tipo nombre valor para agregar los datos recibidos por los parametros anteriores
 			 * y enviarlo mediante POST a nuestro sistema para relizar la validacion*/ 
-			/*ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
+			ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
 			postparameters2send.add(new BasicNameValuePair("user",user));
 			postparameters2send.add(new BasicNameValuePair("password",pass));
 			
@@ -127,51 +114,34 @@ public class PointsRefreshService extends Service{
 
 						if (id == 2)
 						{
-							return "notUser";
+							return Constants.RESULT_NOTUSER;
 						}
 					} catch (JSONException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
 					}
 				}              
-				return "ok"; //lista de puntos obtenida correctamente
+				return Constants.RESULT_OK; //lista de puntos obtenida correctamente
 
 			}     
-			return "err"; //error
+			return Constants.RESULT_ERR; //error
 
 		}
 
-		protected void onPostExecute(String result) {
-
-			if (result.equals("ok")){
-				Toast.makeText(getApplicationContext(),"Puntos obtenidos correctamente", Toast.LENGTH_SHORT).show();
-				points = auxpoints;//Sustituimos la lista de puntos antigua por la nueva
-				mapa.clear();
-
-				for (Punto punto : points) {
-					if (punto.getNombre().equals("Coche"))
-						mapa.addMarker(new MarkerOptions()
-						.position(punto.getCords())
-						.title(punto.getNombre())
-						.snippet(punto.getNombre())
-						.icon(BitmapDescriptorFactory
-								.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-					else
-						mapa.addMarker(new MarkerOptions()
-						.position(punto.getCords())
-						.title(punto.getNombre())
-						.snippet(punto.getNombre())
-						.icon(BitmapDescriptorFactory
-								.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-				}
+		protected void onPostExecute(Integer result) {
+			if (result == Constants.RESULT_OK){
+				points = auxpoints;
 			}
-			else if (result.equals("notUser")){
-				Toast.makeText(getApplicationContext(),"Usuario no reconocido", Toast.LENGTH_SHORT).show();
-			}else{
-				Toast.makeText(getApplicationContext(),"No se pudieron obtener los puntos", Toast.LENGTH_SHORT).show();
+			Message backMsg = Message.obtain();
+			backMsg.arg1 = result;
+			try {
+				if (outMessenger != null)
+					outMessenger.send(backMsg);
+			} catch (android.os.RemoteException e1) {
+				Log.w(getClass().getName(), "Excepción enviando mensaje", e1);
 			}
 		}
-	}*/
+	}
 	
 	
 	
