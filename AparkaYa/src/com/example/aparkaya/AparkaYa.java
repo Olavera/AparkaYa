@@ -4,11 +4,25 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Vector;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -26,6 +40,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,6 +71,33 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
+	
+	private HttpPostAux post;
+	private String user, pass;
+
+    Messenger messenger = null;
+    
+
+	private Handler handler = new Handler() {
+		public void handleMessage(Message message) {
+			Bundle data = message.getData();
+			if (message.arg1 == RESULT_OK && data != null) {
+				String text = data.getString("");
+				Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+			}
+		}
+	};
+
+	private ServiceConnection conn = new ServiceConnection() {
+
+		public void onServiceConnected(ComponentName className, IBinder binder) {
+			messenger = new Messenger(binder);
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			messenger = null;
+		}
+	};
 	
 
 	@Override
@@ -96,6 +138,9 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+		post = new HttpPostAux();
+		user = getIntent().getStringExtra("user");;
+		pass = getIntent().getStringExtra("pass");;
 	}
 
 	@Override
@@ -134,6 +179,24 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	@Override
 	public void onTabReselected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
+	}
+	
+	protected void onResume() {
+		super.onResume();
+		Intent intent = null;
+		intent = new Intent(this, PointsRefreshService.class);
+		//Creamos un nuevo Messenger para la comunicación    
+		// Desde el Service al Activity
+		Messenger messenger = new Messenger(handler);
+		intent.putExtra("MESSENGER", messenger);
+
+		bindService(intent, conn, Context.BIND_AUTO_CREATE);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		unbindService(conn);
 	}
 
 	/**
@@ -185,7 +248,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 
 		private GoogleMap mapa = null;
 		private Vector<Punto> points;
-		private Button save;
+		private Button save, difundir;
 
 		/**
 		 * The fragment argument representing the section number for this
@@ -211,9 +274,13 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			View rootView = inflater.inflate(R.layout.fragment_mapa, container, false);
 			save = (Button) rootView.findViewById(R.id.btnguardar);
 			save.setOnClickListener(new btnGuardarListener());
-			initilizeMap();
-			iniciarTask();
 			
+			difundir = (Button) rootView.findViewById(R.id.btndifundir);
+			difundir.setOnClickListener(new btnDifundir());
+			
+			initilizeMap();
+			//iniciarTask();
+			loadPoints();
 			return rootView;
 		}
 		
@@ -261,16 +328,21 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			RetrieveFeed task = new RetrieveFeed();
 			task.execute();
 		}
+		
+		private void loadPoints(){
+			new asyncCallPoints().execute();
+		}
 
 		
 
 		@Override
 		public void onMapClick(LatLng puntoPulsado) {
-			ParserXML_DOM parser = new ParserXML_DOM(getApplicationContext());
+			/*ParserXML_DOM parser = new ParserXML_DOM(getApplicationContext());
 
 			parser.guardarPunto("prueba", puntoPulsado);
 
-			iniciarTask();
+			iniciarTask();*/
+			new asyncSendPoint().execute(new Punto("1", puntoPulsado, 1));
 		}
 
 		@Override
@@ -293,6 +365,167 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 						mapa.getCameraPosition().target.longitude));
 
 				iniciarTask();
+			}
+		}
+		
+		public class btnDifundir implements OnClickListener
+		{
+			@Override
+			public void onClick(View v) {
+				if (mapa.getMyLocation() != null)
+					new asyncSendPoint().execute(new Punto("1", 
+							new LatLng( mapa.getMyLocation().getLatitude(), mapa.getMyLocation().getLongitude()), 
+							1));
+				else
+					Toast.makeText(getApplicationContext(),
+							"Ubicación GPS no detectada", Toast.LENGTH_SHORT).show();
+			}
+		}
+		
+		private class asyncSendPoint extends AsyncTask< Punto, String, String > {
+			
+			protected String doInBackground(Punto... params) {
+
+				Punto p = params[0];
+				int id = -1;
+				/*Creamos un ArrayList del tipo nombre valor para agregar los datos recibidos por los parametros anteriores
+				 * y enviarlo mediante POST a nuestro sistema para relizar la validacion*/ 
+				ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
+
+				postparameters2send.add(new BasicNameValuePair("user",user));
+				postparameters2send.add(new BasicNameValuePair("password",pass));
+				postparameters2send.add(new BasicNameValuePair("id_usuario",p.getNombre()));
+				postparameters2send.add(new BasicNameValuePair("latitud",Double.toString(p.getCords().latitude)));
+				postparameters2send.add(new BasicNameValuePair("longitud",Double.toString(p.getCords().longitude)));
+				postparameters2send.add(new BasicNameValuePair("libre",Integer.toString(p.getOcupado())));
+
+				//realizamos una peticion y como respuesta obtenes un array JSON
+				JSONArray jdata=post.getserverdata(postparameters2send, "http://aparkaya.webcindario.com/enviarPunto.php");
+
+				//si lo que obtuvimos no es null
+				if (jdata != null && jdata.length() > 0) {
+
+					JSONObject json_data; // creamos un objeto JSON
+					try {
+						json_data = jdata.getJSONObject(0); // leemos el primer
+															// segmento en nuestro
+															// caso el unico
+						id = json_data.getInt("id");// accedemos al valor
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+					// validamos el valor obtenido
+					if (id == 1) {
+						return "ok"; //
+					}
+					else if (id == 2)
+					{
+						return "notUser";
+					}
+				}
+				return "err"; //
+
+			}
+
+			protected void onPostExecute(String result) {
+
+				if (result.equals("ok")){
+					Toast.makeText(getApplicationContext(),"Punto enviado correctamente", Toast.LENGTH_SHORT).show();
+					loadPoints();
+				}
+				else if (result.equals("notUser")){
+					Toast.makeText(getApplicationContext(),"Usuario no reconocido", Toast.LENGTH_SHORT).show();
+				}
+				else{
+					Toast.makeText(getApplicationContext(),"Fallo al enviar el punto", Toast.LENGTH_SHORT).show();
+				}
+			}
+		}
+		
+		private class asyncCallPoints extends AsyncTask< Void, String, String > {
+			
+			Vector<Punto> auxpoints = new Vector<Punto>();
+
+			protected String doInBackground(Void... params) {
+
+				/*Creamos un ArrayList del tipo nombre valor para agregar los datos recibidos por los parametros anteriores
+				 * y enviarlo mediante POST a nuestro sistema para relizar la validacion*/ 
+				ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
+				postparameters2send.add(new BasicNameValuePair("user",user));
+				postparameters2send.add(new BasicNameValuePair("password",pass));
+				
+				//realizamos una peticion y como respuesta obtenes un array JSON
+				JSONArray jdata=post.getserverdata(postparameters2send, "http://aparkaya.webcindario.com/obtenerPuntos.php");
+
+				//si lo que obtuvimos no es null
+				if (jdata!=null && jdata.length() > 0){
+
+					try {
+						for (int i = 0; i < jdata.length(); i++) {
+					        JSONObject jsonObject = jdata.getJSONObject(i);
+					     
+					        auxpoints.add(new Punto(jsonObject.getString("id_usuario"), 
+					    		new LatLng(jsonObject.getDouble("latitud"), 
+					    				jsonObject.getDouble("longitud")),
+					    				jsonObject.getInt("libre")));
+						}
+					    
+					}
+					catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						try {
+							JSONObject json_data = jdata.getJSONObject(0);
+																
+							int id = json_data.getInt("id");
+
+							if (id == 2)
+							{
+								return "notUser";
+							}
+						} catch (JSONException e2) {
+							// TODO Auto-generated catch block
+							e2.printStackTrace();
+						}
+					}              
+					return "ok"; //lista de puntos obtenida correctamente
+
+				}     
+				return "err"; //error
+
+			}
+
+			protected void onPostExecute(String result) {
+
+				if (result.equals("ok")){
+					Toast.makeText(getApplicationContext(),"Puntos obtenidos correctamente", Toast.LENGTH_SHORT).show();
+					points = auxpoints;//Sustituimos la lista de puntos antigua por la nueva
+					mapa.clear();
+
+					for (Punto punto : points) {
+						if (punto.getNombre().equals("Coche"))
+							mapa.addMarker(new MarkerOptions()
+							.position(punto.getCords())
+							.title(punto.getNombre())
+							.snippet(punto.getNombre())
+							.icon(BitmapDescriptorFactory
+									.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+						else
+							mapa.addMarker(new MarkerOptions()
+							.position(punto.getCords())
+							.title(punto.getNombre())
+							.snippet(punto.getNombre())
+							.icon(BitmapDescriptorFactory
+									.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+					}
+				}
+				else if (result.equals("notUser")){
+					Toast.makeText(getApplicationContext(),"Usuario no reconocido", Toast.LENGTH_SHORT).show();
+				}else{
+					Toast.makeText(getApplicationContext(),"No se pudieron obtener los puntos", Toast.LENGTH_SHORT).show();
+				}
 			}
 		}
 		

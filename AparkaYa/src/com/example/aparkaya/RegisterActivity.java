@@ -120,6 +120,8 @@ public class RegisterActivity extends Activity {
 
 				//Inicia la actividad
 				Intent i = new Intent(RegisterActivity.this, AparkaYa.class);
+				i.putExtra("user", user);
+				i.putExtra("pass", pass);
 				startActivity(i);
 			} 
 			else if(result.equals("userExist")){
