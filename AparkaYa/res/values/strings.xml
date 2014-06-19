@@ -11,5 +11,6 @@
     <string name="Opciones">Opciones</string>
     <string name="title_activity_register">RegisterActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_details_dialog">DetailsDialog</string>
 
 </resources>

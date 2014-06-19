@@ -52,9 +52,16 @@
         </activity>
         <activity
             android:name="com.example.aparkaya.RegisterActivity"
-            android:label="@string/title_activity_register" >
+            android:label="@string/app_name" >
         </activity>
-        <service android:name="PointsRefreshService"></service>
+
+        <service android:name="com.example.aparkaya.PointsRefreshService" >
+        </service>
+
+        <activity
+            android:name="com.example.aparkaya.DetailsDialog"
+            android:label="@string/app_name" >
+        </activity>
     </application>
 
 </manifest>

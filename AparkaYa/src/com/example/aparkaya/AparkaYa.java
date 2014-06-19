@@ -191,14 +191,19 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	
 	private void repaintPoints(int result){
 		if (result == Constants.RESULT_OK){
-			Toast.makeText(getApplicationContext(),"Puntos obtenidos correctamente", Toast.LENGTH_SHORT).show();
+			if (mapa.getMyLocation() != null)
+				mapa.animateCamera(CameraUpdateFactory.newLatLngZoom(
+						new LatLng( mapa.getMyLocation().getLatitude(), 
+								mapa.getMyLocation().getLongitude()), 15));
+			Toast.makeText(getApplicationContext(),"Punto: " + mapa.getMyLocation().getLongitude() + " || " + mapa.getMyLocation().getLongitude(), Toast.LENGTH_SHORT).show();
+			//Toast.makeText(getApplicationContext(),"Puntos obtenidos correctamente", Toast.LENGTH_SHORT).show();
 			mapa.clear();
 
 			for (Punto punto : points) {
 					mapa.addMarker(new MarkerOptions()
 					.position(punto.getCords())
 					.title(punto.getNombre())
-					.snippet(punto.getNombre())
+					.snippet(Integer.toString(punto.getOcupado()))
 					.icon(BitmapDescriptorFactory
 							.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 			}
@@ -386,12 +391,13 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 
 		@Override
 		public void onInfoWindowClick(Marker marker) {
-			ParserXML_DOM parser = new ParserXML_DOM(getApplicationContext());
-
-			parser.eliminarPunto(marker.getTitle(), marker.getPosition());
-
-			iniciarTask();
+			Intent intent = new Intent(AparkaYa.this, DetailsDialog.class);
+			intent.putExtra(Constants.USER, marker.getTitle());
+			intent.putExtra(Constants.LATITUDE, marker.getPosition().latitude);
+			intent.putExtra(Constants.LONGITUDE, marker.getPosition().longitude);
+			intent.putExtra(Constants.REPUTATION, marker.getSnippet());
 			
+			startActivity(intent);
 		}
 		
 		public class btnGuardarListener implements OnClickListener
