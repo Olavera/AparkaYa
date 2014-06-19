@@ -81,30 +81,19 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	private String user, pass;
 	private AlarmManager alarm;
 	private PendingIntent pintent;
-
-   /* Messenger messenger = null;
-    
+	private Messenger messenger;
 
 	private Handler handler = new Handler() {
 		public void handleMessage(Message message) {
 			Bundle data = message.getData();
 			if (message.arg1 == RESULT_OK && data != null) {
-				String text = data.getString("");
-				Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+				String text = data.getString("txt");
+				Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
 			}
 		}
 	};
-
-	private ServiceConnection conn = new ServiceConnection() {
-
-		public void onServiceConnected(ComponentName className, IBinder binder) {
-			messenger = new Messenger(binder);
-		}
-
-		public void onServiceDisconnected(ComponentName className) {
-			messenger = null;
-		}
-	};*/
+	
+	/*
 	private BroadcastReceiver receiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
@@ -115,8 +104,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			}
 		}
 			
-	};
-	
+	};*/
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -160,21 +148,27 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		user = getIntent().getStringExtra("user");
 		pass = getIntent().getStringExtra("pass");
         alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        messenger = new Messenger(handler);
 	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
-		/*Intent intent = null;
-		intent = new Intent(this, PointsRefreshService.class);
-		//Creamos un nuevo Messenger para la comunicación    
-		// Desde el Service al Activity
-		Messenger messenger = new Messenger(handler);
-		intent.putExtra("MESSENGER", messenger);
-
-		bindService(intent, conn, Context.BIND_AUTO_CREATE);*/
 		
-		registerReceiver(receiver, new IntentFilter(PointsRefreshService.NOTIFICATION));
+		
+		// Start service using AlarmManager
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.SECOND, 10);
+        Intent intent1 = new Intent(this, PointsRefreshService.class);
+		intent1.putExtra("MESSENGER", messenger);
+        pintent = PendingIntent.getService(this, 0, intent1, 0);
+        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 10000, pintent);
+        
+        Intent intent2 = new Intent(this, PointsRefreshService.class);
+		intent2.putExtra("MESSENGER", messenger);
+        startService(intent2);
+        
+		/*registerReceiver(receiver, new IntentFilter(PointsRefreshService.NOTIFICATION));
 		
 		// Start service using AlarmManager
         Calendar cal = Calendar.getInstance();
@@ -184,7 +178,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
         pintent = PendingIntent.getService(this, 0, intent, 0);
        
         alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 10000, pintent);
-        startService(new Intent(getBaseContext(), PointsRefreshService.class));     
+        startService(new Intent(getBaseContext(), PointsRefreshService.class));*/    
 	}
 
 	@Override
@@ -192,7 +186,9 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		super.onPause();
 		alarm.cancel(pintent);
 		stopService(new Intent(getBaseContext(), PointsRefreshService.class));
-	    unregisterReceiver(receiver);
+		/*alarm.cancel(pintent);
+		stopService(new Intent(getBaseContext(), PointsRefreshService.class));
+	    unregisterReceiver(receiver);*/
 	}
 
 	@Override
