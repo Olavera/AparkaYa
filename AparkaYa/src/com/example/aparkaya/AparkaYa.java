@@ -1,7 +1,10 @@
 package com.example.aparkaya;
 
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -32,6 +35,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.text.method.DateTimeKeyListener;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -81,15 +85,12 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	private String user, pass;
 	private Messenger messenger;
 	private PointsRefreshService localService;
-	private Vector<WebPoint> points;
+	private HashMap<String, WebPoint> points;
 	private GoogleMap mapa = null;
 
 	private Handler handler = new Handler() {
 		public void handleMessage(Message message) {
-			if (message.arg1 == Constants.RESULT_OK) {
-				points = localService.getVectorPoints();
-				repaintPoints(message.arg1);
-			}
+			repaintPoints(message.arg1, localService.getVectorPoints());
 		}
 	};
 
@@ -149,6 +150,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		post = new HttpPostAux();
 		user = getIntent().getStringExtra("user");
 		pass = getIntent().getStringExtra("pass");
+		points = new HashMap<String, WebPoint>();
 	}
 	
 	@Override
@@ -189,17 +191,22 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	    localService.onDestroy();
 	}
 	
-	private void repaintPoints(int result){
+	private void repaintPoints(int result, Vector<WebPoint> auxpoints){
 		if (result == Constants.RESULT_OK){
 			Toast.makeText(getApplicationContext(),"Refresh", Toast.LENGTH_SHORT).show();
 			mapa.clear();
-			for (WebPoint punto : points) {
-					mapa.addMarker(new MarkerOptions()
+			points.clear();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+			for (WebPoint punto : auxpoints) {
+					Marker marker = mapa.addMarker(new MarkerOptions()
 					.position(punto.getCords())
-					.title(punto.getUsuario())
-					.snippet(Integer.toString(punto.getReputacion()))
+					.title("Difundido a las: " + dateFormat.format(punto.getFecha()))
+					.snippet(punto.getUsuario() + " (" + Integer.toString(punto.getReputacion()) + ")")
 					.icon(BitmapDescriptorFactory
 							.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+					String key = marker.getId();
+					punto.setMarker(marker);
+					points.put(key, punto);
 			}
 		}
 		else if (result == Constants.RESULT_NOTUSER){
@@ -375,11 +382,14 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		@Override
 		public void onInfoWindowClick(Marker marker) {
 			Intent intent = new Intent(AparkaYa.this, DetailsDialog.class);
-			intent.putExtra(Constants.USUARIO, marker.getTitle());
-			intent.putExtra(Constants.LATITUD, marker.getPosition().latitude);
-			intent.putExtra(Constants.LONGITUD, marker.getPosition().longitude);
-			intent.putExtra(Constants.REPUTACION, marker.getSnippet());
-			
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+			WebPoint p = points.get(marker.getId());
+			intent.putExtra(Constants.ID_PUNTO, p.getId_punto());
+			intent.putExtra(Constants.USUARIO, p.getUsuario());
+			intent.putExtra(Constants.LATITUD, p.getCords().latitude);
+			intent.putExtra(Constants.LONGITUD, p.getCords().longitude);
+			intent.putExtra(Constants.REPUTACION, p.getReputacion());
+			intent.putExtra(Constants.FECHA, dateFormat.format(p.getFecha()));
 			startActivity(intent);
 		}
 		
@@ -418,11 +428,16 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 				 * y enviarlo mediante POST a nuestro sistema para relizar la validacion*/ 
 				ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
 
+				SimpleDateFormat dateFormat = new SimpleDateFormat(
+		                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+		        Date date = new Date();
+		        String fecha = dateFormat.format(date);
+
 				postparameters2send.add(new BasicNameValuePair("user",user));
 				postparameters2send.add(new BasicNameValuePair("password",pass));
 				postparameters2send.add(new BasicNameValuePair("latitud",Double.toString(ll.latitude)));
 				postparameters2send.add(new BasicNameValuePair("longitud",Double.toString(ll.longitude)));
-				postparameters2send.add(new BasicNameValuePair("fecha", Integer.toString(0)));
+				postparameters2send.add(new BasicNameValuePair("fecha", fecha));
 
 				//realizamos una peticion y como respuesta obtenes un array JSON
 				JSONArray jdata=post.getserverdata(postparameters2send, "http://aparkaya.webcindario.com/enviarPunto.php");

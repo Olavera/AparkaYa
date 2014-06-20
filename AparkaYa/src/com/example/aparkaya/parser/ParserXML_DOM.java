@@ -304,7 +304,7 @@ public class ParserXML_DOM{
 
 			}
 
-			result.add(new WebPoint(1,nombre, new LatLng(lat, lng),0)); // MODIFICADO a 0 hay que cambiarlo
+			result.add(new WebPoint(1,nombre, new LatLng(lat, lng),0,null)); // MODIFICADO a 0 hay que cambiarlo
 
 		}
 

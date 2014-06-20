@@ -1,8 +1,9 @@
 package com.example.aparkaya.model;
 
-import java.sql.Date;
+import java.util.Date;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 
 public class WebPoint {
 	
@@ -11,14 +12,16 @@ public class WebPoint {
 	private LatLng cords;
 	private int reputacion;
 	private Date fecha;
+	private Marker marker;
 	
-	public WebPoint(Integer id_punto, String usuario, LatLng cords, int reputacion){
+	public WebPoint(Integer id_punto, String usuario, LatLng cords, int reputacion, Date fecha){
 		super();
 		this.id_punto = id_punto;
 		this.usuario = usuario;
 		this.cords = cords;
 		this.reputacion = reputacion;
-		this.fecha = null;
+		this.fecha = fecha;
+		this.marker = null;
 	}
 
 	public Integer getId_punto() {
@@ -59,6 +62,14 @@ public class WebPoint {
 
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
+	}
+
+	public Marker getMarker() {
+		return marker;
+	}
+
+	public void setMarker(Marker marker) {
+		this.marker = marker;
 	}
 	
 

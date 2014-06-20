@@ -1,6 +1,10 @@
 package com.example.aparkaya.localService;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Vector;
 
 import org.apache.http.NameValuePair;
@@ -100,12 +104,24 @@ public class PointsRefreshService extends Service{
 				try {
 					for (int i = 0; i < jdata.length(); i++) {
 				        JSONObject jsonObject = jdata.getJSONObject(i);
-				     
+				        
+				        String fechaString = jsonObject.getString(Constants.FECHA);
+				        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+				        Date fecha;
+				        try{
+				        	if(!fechaString.equals("null"))
+				        		fecha = dateFormat.parse(fechaString);
+				        	else
+				        		fecha = new Date(1991,11,7,19,49,59);
+						} catch (ParseException e) {
+							fecha = null;
+						}
 				        auxpoints.add(new WebPoint(jsonObject.getInt(Constants.ID_PUNTO),
-				        		jsonObject.getString(Constants.USUARIO), 
-				    		new LatLng(jsonObject.getDouble(Constants.LATITUD), 
-				    				jsonObject.getDouble(Constants.LONGITUD)),
-				    				jsonObject.getInt(Constants.REPUTACION)));
+				        							jsonObject.getString(Constants.USUARIO), 
+				        							new LatLng(jsonObject.getDouble(Constants.LATITUD), 
+				        									jsonObject.getDouble(Constants.LONGITUD)),
+				        							jsonObject.getInt(Constants.REPUTACION),
+				        							fecha));
 					}
 				    
 				}
@@ -124,8 +140,8 @@ public class PointsRefreshService extends Service{
 					} catch (JSONException e2) {
 						// TODO Auto-generated catch block
 						e2.printStackTrace();
-					}
-				}              
+					}  
+				}
 				return Constants.RESULT_OK; //lista de puntos obtenida correctamente
 			}     
 			return Constants.RESULT_ERR; //error
