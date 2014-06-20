@@ -98,10 +98,11 @@ public class PointsRefreshService extends Service{
 					for (int i = 0; i < jdata.length(); i++) {
 				        JSONObject jsonObject = jdata.getJSONObject(i);
 				     
-				        auxpoints.add(new Punto(jsonObject.getString("id_usuario"), 
-				    		new LatLng(jsonObject.getDouble("latitud"), 
-				    				jsonObject.getDouble("longitud")),
-				    				jsonObject.getInt("libre")));
+				        auxpoints.add(new Punto(jsonObject.getInt(Constants.ID_PUNTO),
+				        		jsonObject.getString(Constants.USUARIO), 
+				    		new LatLng(jsonObject.getDouble(Constants.LATITUD), 
+				    				jsonObject.getDouble(Constants.LONGITUD)),
+				    				jsonObject.getInt(Constants.REPUTACION)));
 					}
 				    
 				}

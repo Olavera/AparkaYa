@@ -1,5 +1,7 @@
 package com.example.aparkaya;
 
+import java.text.DecimalFormat;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,19 +14,20 @@ public class DetailsDialog extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.details_dialog);
 		
-		String user = getIntent().getExtras().getString(Constants.USER);
-		double longitude = getIntent().getExtras().getDouble(Constants.LONGITUDE);
-		double latitude = getIntent().getExtras().getDouble(Constants.LATITUDE);
-		String reputation = getIntent().getExtras().getString(Constants.REPUTATION);
+		String user = getIntent().getExtras().getString(Constants.USUARIO);
+		double longitude = getIntent().getExtras().getDouble(Constants.LONGITUD);
+		double latitude = getIntent().getExtras().getDouble(Constants.LATITUD);
+		String reputation = getIntent().getExtras().getString(Constants.REPUTACION);
 		
 		TextView tvContUser = (TextView)findViewById(R.id.tvContUser);
 		TextView tvContLongitude = (TextView)findViewById(R.id.tvContLongitude);
 		TextView tvContLatitude = (TextView)findViewById(R.id.tvContLatitude);
 		TextView tvContReputation = (TextView)findViewById(R.id.tvContReputation);
 		
+		DecimalFormat df = new DecimalFormat("#.######");
 		tvContUser.setText(user);
-		tvContLongitude.setText(Double.toString(longitude));
-		tvContLatitude.setText(Double.toString(latitude));
+		tvContLongitude.setText(df.format(longitude));
+		tvContLatitude.setText(df.format(latitude));
 		tvContReputation.setText(reputation);
 	}
 

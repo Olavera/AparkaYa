@@ -192,12 +192,11 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		if (result == Constants.RESULT_OK){
 			Toast.makeText(getApplicationContext(),"Refresh", Toast.LENGTH_SHORT).show();
 			mapa.clear();
-
 			for (Punto punto : points) {
 					mapa.addMarker(new MarkerOptions()
 					.position(punto.getCords())
-					.title(punto.getNombre())
-					.snippet(Integer.toString(punto.getOcupado()))
+					.title(punto.getUsuario())
+					.snippet(Integer.toString(punto.getReputacion()))
 					.icon(BitmapDescriptorFactory
 							.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 			}
@@ -372,8 +371,8 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		}
 		
 		private void iniciarTask(){
-			RetrieveFeed task = new RetrieveFeed();
-			task.execute();
+			//RetrieveFeed task = new RetrieveFeed();
+			//task.execute();
 		}
 
 		@Override
@@ -383,17 +382,16 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			parser.guardarPunto("prueba", puntoPulsado);
 
 			iniciarTask();*/
-			new asyncSendPoint().execute(new Punto("1", puntoPulsado, 1));
+			new asyncSendPoint().execute(puntoPulsado);
 		}
 
 		@Override
 		public void onInfoWindowClick(Marker marker) {
-			DecimalFormat df = new DecimalFormat("#.########");
 			Intent intent = new Intent(AparkaYa.this, DetailsDialog.class);
-			intent.putExtra(Constants.USER, marker.getTitle());
-			intent.putExtra(Constants.LATITUDE, df.format(marker.getPosition().latitude));
-			intent.putExtra(Constants.LONGITUDE, df.format(marker.getPosition().longitude));
-			intent.putExtra(Constants.REPUTATION, marker.getSnippet());
+			intent.putExtra(Constants.USUARIO, marker.getTitle());
+			intent.putExtra(Constants.LATITUD, marker.getPosition().latitude);
+			intent.putExtra(Constants.LONGITUD, marker.getPosition().longitude);
+			intent.putExtra(Constants.REPUTACION, marker.getSnippet());
 			
 			startActivity(intent);
 		}
@@ -416,20 +414,18 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			@Override
 			public void onClick(View v) {
 				if (mapa.getMyLocation() != null)
-					new asyncSendPoint().execute(new Punto("1", 
-							new LatLng( mapa.getMyLocation().getLatitude(), mapa.getMyLocation().getLongitude()), 
-							1));
+					new asyncSendPoint().execute(new LatLng( mapa.getMyLocation().getLatitude(), mapa.getMyLocation().getLongitude()));
 				else
 					Toast.makeText(getApplicationContext(),
 							"Ubicación GPS no detectada", Toast.LENGTH_SHORT).show();
 			}
 		}
 		
-		private class asyncSendPoint extends AsyncTask< Punto, String, String > {
+		private class asyncSendPoint extends AsyncTask< LatLng, String, String > {
 			
-			protected String doInBackground(Punto... params) {
+			protected String doInBackground(LatLng... params) {
 
-				Punto p = params[0];
+				LatLng ll = params[0];
 				int id = -1;
 				/*Creamos un ArrayList del tipo nombre valor para agregar los datos recibidos por los parametros anteriores
 				 * y enviarlo mediante POST a nuestro sistema para relizar la validacion*/ 
@@ -437,10 +433,9 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 
 				postparameters2send.add(new BasicNameValuePair("user",user));
 				postparameters2send.add(new BasicNameValuePair("password",pass));
-				postparameters2send.add(new BasicNameValuePair("id_usuario",p.getNombre()));
-				postparameters2send.add(new BasicNameValuePair("latitud",Double.toString(p.getCords().latitude)));
-				postparameters2send.add(new BasicNameValuePair("longitud",Double.toString(p.getCords().longitude)));
-				postparameters2send.add(new BasicNameValuePair("libre",Integer.toString(p.getOcupado())));
+				postparameters2send.add(new BasicNameValuePair("latitud",Double.toString(ll.latitude)));
+				postparameters2send.add(new BasicNameValuePair("longitud",Double.toString(ll.longitude)));
+				postparameters2send.add(new BasicNameValuePair("fecha", Integer.toString(0)));
 
 				//realizamos una peticion y como respuesta obtenes un array JSON
 				JSONArray jdata=post.getserverdata(postparameters2send, "http://aparkaya.webcindario.com/enviarPunto.php");
@@ -485,15 +480,13 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 				}
 			}
 		}
-		
+		/*
 		private class asyncCallPoints extends AsyncTask< Void, String, String > {
 			
 			Vector<Punto> auxpoints = new Vector<Punto>();
 
 			protected String doInBackground(Void... params) {
 
-				/*Creamos un ArrayList del tipo nombre valor para agregar los datos recibidos por los parametros anteriores
-				 * y enviarlo mediante POST a nuestro sistema para relizar la validacion*/ 
 				ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
 				postparameters2send.add(new BasicNameValuePair("user",user));
 				postparameters2send.add(new BasicNameValuePair("password",pass));
@@ -604,7 +597,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 				}
 			}
 
-		}
+		}*/
 	}
 	
 	/**
@@ -667,7 +660,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	 
 		      //Rellenamos el nombre
 		        TextView nombre = (TextView) v.findViewById(R.id.textNameList);
-		        nombre.setText(punto.getNombre());
+		        nombre.setText(punto.getUsuario());
 		        //Rellenamos el cargo
 		        TextView coordenadas = (TextView) v.findViewById(R.id.textLatLng);
 		        coordenadas.setText(punto.getCords().toString());
@@ -707,7 +700,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			
 			ArrayList<Punto> listap = new ArrayList<Punto>();
 
-		    Punto punto1 = new Punto();
+		  /*  Punto punto1 = new Punto();
 		    Punto punto2 = new Punto();
 		    Punto punto3 = new Punto();
 
@@ -724,9 +717,9 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		    punto3.setNombre("punto3");
 		    punto3.setCords(new LatLng(75,40));
 		    punto3.setOcupado(0);
-		    listap.add(punto3);
+		    listap.add(punto3);*/
 
-		    return listap; 
+		    return listap;
 		    }   
 		}	
 }

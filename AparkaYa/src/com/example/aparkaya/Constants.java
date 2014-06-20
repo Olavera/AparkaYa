@@ -9,10 +9,11 @@ public class Constants {
 	
 	public static final long LOCALSERVER_TIME_REFRESH = 20000;//20segundos por defecto
 	
-	public static final String ID_POINT = "id_point";
-	public static final String USER = "user";
-	public static final String LATITUDE = "latitude";
-	public static final String LONGITUDE = "longitude";
-	public static final String REPUTATION = "reputation";
+	public static final String ID_PUNTO = "id_punto";
+	public static final String USUARIO = "usuario";
+	public static final String LATITUD = "latitud";
+	public static final String LONGITUD = "longitud";
+	public static final String REPUTACION = "reputacion";
+	public static final String FECHA = "fecha";
 
 }
