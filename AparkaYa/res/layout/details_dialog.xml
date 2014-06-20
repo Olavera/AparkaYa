@@ -178,33 +178,34 @@
 
         <Button
             android:id="@+id/btnOcupar"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.60"
-            android:background="#0099cc"
-            android:text="Ocupar"
-            android:textAlignment="center"
-            android:textColor="#FFFFFF" />
+            android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/truck" />
 
         <Button
             android:id="@+id/btnVotarPositivo"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.60"
-            android:background="#0099cc"
-            android:text="Positivo"
-            android:textColor="#FFFFFF"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginLeft="40dp"
+            android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/smiley" />
         
         <Button
             android:id="@+id/btnVotarNegativo"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.60"
-            android:background="#0099cc"
-            android:text="Negativo"
-            android:textColor="#FFFFFF"
-            android:layout_marginLeft="10dp" />
+            android:layout_marginLeft="40dp"
+            android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/sad" />
+        
+         <Button
+            android:id="@+id/btnEliminar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/untitled" />
 
     </LinearLayout>
 
