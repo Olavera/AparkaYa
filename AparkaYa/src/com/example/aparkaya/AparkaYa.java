@@ -36,11 +36,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.method.DateTimeKeyListener;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -58,6 +60,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -85,7 +88,8 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	private String user, pass;
 	private Messenger messenger;
 	private PointsRefreshService localService;
-	private HashMap<String, WebPoint> points;
+	private HashMap<String, WebPoint> hashmap_idMarker_WebPoint;
+	private SparseArray<String> array_id_point_idMarker;
 	private GoogleMap mapa = null;
 
 	private Handler handler = new Handler() {
@@ -150,7 +154,8 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		post = new HttpPostAux();
 		user = getIntent().getStringExtra("user");
 		pass = getIntent().getStringExtra("pass");
-		points = new HashMap<String, WebPoint>();
+		hashmap_idMarker_WebPoint = new HashMap<String, WebPoint>();
+		array_id_point_idMarker = new SparseArray<String>();
 	}
 	
 	@Override
@@ -195,18 +200,28 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		if (result == Constants.RESULT_OK){
 			Toast.makeText(getApplicationContext(),"Refresh", Toast.LENGTH_SHORT).show();
 			mapa.clear();
-			points.clear();
-			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+			hashmap_idMarker_WebPoint.clear();
+			array_id_point_idMarker.clear();
+			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM", Locale.getDefault());
+			SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH:mm", Locale.getDefault());
+			Date datenow = new Date();
+			long timeUmbral= datenow.getTime() - 86400000; // 24h en milisegundos
+			String textoFecha = "No se obtuvo fecha";
 			for (WebPoint punto : auxpoints) {
-					Marker marker = mapa.addMarker(new MarkerOptions()
+				if(punto.getFecha().getTime()<timeUmbral)
+					textoFecha = "Difundido el: " + dateFormat1.format(punto.getFecha());
+				else
+					textoFecha = "Difundido a las " + dateFormat2.format(punto.getFecha());
+				Marker marker = mapa.addMarker(new MarkerOptions()
 					.position(punto.getCords())
-					.title("Difundido a las: " + dateFormat.format(punto.getFecha()))
+					.title(textoFecha)
 					.snippet(punto.getUsuario() + " (" + Integer.toString(punto.getReputacion()) + ")")
 					.icon(BitmapDescriptorFactory
 							.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 					String key = marker.getId();
 					punto.setMarker(marker);
-					points.put(key, punto);
+					hashmap_idMarker_WebPoint.put(key, punto);
+					array_id_point_idMarker.put(punto.getId_punto(), key);
 			}
 		}
 		else if (result == Constants.RESULT_NOTUSER){
@@ -299,7 +314,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		}
 	}
 
-	public class FragmentoMapa extends Fragment implements OnMapClickListener, OnInfoWindowClickListener{
+	public class FragmentoMapa extends Fragment implements OnMapLongClickListener, OnInfoWindowClickListener{
 
 		private Button save, difundir;
 
@@ -358,7 +373,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 					mapa.getUiSettings().setZoomControlsEnabled(false);
 					mapa.getUiSettings().setCompassEnabled(true);
 					mapa.setOnInfoWindowClickListener(this);
-					mapa.setOnMapClickListener(this);
+					mapa.setOnMapLongClickListener(this);
 				}
 
 			}
@@ -370,7 +385,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		}
 
 		@Override
-		public void onMapClick(LatLng puntoPulsado) {
+		public void onMapLongClick(LatLng puntoPulsado) {
 			/*ParserXML_DOM parser = new ParserXML_DOM(getApplicationContext());
 
 			parser.guardarPunto("prueba", puntoPulsado);
@@ -383,7 +398,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		public void onInfoWindowClick(Marker marker) {
 			Intent intent = new Intent(AparkaYa.this, DetailsDialog.class);
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
-			WebPoint p = points.get(marker.getId());
+			WebPoint p = hashmap_idMarker_WebPoint.get(marker.getId());
 			intent.putExtra(Constants.ID_PUNTO, p.getId_punto());
 			intent.putExtra(Constants.USUARIO, p.getUsuario());
 			intent.putExtra(Constants.LATITUD, p.getCords().latitude);
@@ -599,7 +614,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 				}
 			}
 
-		}*/
+		}*/	
 	}
 	
 	/**

@@ -112,7 +112,7 @@ public class PointsRefreshService extends Service{
 				        	if(!fechaString.equals("null"))
 				        		fecha = dateFormat.parse(fechaString);
 				        	else
-				        		fecha = new Date(1991,11,7,19,49,59);
+				        		fecha = new Date();
 						} catch (ParseException e) {
 							fecha = null;
 						}

@@ -24,10 +24,12 @@ public class DetailsDialog extends Activity {
 		
 		
 		String fechaString = getIntent().getExtras().getString(Constants.FECHA);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+		SimpleDateFormat dateFormat0 = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+		SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM", Locale.getDefault());
+		SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH:mm", Locale.getDefault());
         Date fecha;
         try{
-        	fecha = dateFormat.parse(fechaString);
+        	fecha = dateFormat0.parse(fechaString);
 		} catch (ParseException e) {
 			fecha = null;
 		}
@@ -49,7 +51,7 @@ public class DetailsDialog extends Activity {
 		
 		DecimalFormat df = new DecimalFormat("#.######");
 		tvContUser.setText(wp.getUsuario());
-		tvFecha.setText(dateFormat.format(wp.getFecha()));
+		tvFecha.setText(" a las " + dateFormat2.format(wp.getFecha()) + " el " + dateFormat1.format(wp.getFecha()));
 		tvContLongitude.setText(df.format(wp.getCords().longitude));
 		tvContLatitude.setText(df.format(wp.getCords().latitude));
 		tvContReputation.setText(Integer.toString(wp.getReputacion()));
