@@ -40,7 +40,7 @@ public class PointsRefreshService extends Service{
 	@Override
 	public IBinder onBind(Intent intent) {
 		Bundle extras = intent.getExtras();
-		// Get messager from the Activity
+		// Get messenger from the Activity
 		if (extras != null) {
 			outMessenger = (Messenger) extras.get("MESSENGER");
 			user = extras.getString("user");
@@ -55,6 +55,7 @@ public class PointsRefreshService extends Service{
 		post = new HttpPostAux();
 		Toast.makeText(getApplicationContext(), "Service Created", Toast.LENGTH_SHORT).show();
 		super.onCreate();
+		new asyncCallPoints().execute();	
 	}
 
 	@Override
@@ -122,10 +123,8 @@ public class PointsRefreshService extends Service{
 					}
 				}              
 				return Constants.RESULT_OK; //lista de puntos obtenida correctamente
-
 			}     
 			return Constants.RESULT_ERR; //error
-
 		}
 
 		protected void onPostExecute(Integer result) {
@@ -142,15 +141,5 @@ public class PointsRefreshService extends Service{
 			}
 		}
 	}
-	
-	
-	
-	
-/*
-	private void publishResults(String result){
-		Intent intent = new Intent(NOTIFICATION);
-		intent.putExtra("RESULT", result);
-		sendBroadcast(intent);
-	}*/
 
 }  

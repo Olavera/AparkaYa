@@ -130,6 +130,37 @@
             android:textSize="15sp" />
 
     </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="20dp"
+        android:layout_weight="1"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btnOcupar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ocupar"/>
+
+        <Button
+            android:id="@+id/btnVotarPositivo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Positivo"/>
+        
+        <Button
+            android:id="@+id/btnVotarNegativo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Negativo"/>
+
+    </LinearLayout>
 
 </LinearLayout>
 

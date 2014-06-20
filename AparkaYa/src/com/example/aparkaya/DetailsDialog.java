@@ -13,8 +13,8 @@ public class DetailsDialog extends Activity {
 		setContentView(R.layout.details_dialog);
 		
 		String user = getIntent().getExtras().getString(Constants.USER);
-		long longitude = getIntent().getExtras().getLong(Constants.LONGITUDE);
-		long latitude = getIntent().getExtras().getLong(Constants.LATITUDE);
+		double longitude = getIntent().getExtras().getDouble(Constants.LONGITUDE);
+		double latitude = getIntent().getExtras().getDouble(Constants.LATITUDE);
 		String reputation = getIntent().getExtras().getString(Constants.REPUTATION);
 		
 		TextView tvContUser = (TextView)findViewById(R.id.tvContUser);
@@ -23,8 +23,8 @@ public class DetailsDialog extends Activity {
 		TextView tvContReputation = (TextView)findViewById(R.id.tvContReputation);
 		
 		tvContUser.setText(user);
-		tvContLongitude.setText(Long.toString(longitude));
-		tvContLatitude.setText(Long.toString(latitude));
+		tvContLongitude.setText(Double.toString(longitude));
+		tvContLatitude.setText(Double.toString(latitude));
 		tvContReputation.setText(reputation);
 	}
 

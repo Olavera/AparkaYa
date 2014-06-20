@@ -1,5 +1,6 @@
 package com.example.aparkaya;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
@@ -155,8 +156,6 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
-		
 		// Start service using AlarmManager
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.SECOND, 10);
@@ -191,12 +190,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	
 	private void repaintPoints(int result){
 		if (result == Constants.RESULT_OK){
-			if (mapa.getMyLocation() != null)
-				mapa.animateCamera(CameraUpdateFactory.newLatLngZoom(
-						new LatLng( mapa.getMyLocation().getLatitude(), 
-								mapa.getMyLocation().getLongitude()), 15));
-			Toast.makeText(getApplicationContext(),"Punto: " + mapa.getMyLocation().getLongitude() + " || " + mapa.getMyLocation().getLongitude(), Toast.LENGTH_SHORT).show();
-			//Toast.makeText(getApplicationContext(),"Puntos obtenidos correctamente", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(),"Refresh", Toast.LENGTH_SHORT).show();
 			mapa.clear();
 
 			for (Punto punto : points) {
@@ -211,7 +205,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		else if (result == Constants.RESULT_NOTUSER){
 			Toast.makeText(getApplicationContext(),"Usuario no reconocido", Toast.LENGTH_SHORT).show();
 		}else if (result == Constants.RESULT_ERR){
-			Toast.makeText(getApplicationContext(),"No se pudieron obtener los puntos", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(),"Error al actualizar información", Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -334,7 +328,17 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			return rootView;
 		}
 		
-		
+		@Override
+		public void onResume(){
+			super.onResume();
+			if (mapa.getMyLocation() != null)
+				mapa.animateCamera(CameraUpdateFactory.newLatLngZoom(
+						new LatLng( mapa.getMyLocation().getLatitude(), 
+								mapa.getMyLocation().getLongitude()), 15));
+			else
+				Toast.makeText(getApplicationContext(),
+						"Esperando ubicacion", Toast.LENGTH_SHORT).show();
+		}
 
 		@Override
 		public void setRetainInstance(boolean retain) {
@@ -358,13 +362,6 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 				else{
 					mapa.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 					mapa.setMyLocationEnabled(true);
-					if (mapa.getMyLocation() != null)
-						mapa.animateCamera(CameraUpdateFactory.newLatLngZoom(
-								new LatLng( mapa.getMyLocation().getLatitude(), 
-										mapa.getMyLocation().getLongitude()), 15));
-					else
-						Toast.makeText(getApplicationContext(),
-								"Esperando ubicacion", Toast.LENGTH_SHORT).show();
 					mapa.getUiSettings().setZoomControlsEnabled(false);
 					mapa.getUiSettings().setCompassEnabled(true);
 					mapa.setOnInfoWindowClickListener(this);
@@ -391,10 +388,11 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 
 		@Override
 		public void onInfoWindowClick(Marker marker) {
+			DecimalFormat df = new DecimalFormat("#.########");
 			Intent intent = new Intent(AparkaYa.this, DetailsDialog.class);
 			intent.putExtra(Constants.USER, marker.getTitle());
-			intent.putExtra(Constants.LATITUDE, marker.getPosition().latitude);
-			intent.putExtra(Constants.LONGITUDE, marker.getPosition().longitude);
+			intent.putExtra(Constants.LATITUDE, df.format(marker.getPosition().latitude));
+			intent.putExtra(Constants.LONGITUDE, df.format(marker.getPosition().longitude));
 			intent.putExtra(Constants.REPUTATION, marker.getSnippet());
 			
 			startActivity(intent);
