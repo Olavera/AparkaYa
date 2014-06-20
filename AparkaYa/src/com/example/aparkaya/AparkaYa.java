@@ -172,7 +172,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		intent.putExtra("MESSENGER", messenger);
 		intent.putExtra("user", user);
 		intent.putExtra("pass", pass);
-		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);   
+		bindService(intent, mConnection, Context.BIND_ALLOW_OOM_MANAGEMENT);   
 	}
 
 	@Override

@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 public class RegisterActivity extends Activity {
 
-	private EditText usuario, contrasenia1, contrasenia2;
+	private EditText usuario, email, contrasenia1, contrasenia2;
 	HttpPostAux post;
 	
 	
@@ -46,27 +46,26 @@ public class RegisterActivity extends Activity {
 		post = new HttpPostAux();
 
 		usuario = (EditText) findViewById(R.id.usuario_registro);
+		email = (EditText) findViewById(R.id.email_registro);
 		contrasenia1 = (EditText) findViewById(R.id.contrasenia_registro);
 		contrasenia2 = (EditText) findViewById(R.id.contrasenia2_registro);
 
 	}
 
 	public void Registra(View view) {
-
 		if (contrasenia1.getText().equals(contrasenia2.getText()) ) {
 		
 			Toast.makeText(getApplicationContext(),"Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
 		} else {//pasamos los posibles filtros tambien podemos comprobar si el usuario ya esta registrado
-			new asyncRegister().execute("email",usuario.getText().toString(),contrasenia1.getText().toString());
+			new asyncRegister().execute(email.getText().toString(),usuario.getText().toString(),contrasenia1.getText().toString());
 		}
 
 	}
 
-	private class asyncRegister extends AsyncTask<String, String, String> {
-
+	private class asyncRegister extends AsyncTask<String, String, Integer> {
 		String email, user, pass;
 
-		protected String doInBackground(String... params) {
+		protected Integer doInBackground(String... params) {
 			// obtenemos user y pass
 			email = params[0];
 			user = params[1];
@@ -104,20 +103,20 @@ public class RegisterActivity extends Activity {
 
 				// validamos el valor obtenido
 				if (id == 1) {
-					return "ok"; // login valido
+					return Constants.RESULT_OK; // registro valido
 				} else if (id == 2) {
-					return "userExist"; // usuario ya existe
+					return Constants.RESULT_USER_EXISTS; // usuario ya existe
 				} else if (id == 3) {
-					return "emailExist"; // email ya existe
+					return Constants.RESULT_EMAIL_EXISTS; // email ya existe
 				} 
 			}
-			return "err"; // login invalido
+			return Constants.RESULT_ERR; // registro invalido
 
 		}
 
-		protected void onPostExecute(String result) {
+		protected void onPostExecute(Integer result) {
 
-			if (result.equals("ok")){
+			if (result==Constants.RESULT_OK){
 				Toast.makeText(getApplicationContext(),"Registrado correctamente", Toast.LENGTH_SHORT).show();
 
 				//Inicia la actividad
@@ -126,11 +125,11 @@ public class RegisterActivity extends Activity {
 				i.putExtra("pass", pass);
 				startActivity(i);
 			} 
-			else if(result.equals("userExist")){
-				Toast.makeText(getApplicationContext(),"Email ya en uso", Toast.LENGTH_SHORT).show();
-			}
-			else if(result.equals("emailExist")){
+			else if(result==Constants.RESULT_USER_EXISTS){
 				Toast.makeText(getApplicationContext(),"Nombre de usuario ya en uso", Toast.LENGTH_SHORT).show();
+			}
+			else if(result==Constants.RESULT_EMAIL_EXISTS){
+				Toast.makeText(getApplicationContext(),"Email ya en uso", Toast.LENGTH_SHORT).show();
 			}
 			else{
 				Toast.makeText(getApplicationContext(),"No se pudo conectar con el servidor", Toast.LENGTH_SHORT).show();
