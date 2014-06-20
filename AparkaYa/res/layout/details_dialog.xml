@@ -51,38 +51,6 @@
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/tvTitFecha"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:ems="10"
-            android:gravity="center_vertical"
-            android:text="Fecha"
-            android:textColor="#FFFFFF"
-            android:textSize="23sp"
-            android:textStyle="bold"
-            tools:ignore="NestedWeights" />
-
-        <TextView
-            android:id="@+id/tvContFecha"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:ems="10"
-            android:gravity="center_vertical|center_horizontal"
-            android:textColor="#FFFFFF"
-            android:textSize="15sp" />
-
-    </LinearLayout>
-    
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="20dp"
-        android:layout_weight="1"
-        android:orientation="horizontal" >
-
-        <TextView
             android:id="@+id/tvTitLongitude"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

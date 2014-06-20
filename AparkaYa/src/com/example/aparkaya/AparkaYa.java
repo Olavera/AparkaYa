@@ -1,10 +1,7 @@
 package com.example.aparkaya;
 
-import java.util.Date;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Vector;
 
@@ -22,6 +19,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,7 +33,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.text.method.DateTimeKeyListener;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -85,12 +83,21 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	private String user, pass;
 	private Messenger messenger;
 	private PointsRefreshService localService;
-	private HashMap<String, WebPoint> points;
+	private Vector<WebPoint> points;
 	private GoogleMap mapa = null;
+	
+	private String t_refresco="";
+	private String area_busqueda="";
+	private String ordenar_por="";
+	
+	private SharedPreferences prefs;
 
 	private Handler handler = new Handler() {
 		public void handleMessage(Message message) {
-			repaintPoints(message.arg1, localService.getVectorPoints());
+			if (message.arg1 == Constants.RESULT_OK) {
+				points = localService.getVectorPoints();
+				repaintPoints(message.arg1);
+			}
 		}
 	};
 
@@ -108,6 +115,8 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			localService = null;
 		}
 	};
+	
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -150,12 +159,23 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		post = new HttpPostAux();
 		user = getIntent().getStringExtra("user");
 		pass = getIntent().getStringExtra("pass");
-		points = new HashMap<String, WebPoint>();
+		
+		
 	}
 	
 	@Override
 	protected void onStart() {
 		super.onStart();
+		
+		//SHARED PREFERENCES
+		
+		prefs=getSharedPreferences("MisPreferencias",Context.MODE_PRIVATE);
+		
+		t_refresco = prefs.getString(Constants.TIEMPO_REFRESCO,"5 segundos");
+		area_busqueda = prefs.getString(Constants.AREA_BUSQUEDA, "500 metros");
+		ordenar_por = prefs.getString(Constants.ORDENAR_POR, "nombre");
+		
+		//-----------------------------------------------------------------------
 		
 		mConnection = new MyServiceConnection();
 		
@@ -167,19 +187,39 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
         Intent intt = new Intent(this, PointsRefreshService.class);
         intt.putExtra("MESSENGER", messenger);
         PendingIntent pintent = PendingIntent.getService(this, 0, intt, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), Constants.LOCALSERVER_TIME_REFRESH, pintent);
+        
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+        	alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), Constants.LOCALSERVER_TIME_REFRESH, pintent);
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pintent);
+        }
+        
+        //AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        //alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), Constants.LOCALSERVER_TIME_REFRESH, pintent);
         
         Intent intent = new Intent(this, PointsRefreshService.class);
 		intent.putExtra("MESSENGER", messenger);
 		intent.putExtra("user", user);
 		intent.putExtra("pass", pass);
-		bindService(intent, mConnection, Context.BIND_ALLOW_OOM_MANAGEMENT);   
+		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);   
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
+		
+		//SHARED PREFERENCES
+		
+		SharedPreferences prefs =getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
+			   SharedPreferences.Editor editor = prefs.edit();
+			   editor.putString(Constants.TIEMPO_REFRESCO,t_refresco);
+			   editor.putString(Constants.AREA_BUSQUEDA,area_busqueda);
+			   editor.putString(Constants.ORDENAR_POR,ordenar_por);
+			   editor.commit();
+		
+		//----------------------------------------------------------
+		
 		Intent intt = new Intent(this, PointsRefreshService.class);
         intt.putExtra("MESSENGER", messenger);
         PendingIntent pintent = PendingIntent.getService(this, 0, intt, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -191,22 +231,17 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	    localService.onDestroy();
 	}
 	
-	private void repaintPoints(int result, Vector<WebPoint> auxpoints){
+	private void repaintPoints(int result){
 		if (result == Constants.RESULT_OK){
 			Toast.makeText(getApplicationContext(),"Refresh", Toast.LENGTH_SHORT).show();
 			mapa.clear();
-			points.clear();
-			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
-			for (WebPoint punto : auxpoints) {
-					Marker marker = mapa.addMarker(new MarkerOptions()
+			for (WebPoint punto : points) {
+					mapa.addMarker(new MarkerOptions()
 					.position(punto.getCords())
-					.title("Difundido a las: " + dateFormat.format(punto.getFecha()))
-					.snippet(punto.getUsuario() + " (" + Integer.toString(punto.getReputacion()) + ")")
+					.title(punto.getUsuario())
+					.snippet(Integer.toString(punto.getReputacion()))
 					.icon(BitmapDescriptorFactory
 							.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-					String key = marker.getId();
-					punto.setMarker(marker);
-					points.put(key, punto);
 			}
 		}
 		else if (result == Constants.RESULT_NOTUSER){
@@ -220,21 +255,90 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.menu_opciones_aparkaya, menu);
 		return true;
 	}
+	
+	 //código para cada opción de menú
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) 
+    {
+    	int segundos=0;
+    	int distancia_busqueda=0;
+    	String ordenado_por="";
+    	
+        switch (item.getItemId()) 
+        {
+            case R.id.t_refresco_5:
+            	t_refresco="5 segundos";
+            	segundos=5;
+                TiempoRefresco(segundos);
+                return true;
+            case R.id.t_refresco_10:
+            	t_refresco="10 segundos";
+            	segundos=10;
+            	TiempoRefresco(segundos);
+                return true;                
+            case R.id.t_refresco_15:
+            	t_refresco="15 segundos";
+            	segundos=15;
+            	TiempoRefresco(segundos);
+                return true;
+            case R.id.area_500:
+            	distancia_busqueda=500;
+            	area_busqueda="500 metros";
+            	AreaBusqueda(distancia_busqueda);
+                return true;
+            case R.id.area_1km:
+            	distancia_busqueda=1000;
+            	area_busqueda="1 km";
+            	AreaBusqueda(distancia_busqueda);
+                return true; 
+            case R.id.ordena_nombre:
+            	ordenado_por="nombre";
+            	ordenar_por="nombre";
+            	menuOrdenar(ordenado_por);
+                return true;
+            case R.id.ordena_distancia:
+            	ordenado_por="distancia";
+            	ordenar_por="distancia";
+            	menuOrdenar(ordenado_por);
+                return true;
+            case R.id.info_cuenta:
+            	menuInfoCuenta();
+                return true;
+                
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    public void menuInfoCuenta(){
+    	
+    	Intent i = new Intent(this,InfoCuenta.class);   	
+        	startActivity(i);
+    	
+    }
+    
+    public void TiempoRefresco(int segundos_refresco){
+    	
+   	
+    	//FALTA QUE CAMBIE EL INTERVALO DE LA ALARMA PARA EL REFRESCO
+    	
+    }
+    
+    public void AreaBusqueda(int area_busqueda){
+    	
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+		//FALTA HACER EL PHP para ordenar segun la distancia pasada
+    	
+    }
+    
+    public void menuOrdenar(String ordenador_por){
+    	
+    	//Falta hacer php para ordenar segun lo que le pases
+    	
+    }
 
 	@Override
 	public void onTabSelected(ActionBar.Tab tab,
@@ -382,14 +486,11 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		@Override
 		public void onInfoWindowClick(Marker marker) {
 			Intent intent = new Intent(AparkaYa.this, DetailsDialog.class);
-			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
-			WebPoint p = points.get(marker.getId());
-			intent.putExtra(Constants.ID_PUNTO, p.getId_punto());
-			intent.putExtra(Constants.USUARIO, p.getUsuario());
-			intent.putExtra(Constants.LATITUD, p.getCords().latitude);
-			intent.putExtra(Constants.LONGITUD, p.getCords().longitude);
-			intent.putExtra(Constants.REPUTACION, p.getReputacion());
-			intent.putExtra(Constants.FECHA, dateFormat.format(p.getFecha()));
+			intent.putExtra(Constants.USUARIO, marker.getTitle());
+			intent.putExtra(Constants.LATITUD, marker.getPosition().latitude);
+			intent.putExtra(Constants.LONGITUD, marker.getPosition().longitude);
+			intent.putExtra(Constants.REPUTACION, marker.getSnippet());
+			
 			startActivity(intent);
 		}
 		
@@ -428,16 +529,11 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 				 * y enviarlo mediante POST a nuestro sistema para relizar la validacion*/ 
 				ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
 
-				SimpleDateFormat dateFormat = new SimpleDateFormat(
-		                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-		        Date date = new Date();
-		        String fecha = dateFormat.format(date);
-
 				postparameters2send.add(new BasicNameValuePair("user",user));
 				postparameters2send.add(new BasicNameValuePair("password",pass));
 				postparameters2send.add(new BasicNameValuePair("latitud",Double.toString(ll.latitude)));
 				postparameters2send.add(new BasicNameValuePair("longitud",Double.toString(ll.longitude)));
-				postparameters2send.add(new BasicNameValuePair("fecha", fecha));
+				postparameters2send.add(new BasicNameValuePair("fecha", Integer.toString(0)));
 
 				//realizamos una peticion y como respuesta obtenes un array JSON
 				JSONArray jdata=post.getserverdata(postparameters2send, "http://aparkaya.webcindario.com/enviarPunto.php");

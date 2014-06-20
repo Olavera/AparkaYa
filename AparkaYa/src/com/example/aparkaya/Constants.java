@@ -17,5 +17,9 @@ public class Constants {
 	public static final String LONGITUD = "longitud";
 	public static final String REPUTACION = "reputacion";
 	public static final String FECHA = "fecha";
+	
+	public static final String TIEMPO_REFRESCO = "tiempo_refresco";
+	public static final String AREA_BUSQUEDA = "area_busqueda";
+	public static final String ORDENAR_POR = "ordenar_por";
 
 }

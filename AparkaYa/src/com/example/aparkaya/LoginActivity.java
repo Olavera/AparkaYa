@@ -8,17 +8,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.aparkaya.webService.HttpPostAux;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.aparkaya.webService.HttpPostAux;
 
 
 public class LoginActivity extends Activity {
@@ -34,8 +34,7 @@ public class LoginActivity extends Activity {
 		super.onRestoreInstanceState(savedInstanceState);
 	}
 
-
-
+	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		// TODO Auto-generated method stub
