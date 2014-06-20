@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/t_refresco" android:title="@string/t_refresco">
+        <menu>
+            <item android:id="@+id/t_refresco_5" android:title="@string/t_refresco_5"/>
+            <item android:id="@+id/t_refresco_10" android:title="@string/t_refresco_10"/>
+            <item android:id="@+id/t_refresco_15" android:title="@string/t_refresco_15"/>
+        </menu>
+    </item>
+    <item android:id="@+id/area_busqueda" android:title="@string/area_busqueda">
+        <menu>
+            <item android:id="@+id/area_500" android:title="@string/area_500"/>
+            <item android:id="@+id/area_1km" android:title="@string/area_1km"/>
+        </menu>
+    </item>
+    <item android:id="@+id/ordenar_por" android:title="@string/Ordenar_por">
+        <menu>
+            <item android:id="@+id/ordena_nombre" android:title="@string/ordenar_nombre"/>
+            <item android:id="@+id/ordena_distancia" android:title="@string/ordena_distancia"/>
+        </menu>
+    </item>
+    <item android:id="@+id/info_cuenta" android:title="@string/info_cuenta"></item>
+    
+
+</menu>

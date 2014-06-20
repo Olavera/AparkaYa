@@ -188,15 +188,8 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
         intt.putExtra("MESSENGER", messenger);
         PendingIntent pintent = PendingIntent.getService(this, 0, intt, PendingIntent.FLAG_CANCEL_CURRENT);
         
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-        	alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), Constants.LOCALSERVER_TIME_REFRESH, pintent);
-        } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pintent);
-        }
-        
-        //AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        //alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), Constants.LOCALSERVER_TIME_REFRESH, pintent);
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), Constants.LOCALSERVER_TIME_REFRESH, pintent);
         
         Intent intent = new Intent(this, PointsRefreshService.class);
 		intent.putExtra("MESSENGER", messenger);
