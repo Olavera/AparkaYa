@@ -80,8 +80,6 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	
 	private HttpPostAux post;
 	private String user, pass;
-	private AlarmManager alarm;
-	private PendingIntent pintent;
 	private Messenger messenger;
 	private PointsRefreshService localService;
 	private Vector<Punto> points;
@@ -96,7 +94,9 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		}
 	};
 
-	private ServiceConnection mConnection = new ServiceConnection() {
+	private MyServiceConnection mConnection = new MyServiceConnection();
+	
+	public class MyServiceConnection implements ServiceConnection{
 		public void onServiceConnected(ComponentName className, 
 				IBinder binder) {
 			PointsRefreshService.MyBinder b = (PointsRefreshService.MyBinder) binder;
@@ -104,6 +104,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
+			localService.onDestroy();
 			localService = null;
 		}
 	};
@@ -149,17 +150,21 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		post = new HttpPostAux();
 		user = getIntent().getStringExtra("user");
 		pass = getIntent().getStringExtra("pass");
-        alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        messenger = new Messenger(handler);
 	}
 	
 	@Override
-	protected void onResume() {
-		super.onResume();
+	protected void onStart() {
+		super.onStart();
+		
+        messenger = new Messenger(handler);
+        
 		// Start service using AlarmManager
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.SECOND, 10);
-        pintent = PendingIntent.getService(this, 0, new Intent(this, PointsRefreshService.class), 0);
+        Intent intt = new Intent(this, PointsRefreshService.class);
+        intt.putExtra("MESSENGER", messenger);
+        PendingIntent pintent = PendingIntent.getService(this, 0, intt, 0);
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), Constants.LOCALSERVER_TIME_REFRESH, pintent);
         
         Intent intent = new Intent(this, PointsRefreshService.class);
@@ -182,10 +187,16 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
+	protected void onStop() {
+		Intent intt = new Intent(this, PointsRefreshService.class);
+        intt.putExtra("MESSENGER", messenger);
+        PendingIntent pintent = PendingIntent.getService(this, 0, intt, 0);
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		super.onStop();
 		alarm.cancel(pintent);
 	    unbindService(mConnection);
+	    mConnection = null;
+	    localService.onDestroy();
 	}
 	
 	private void repaintPoints(int result){

@@ -115,7 +115,7 @@ public class LoginActivity extends Activity {
 		protected void onPostExecute(String result) {
 
 			if (result.equals("ok")){
-				Toast.makeText(getApplicationContext(),"Logueado correctamente", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(),"Login correcto", Toast.LENGTH_SHORT).show();
 
 				//Inicia la actividad
 				Intent i = new Intent(LoginActivity.this, AparkaYa.class);

@@ -66,6 +66,11 @@ public class PointsRefreshService extends Service{
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		Bundle extras = intent.getExtras();
+		// Get messenger from the Activity
+		if (extras.get("MESSENGER") != null) {
+			outMessenger = (Messenger) extras.get("MESSENGER");
+		}
 		new asyncCallPoints().execute();	
 		//publishResults("Prueba");
 		return super.onStartCommand(intent, flags, startId);
