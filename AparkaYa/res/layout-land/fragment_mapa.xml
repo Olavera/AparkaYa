@@ -11,6 +11,7 @@
          android:layout_width="fill_parent"
          android:layout_height="fill_parent"
          class="com.google.android.gms.maps.SupportMapFragment" />
+     
 
     <Button
         android:id="@+id/btnguardar"

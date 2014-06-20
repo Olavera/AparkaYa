@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 public class LoginActivity extends Activity {
 
+	
 	private EditText usuario, contrasenia;
 	HttpPostAux post;
 	

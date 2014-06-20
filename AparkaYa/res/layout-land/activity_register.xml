@@ -1,103 +1,140 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
+    android:orientation="vertical" 
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".RegisterActivity" >
-
-       <TextView
-        android:id="@+id/Titulo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="REGISTRO"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="40sp" />
+    android:background="#555555">
     
+	    <LinearLayout
+	        android:id="@+id/linearLayout0"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
 
-    <LinearLayout
-        android:id="@+id/linearLayout1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/linearLayout2"
-        android:layout_alignLeft="@+id/linearLayout2"
-        android:layout_marginBottom="106dp"
-        android:orientation="horizontal" >
+         <ImageView
+             android:id="@+id/imagen_registro"
+             android:layout_width="60dp"
+             android:layout_height="60dp"
+             android:contentDescription="@string/descripcion_imagen_registro"
+             android:src="@drawable/ic_launcher"
+             android:layout_marginLeft="125dp"
+             />
+ 		
+         <TextView
+	        android:id="@+id/cabecera_registro"
+	        android:layout_width="wrap_content"
+	        android:layout_height="fill_parent"
+	        android:text="@string/cabecera_registro"
+	        android:textSize="28sp"
+	        android:textStyle="bold"
+	        android:gravity="center_vertical"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="#FFFFFF"
+	        android:textColorHint="#FFFFFF"
+        	/>
         
-     
-
-        <EditText
-            android:id="@+id/usuario_registro"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.76"
-            android:ems="10"
-            android:hint="Usuario"
-            android:inputType="text" />
-
     </LinearLayout>
-    
-    <LinearLayout
-        android:id="@+id/linearLayout2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/linearLayout3"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="41dp" >
-
-        <EditText
-            android:id="@+id/contrasenia_registro"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.39"
-            android:ems="10"
-            android:hint="Contraseña"
-            android:inputType="textPassword" />
-
-    </LinearLayout>
-    
-    <LinearLayout
+	    
+	    <LinearLayout 
+	        android:id="@+id/linearLayout1"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+	 		
+	        <EditText
+	            android:id="@+id/usuario_registro"
+	            android:layout_width="245dp"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="15dp"
+	            android:ems="10"
+	            android:hint="@string/usuario_registro"
+	            android:inputType="text"
+	            android:layout_marginLeft="20dp" 
+	            android:textColor="#FFFFFF"
+	            android:textColorHint="#FFFFFF">
+	
+	            <requestFocus />
+	        </EditText>
+	        
+	         <EditText
+	            android:id="@+id/email_registro"
+	            android:layout_width="245dp"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="15dp"
+	            android:ems="10"
+	            android:hint="@string/email_registro"
+	            android:inputType="textEmailAddress"
+	            android:layout_marginLeft="40dp"
+	            android:textColor="#FFFFFF"
+	            android:textColorHint="#FFFFFF" >
+	
+	            <requestFocus />
+	        </EditText>
+	        
+	    </LinearLayout>
+	        
+	    <LinearLayout 
+	        android:id="@+id/linearLayout2"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+	 		
+	        <EditText
+	            android:id="@+id/contrasenia_registro"
+	            android:layout_width="245dp"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="21dp"
+	            android:ems="10"
+	            android:hint="@string/contrasenia_registro"
+	            android:inputType="textPassword"
+	            android:layout_marginLeft="20dp"
+	            android:textColor="#FFFFFF"
+	            android:textColorHint="#FFFFFF" >
+	
+	            <requestFocus />
+	        </EditText>
+	        
+	        <EditText
+	            android:id="@+id/contrasenia2_registro"
+	            android:layout_width="245dp"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="21dp"
+	            android:ems="10"
+	            android:hint="@string/contrasenia2_registro"
+	            android:inputType="textPassword"
+	            android:layout_marginLeft="40dp"
+	            android:textColor="#FFFFFF"
+	            android:textColorHint="#FFFFFF" >
+	
+	            <requestFocus />
+	        </EditText>
+	        
+	    </LinearLayout>
+	    
+	     <LinearLayout 
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/linearLayout4"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="41dp" >
-
-        <EditText
-            android:id="@+id/contrasenia2_registro"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.39"
-            android:ems="10"
-            android:hint="Verificar Contraseña"
-            android:inputType="textPassword" />
-
+        android:orientation="vertical" >
+ 		
+         <Button
+             android:id="@+id/boton_registro"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginLeft="225dp"
+             android:layout_marginTop="20dp"
+             android:drawableLeft="@drawable/ic_registro"
+             android:onClick="Registra"
+             android:text="@string/boton_registro"
+             android:background="#0099cc"
+             android:textColor="#FFFFFF" />
+        
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout4"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="43dp" >
-
-        <Button
-            android:id="@+id/boton_registrarse"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:drawableEnd="@drawable/ic_registro"
-            android:onClick="Registra"
-            android:text="Confirmar" />
-     
-    </LinearLayout>
-
-  
-
-</RelativeLayout>
+	    
+	    
+</LinearLayout>
 

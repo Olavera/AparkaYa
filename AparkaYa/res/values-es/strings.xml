@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources><string name="usuario_login"></string>
-<string name="contraseña_login"></string>
-<string name="contraseña"></string>
+<resources>
+<string name="cabecera_registro">REGISTRO</string>
+<string name="usuario_registro">Usuario</string>
+<string name="email_registro">Email</string>
+<string name="contrasenia_registro">Contraseña</string>
+<string name="contrasenia2_registro">Verificar contraseña</string>
+<string name="boton_registro">Confirmar</string>
+<string name="descripcion_imagen_registro">Registro</string>
+<string name="descripcion_imagen_logo">AparkaYa</string>
+<string name="usuario_login">Usuario</string>
+<string name="contrasenia_login">Contraseña</string>
+<string name="boton_registro_login">Registro</string>
+<string name="boton_login_login">Login</string>
+<string name="aparkaya_login">AparkaYa</string>
 </resources>

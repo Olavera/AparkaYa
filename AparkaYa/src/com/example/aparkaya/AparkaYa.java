@@ -315,14 +315,6 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		public FragmentoMapa() {
 		}
 		
-		// this method is only called once for this fragment
-	    @Override
-	    public void onCreate(Bundle savedInstanceState) {
-	        super.onCreate(savedInstanceState);
-	        // retain this fragment
-	        setRetainInstance(true);
-	    }
-
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
@@ -348,12 +340,6 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			else
 				Toast.makeText(getApplicationContext(),
 						"Esperando ubicacion", Toast.LENGTH_SHORT).show();
-		}
-
-		@Override
-		public void setRetainInstance(boolean retain) {
-			// TODO Auto-generated method stub
-			super.setRetainInstance(retain);
 		}
 
 		/** function to load map. 
@@ -622,26 +608,13 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		@SuppressLint("ValidFragment")
 		public FragmentoHuecos() {
 		}
-		
-		// this method is only called once for this fragment
-	    @Override
-	    public void onCreate(Bundle savedInstanceState) {
-	        super.onCreate(savedInstanceState);
-	        // retain this fragment
-	        setRetainInstance(true);
-	    }
-			 
+					 
 	    @Override
 	    public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState) {
 	 
 	        return inflater.inflate(R.layout.fragment_huecos, container, false);
 	    }
 	    
-	    @Override
-		public void setRetainInstance(boolean retain) {
-			// TODO Auto-generated method stub
-			super.setRetainInstance(retain);
-		}
 	 
 	    @Override
 	    public void onActivityCreated(Bundle state) {
@@ -650,6 +623,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	        lstListado = (ListView)getView().findViewById(R.id.listView1);
 	 
 	        lstListado.setAdapter(new AdaptadorPuntos(this));
+	        lstListado.setOnItemClickListener(onclick_punto);
 	    }
 	 
 	    class AdaptadorPuntos extends ArrayAdapter<Punto> {
