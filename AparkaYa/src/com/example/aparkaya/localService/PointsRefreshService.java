@@ -1,4 +1,4 @@
-package com.example.aparkaya;
+package com.example.aparkaya.localService;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -9,6 +9,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.aparkaya.Constants;
+import com.example.aparkaya.model.WebPoint;
+import com.example.aparkaya.webService.HttpPostAux;
 import com.google.android.gms.maps.model.LatLng;
 
 import android.app.Service;
@@ -27,12 +30,12 @@ public class PointsRefreshService extends Service{
 	public static final String NOTIFICATION = "com.example.aparkaya";
 	private String user, pass;
 	private Messenger outMessenger;
-	private Vector<Punto> points;
+	private Vector<WebPoint> points;
 	private HttpPostAux post;
 	private final IBinder mBinder = new MyBinder();
 
 	public class MyBinder extends Binder {
-		PointsRefreshService getService() {
+		public PointsRefreshService getService() {
 			return PointsRefreshService.this;
 		}
 	}
@@ -71,14 +74,14 @@ public class PointsRefreshService extends Service{
 		return START_NOT_STICKY;
 	}
 	
-	public Vector<Punto> getVectorPoints()
+	public Vector<WebPoint> getVectorPoints()
 	{
 		return points;
 	}
 	
 	private class asyncCallPoints extends AsyncTask< Void, String, Integer > {
 		
-		Vector<Punto> auxpoints = new Vector<Punto>();
+		Vector<WebPoint> auxpoints = new Vector<WebPoint>();
 
 		protected Integer doInBackground(Void... params) {
 
@@ -98,7 +101,7 @@ public class PointsRefreshService extends Service{
 					for (int i = 0; i < jdata.length(); i++) {
 				        JSONObject jsonObject = jdata.getJSONObject(i);
 				     
-				        auxpoints.add(new Punto(jsonObject.getInt(Constants.ID_PUNTO),
+				        auxpoints.add(new WebPoint(jsonObject.getInt(Constants.ID_PUNTO),
 				        		jsonObject.getString(Constants.USUARIO), 
 				    		new LatLng(jsonObject.getDouble(Constants.LATITUD), 
 				    				jsonObject.getDouble(Constants.LONGITUD)),

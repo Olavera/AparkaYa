@@ -1,4 +1,4 @@
-package com.example.aparkaya;
+package com.example.aparkaya.parser;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -19,6 +19,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import com.example.aparkaya.model.WebPoint;
 import com.google.android.gms.maps.model.LatLng;
 
 import android.content.Context;
@@ -115,7 +116,7 @@ public class ParserXML_DOM{
 
 	}
 
-	public Vector<Punto> listaPuntos() {
+	public Vector<WebPoint> listaPuntos() {
 
 		try {
 
@@ -263,9 +264,9 @@ public class ParserXML_DOM{
 	}
 	
 
-	private Vector<Punto> aVectorString() {
+	private Vector<WebPoint> aVectorString() {
 
-		Vector<Punto> result = new Vector<Punto>();
+		Vector<WebPoint> result = new Vector<WebPoint>();
 
 		String nombre = "";
 		Double lat = 0.0;
@@ -303,7 +304,7 @@ public class ParserXML_DOM{
 
 			}
 
-			result.add(new Punto(1,nombre, new LatLng(lat, lng),0)); // MODIFICADO a 0 hay que cambiarlo
+			result.add(new WebPoint(1,nombre, new LatLng(lat, lng),0)); // MODIFICADO a 0 hay que cambiarlo
 
 		}
 

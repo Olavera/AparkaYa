@@ -1,4 +1,4 @@
-package com.example.aparkaya;
+package com.example.aparkaya.webService;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

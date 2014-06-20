@@ -1,10 +1,10 @@
-package com.example.aparkaya;
+package com.example.aparkaya.model;
 
 import java.sql.Date;
 
 import com.google.android.gms.maps.model.LatLng;
 
-public class Punto {
+public class WebPoint {
 	
 	private Integer id_punto;
 	private String usuario;
@@ -12,7 +12,7 @@ public class Punto {
 	private int reputacion;
 	private Date fecha;
 	
-	public Punto(Integer id_punto, String usuario, LatLng cords, int reputacion){
+	public WebPoint(Integer id_punto, String usuario, LatLng cords, int reputacion){
 		super();
 		this.id_punto = id_punto;
 		this.usuario = usuario;

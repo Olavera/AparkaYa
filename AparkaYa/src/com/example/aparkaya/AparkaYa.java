@@ -46,6 +46,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.aparkaya.localService.PointsRefreshService;
+import com.example.aparkaya.model.WebPoint;
+import com.example.aparkaya.parser.ParserXML_DOM;
+import com.example.aparkaya.webService.HttpPostAux;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
@@ -77,7 +81,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	private String user, pass;
 	private Messenger messenger;
 	private PointsRefreshService localService;
-	private Vector<Punto> points;
+	private Vector<WebPoint> points;
 	private GoogleMap mapa = null;
 
 	private Handler handler = new Handler() {
@@ -168,19 +172,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		intent.putExtra("MESSENGER", messenger);
 		intent.putExtra("user", user);
 		intent.putExtra("pass", pass);
-		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        
-		/*registerReceiver(receiver, new IntentFilter(PointsRefreshService.NOTIFICATION));
-		
-		// Start service using AlarmManager
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.SECOND, 10);
-       
-        Intent intent = new Intent(this, PointsRefreshService.class);
-        pintent = PendingIntent.getService(this, 0, intent, 0);
-       
-        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 10000, pintent);
-        startService(new Intent(getBaseContext(), PointsRefreshService.class));*/    
+		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);   
 	}
 
 	@Override
@@ -201,7 +193,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		if (result == Constants.RESULT_OK){
 			Toast.makeText(getApplicationContext(),"Refresh", Toast.LENGTH_SHORT).show();
 			mapa.clear();
-			for (Punto punto : points) {
+			for (WebPoint punto : points) {
 					mapa.addMarker(new MarkerOptions()
 					.position(punto.getCords())
 					.title(punto.getUsuario())
@@ -600,7 +592,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	 */
 	public class FragmentoHuecos extends Fragment {
 		
-		 ArrayList<Punto> lista_puntos = GetlistPuntos();
+		 ArrayList<WebPoint> lista_puntos = GetlistPuntos();
 		 private ListView lstListado;
 		
 		@SuppressLint("ValidFragment")
@@ -624,7 +616,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	        lstListado.setOnItemClickListener(onclick_punto);
 	    }
 	 
-	    class AdaptadorPuntos extends ArrayAdapter<Punto> {
+	    class AdaptadorPuntos extends ArrayAdapter<WebPoint> {
 	 
 	            Activity context;
 	 
@@ -639,7 +631,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	            View v = inflater.inflate(R.layout.vista_punto, null);
 	            
 	            // Creamos un objeto directivo
-		        Punto punto = lista_puntos.get(position);
+		        WebPoint punto = lista_puntos.get(position);
 	 
 		      //Rellenamos el nombre
 		        TextView nombre = (TextView) v.findViewById(R.id.textNameList);
@@ -679,9 +671,9 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			}
 		};
 		
-		private ArrayList<Punto> GetlistPuntos(){
+		private ArrayList<WebPoint> GetlistPuntos(){
 			
-			ArrayList<Punto> listap = new ArrayList<Punto>();
+			ArrayList<WebPoint> listap = new ArrayList<WebPoint>();
 
 		  /*  Punto punto1 = new Punto();
 		    Punto punto2 = new Punto();
