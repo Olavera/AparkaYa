@@ -1,6 +1,5 @@
 package com.example.aparkaya;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
@@ -16,13 +15,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -46,7 +42,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -94,7 +89,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		}
 	};
 
-	private MyServiceConnection mConnection = new MyServiceConnection();
+	private MyServiceConnection mConnection;
 	
 	public class MyServiceConnection implements ServiceConnection{
 		public void onServiceConnected(ComponentName className, 
@@ -156,6 +151,8 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	protected void onStart() {
 		super.onStart();
 		
+		mConnection = new MyServiceConnection();
+		
         messenger = new Messenger(handler);
         
 		// Start service using AlarmManager
@@ -163,7 +160,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
         cal.add(Calendar.SECOND, 10);
         Intent intt = new Intent(this, PointsRefreshService.class);
         intt.putExtra("MESSENGER", messenger);
-        PendingIntent pintent = PendingIntent.getService(this, 0, intt, 0);
+        PendingIntent pintent = PendingIntent.getService(this, 0, intt, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), Constants.LOCALSERVER_TIME_REFRESH, pintent);
         
@@ -188,12 +185,13 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 
 	@Override
 	protected void onStop() {
+		super.onStop();
 		Intent intt = new Intent(this, PointsRefreshService.class);
         intt.putExtra("MESSENGER", messenger);
-        PendingIntent pintent = PendingIntent.getService(this, 0, intt, 0);
+        PendingIntent pintent = PendingIntent.getService(this, 0, intt, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-		super.onStop();
 		alarm.cancel(pintent);
+		
 	    unbindService(mConnection);
 	    mConnection = null;
 	    localService.onDestroy();
