@@ -12,6 +12,9 @@ public class Constants {
 	
 	public static final long LOCALSERVER_TIME_REFRESH = 20000;//20segundos por defecto
 	public static final long TIME_UMBRAL = 86400000;//24h en milisegundos
+	public static final long TIME_GOOD = 300000;//5 min
+	public static final long TIME_REGULAR = 1800000;//30 min
+	public static final long TIME_BAD = 3600000;//1 h
 	
 	public static final String ID_PUNTO = "id_punto";
 	public static final String USUARIO = "usuario";
@@ -33,5 +36,7 @@ public class Constants {
 	
 	public static final String USUARIO_PREFS = "nombre_usuario";
 	public static final String CONTRASENIA_PREFS = "contrasenia_usuario";
+	
+	public static final String POINT_NO_MAPPED = "punto_no_mapeado";
 
 }
