@@ -915,8 +915,13 @@ public class AparkaYa extends ActionBarActivity implements
 		}
 
 		OnItemClickListener onclick_punto = new OnItemClickListener() {
+			@SuppressLint("NewApi")
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
+				WebPoint punto_selec=(WebPoint) lstListado.getItemAtPosition(position);
+			    getActivity().getActionBar().setSelectedNavigationItem(0);
+			    mapa.animateCamera(CameraUpdateFactory.newLatLngZoom(punto_selec.getCords(), 15));
+			    punto_selec.getMarker().showInfoWindow();
 			}
 		};
 	}
