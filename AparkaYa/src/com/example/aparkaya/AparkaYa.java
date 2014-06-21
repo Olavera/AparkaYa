@@ -69,7 +69,8 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 @SuppressLint("ValidFragment")
-public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener {
+public class AparkaYa extends ActionBarActivity implements
+		ActionBar.TabListener {
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -84,7 +85,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
-	
+
 	private HttpPostAux post;
 	private String user, pass;
 	private Messenger messenger;
@@ -95,12 +96,11 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	private ListView lstListado;
 	private AdaptadorPuntos adapter;
 	private ArrayList<WebPoint> listpoints;
-	
-	
-	private String t_refresco="";
-	private String area_busqueda="";
-	private String ordenar_por="";
-	
+
+	private String t_refresco = "";
+	private String area_busqueda = "";
+	private String ordenar_por = "";
+
 	private SharedPreferences prefs;
 
 	private Handler handler = new Handler() {
@@ -110,10 +110,9 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	};
 
 	private MyServiceConnection mConnection;
-	
-	public class MyServiceConnection implements ServiceConnection{
-		public void onServiceConnected(ComponentName className, 
-				IBinder binder) {
+
+	public class MyServiceConnection implements ServiceConnection {
+		public void onServiceConnected(ComponentName className, IBinder binder) {
 			PointsRefreshService.MyBinder b = (PointsRefreshService.MyBinder) binder;
 			localService = b.getService();
 		}
@@ -135,7 +134,8 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
-		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+		mSectionsPagerAdapter = new SectionsPagerAdapter(
+				getSupportFragmentManager());
 
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -144,8 +144,9 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		// When swiping between different sections, select the corresponding
 		// tab. We can also use ActionBar.Tab#select() to do this if we have
 		// a reference to the Tab.
-		
-		mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+
+		mViewPager
+				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 					@Override
 					public void onPageSelected(int position) {
 						actionBar.setSelectedNavigationItem(position);
@@ -168,120 +169,149 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		hashmap_idMarker_WebPoint = new HashMap<String, WebPoint>();
 		array_id_point_idMarker = new SparseArray<String>();
 		listpoints = new ArrayList<WebPoint>();
-        adapter = new AdaptadorPuntos(this);
+		adapter = new AdaptadorPuntos(this);
 	}
-	
+
 	@Override
 	protected void onStart() {
 		super.onStart();
-		
-		//SHARED PREFERENCES
-		
-		prefs=getSharedPreferences("MisPreferencias",Context.MODE_PRIVATE);
-		
-		t_refresco = prefs.getString(Constants.TIEMPO_REFRESCO,"5 segundos");
-		Toast.makeText(getApplicationContext(),t_refresco, Toast.LENGTH_SHORT).show();
-		area_busqueda = prefs.getString(Constants.AREA_BUSQUEDA, "500 metros");
-		Toast.makeText(getApplicationContext(),area_busqueda, Toast.LENGTH_SHORT).show();
-		ordenar_por = prefs.getString(Constants.ORDENAR_POR, "nombre");
-		Toast.makeText(getApplicationContext(),ordenar_por, Toast.LENGTH_SHORT).show();
+		if (mapa != null) {
+			if (mapa.getMyLocation() != null)
+				mapa.animateCamera(CameraUpdateFactory.newLatLngZoom(
+						new LatLng(mapa.getMyLocation().getLatitude(), mapa
+								.getMyLocation().getLongitude()), 15));
+			else
+				Toast.makeText(getApplicationContext(), "Esperando ubicacion",
+						Toast.LENGTH_SHORT).show();
+		}
 
-		
-		//-----------------------------------------------------------------------
-		
+		// SHARED PREFERENCES
+
+		prefs = getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
+
+		t_refresco = prefs.getString(Constants.TIEMPO_REFRESCO, "5 segundos");
+		area_busqueda = prefs.getString(Constants.AREA_BUSQUEDA, "500 metros");
+		ordenar_por = prefs.getString(Constants.ORDENAR_POR, "nombre");
+		Toast.makeText(getApplicationContext(), "Preferencias:"  + t_refresco + " | " + area_busqueda + " | " + ordenar_por, Toast.LENGTH_LONG)
+				.show();
+
+		// -----------------------------------------------------------------------
+
 		mConnection = new MyServiceConnection();
-		
-        messenger = new Messenger(handler);
-        
+
+		messenger = new Messenger(handler);
+
 		// Start service using AlarmManager
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.SECOND, 10);
-        Intent intt = new Intent(this, PointsRefreshService.class);
-        intt.putExtra("MESSENGER", messenger);
-        PendingIntent pintent = PendingIntent.getService(this, 0, intt, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), Constants.LOCALSERVER_TIME_REFRESH, pintent);
-        
-        Intent intent = new Intent(this, PointsRefreshService.class);
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.SECOND, 10);
+		Intent intt = new Intent(this, PointsRefreshService.class);
+		intt.putExtra("MESSENGER", messenger);
+		PendingIntent pintent = PendingIntent.getService(this, 0, intt,
+				PendingIntent.FLAG_CANCEL_CURRENT);
+		AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		alarm.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+				cal.getTimeInMillis(), Constants.LOCALSERVER_TIME_REFRESH,
+				pintent);
+
+		Intent intent = new Intent(this, PointsRefreshService.class);
 		intent.putExtra("MESSENGER", messenger);
 		intent.putExtra("user", user);
 		intent.putExtra("pass", pass);
-		bindService(intent, mConnection, Context.BIND_ALLOW_OOM_MANAGEMENT);   
+		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
-		
-		//SHARED PREFERENCES
-		
-		SharedPreferences prefs =getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
-			   SharedPreferences.Editor editor = prefs.edit();
-			   editor.putString(Constants.TIEMPO_REFRESCO,t_refresco);
-			   
-			   editor.putString(Constants.AREA_BUSQUEDA,area_busqueda);
-			   editor.putString(Constants.ORDENAR_POR,ordenar_por);
-			   editor.commit();
-		
-		//----------------------------------------------------------
-		
+
+		// SHARED PREFERENCES
+
+		SharedPreferences prefs = getSharedPreferences("MisPreferencias",
+				Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(Constants.TIEMPO_REFRESCO, t_refresco);
+
+		editor.putString(Constants.AREA_BUSQUEDA, area_busqueda);
+		editor.putString(Constants.ORDENAR_POR, ordenar_por);
+		editor.commit();
+
+		// ----------------------------------------------------------
+
 		Intent intt = new Intent(this, PointsRefreshService.class);
-        intt.putExtra("MESSENGER", messenger);
-        PendingIntent pintent = PendingIntent.getService(this, 0, intt, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		intt.putExtra("MESSENGER", messenger);
+		PendingIntent pintent = PendingIntent.getService(this, 0, intt,
+				PendingIntent.FLAG_CANCEL_CURRENT);
+		AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		alarm.cancel(pintent);
-		
-	    unbindService(mConnection);
-	    mConnection = null;
-	    localService.onDestroy();
+
+		unbindService(mConnection);
+		mConnection = null;
+		localService.onDestroy();
 	}
-	
-	private void repaintPoints(int result, ArrayList<WebPoint> auxpoints){
-		if (result == Constants.RESULT_OK){
-			Toast.makeText(getApplicationContext(),"Refresh", Toast.LENGTH_SHORT).show();
+
+	private void repaintPoints(int result, ArrayList<WebPoint> auxpoints) {
+		if (result == Constants.RESULT_OK) {
+			Toast.makeText(getApplicationContext(), "Refresh",
+					Toast.LENGTH_SHORT).show();
 			mapa.clear();
 			hashmap_idMarker_WebPoint.clear();
 			array_id_point_idMarker.clear();
-			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM", Locale.getDefault());
-			SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH:mm", Locale.getDefault());
+			listpoints.clear();
+			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM",
+					Locale.getDefault());
+			SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH:mm",
+					Locale.getDefault());
 			Date datenow = new Date();
-			long timeUmbral= datenow.getTime() - Constants.TIME_UMBRAL; // 24h en milisegundos
+			long timeUmbral = datenow.getTime() - Constants.TIME_UMBRAL; // 24h
+																			// en
+																			// milisegundos
 			String textoFecha = "No se obtuvo fecha";
 			for (WebPoint punto : auxpoints) {
-				if(punto.getFecha().getTime()<timeUmbral)
-					textoFecha = "Difundido el: " + dateFormat1.format(punto.getFecha());
-				else
-					textoFecha = "Difundido a las " + dateFormat2.format(punto.getFecha());
-				Marker marker = mapa.addMarker(new MarkerOptions()
-					.position(punto.getCords())
-					.title(textoFecha)
-					.snippet(punto.getUsuario() + " (" + Integer.toString(punto.getReputacion()) + ")")
-					.icon(BitmapDescriptorFactory
-							.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-					String key = marker.getId();
-					punto.setMarker(marker);
-					hashmap_idMarker_WebPoint.put(key, punto);
-					array_id_point_idMarker.put(punto.getId_punto(), key);
+				if (punto.getFecha().getTime() < timeUmbral)
+					textoFecha = "Difundido el: "
+							+ dateFormat1.format(punto.getFecha());
+				else {
+					textoFecha = "Difundido a las "
+							+ dateFormat2.format(punto.getFecha());
+				}
+				Marker marker = mapa
+						.addMarker(new MarkerOptions()
+								.position(punto.getCords())
+								.title(textoFecha)
+								.snippet(
+										punto.getUsuario()
+												+ " ("
+												+ Integer.toString(punto
+														.getReputacion()) + ")")
+								.icon(BitmapDescriptorFactory
+										.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+				String key = marker.getId();
+				punto.setMarker(marker);
+				hashmap_idMarker_WebPoint.put(key, punto);
+				array_id_point_idMarker.put(punto.getId_punto(), key);
+				listpoints.add(punto);
 			}
-			listpoints = auxpoints;
 			Collections.sort(listpoints, new Id_punto_Comparator());
-			adapter.notifyDataSetChanged();		
-		}
-		else if (result == Constants.RESULT_NOTUSER){
-			Toast.makeText(getApplicationContext(),"Usuario no reconocido", Toast.LENGTH_SHORT).show();
-		}else if (result == Constants.RESULT_ERR){
-			Toast.makeText(getApplicationContext(),"Error al actualizar información", Toast.LENGTH_SHORT).show();
+			adapter.notifyDataSetChanged();
+		} else if (result == Constants.RESULT_NOTUSER) {
+			Toast.makeText(getApplicationContext(), "Usuario no reconocido",
+					Toast.LENGTH_SHORT).show();
+		} else if (result == Constants.RESULT_ERR) {
+			Toast.makeText(getApplicationContext(),
+					"Error al actualizar información", Toast.LENGTH_SHORT)
+					.show();
 		}
 	}
-	
-	class Id_punto_Comparator implements Comparator<WebPoint>{
+
+	class Id_punto_Comparator implements Comparator<WebPoint> {
 		@Override
 		public int compare(WebPoint p1, WebPoint p2) {
-			return Integer.valueOf(p1.getId_punto()).compareTo(Integer.valueOf(p2.getId_punto()));
+			return Integer.valueOf(p1.getId_punto()).compareTo(
+					Integer.valueOf(p2.getId_punto()));
 		}
-		
+
 	}
-	
+
 	class AdaptadorPuntos extends ArrayAdapter<WebPoint> {
 		Activity context;
 
@@ -294,12 +324,13 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			LayoutInflater inflater = context.getLayoutInflater();
 			View v = inflater.inflate(R.layout.vista_punto, null);
 
-			//Creamos un objeto directivo
+			// Creamos un objeto directivo
 			WebPoint punto = listpoints.get(position);
-			//Rellenamos el nombre
+			// Rellenamos el nombre
 			TextView nombre = (TextView) v.findViewById(R.id.textNameList);
-			nombre.setText(punto.getId_punto() + ": " + punto.getUsuario() + " (" + punto.getReputacion() + ")");
-			//Rellenamos el cargo
+			nombre.setText(punto.getId_punto() + ": " + punto.getUsuario()
+					+ " (" + punto.getReputacion() + ")");
+			// Rellenamos el cargo
 			TextView coordenadas = (TextView) v.findViewById(R.id.textLatLng);
 			coordenadas.setText(punto.getCords().toString());
 
@@ -314,89 +345,90 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		getMenuInflater().inflate(R.menu.menu_opciones_aparkaya, menu);
 		return true;
 	}
-	
-	 //código para cada opción de menú
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) 
-    {
-    	int segundos=0;
-    	int distancia_busqueda=0;
-    	String ordenado_por="";
-    	
-        switch (item.getItemId()) 
-        {
-            case R.id.t_refresco_5:
-            	t_refresco="5 segundos";
-            	segundos=5;
-                TiempoRefresco(segundos);
-                return true;
-            case R.id.t_refresco_10:
-            	t_refresco="10 segundos";
-            	segundos=10;
-            	TiempoRefresco(segundos);
-                return true;                
-            case R.id.t_refresco_15:
-            	t_refresco="15 segundos";
-            	segundos=15;
-            	TiempoRefresco(segundos);
-                return true;
-            case R.id.area_500m:
-            	distancia_busqueda=500;
-            	area_busqueda="500 metros";
-            	AreaBusqueda(distancia_busqueda);
-                return true;
-            case R.id.area_1km:
-            	distancia_busqueda=1000;
-            	area_busqueda="1 km";
-            	AreaBusqueda(distancia_busqueda);
-                return true; 
-            case R.id.ordena_nombre:
-            	ordenado_por="nombre";
-            	ordenar_por="nombre";
-            	menuOrdenar(ordenado_por);
-                return true;
-            case R.id.ordena_distancia:
-            	ordenado_por="distancia";
-            	ordenar_por="distancia";
-            	menuOrdenar(ordenado_por);
-                return true;
-            case R.id.info_cuenta:
-            	menuInfoCuenta();
-                return true;
-                
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-    
-    public void menuInfoCuenta(){
-    	
-    	Intent i = new Intent(this,InfoCuenta.class);   	
-        	startActivity(i);
-    	
-    }
-    
-    public void TiempoRefresco(int segundos_refresco){
-    	
-    	Toast.makeText(getApplicationContext(),t_refresco, Toast.LENGTH_SHORT).show();
-   	
-    	//FALTA QUE CAMBIE EL INTERVALO DE LA ALARMA PARA EL REFRESCO
-    	
-    }
-    
-    public void AreaBusqueda(int area_busqueda){
-    	
-    	Toast.makeText(getApplicationContext(),area_busqueda, Toast.LENGTH_SHORT).show();
-		//FALTA HACER EL PHP para ordenar segun la distancia pasada
-    	
-    }
-    
-    public void menuOrdenar(String ordenador_por){
-    	
-    	Toast.makeText(getApplicationContext(),ordenar_por, Toast.LENGTH_SHORT).show();
-    	//Falta hacer php para ordenar segun lo que le pases
-    	
-    }
+
+	// código para cada opción de menú
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int segundos = 0;
+		int distancia_busqueda = 0;
+		String ordenado_por = "";
+
+		switch (item.getItemId()) {
+		case R.id.t_refresco_5:
+			t_refresco = "5 segundos";
+			segundos = 5;
+			TiempoRefresco(segundos);
+			return true;
+		case R.id.t_refresco_10:
+			t_refresco = "10 segundos";
+			segundos = 10;
+			TiempoRefresco(segundos);
+			return true;
+		case R.id.t_refresco_15:
+			t_refresco = "15 segundos";
+			segundos = 15;
+			TiempoRefresco(segundos);
+			return true;
+		case R.id.area_500m:
+			distancia_busqueda = 500;
+			area_busqueda = "500 metros";
+			AreaBusqueda(distancia_busqueda);
+			return true;
+		case R.id.area_1km:
+			distancia_busqueda = 1000;
+			area_busqueda = "1 km";
+			AreaBusqueda(distancia_busqueda);
+			return true;
+		case R.id.ordena_nombre:
+			ordenado_por = "nombre";
+			ordenar_por = "nombre";
+			menuOrdenar(ordenado_por);
+			return true;
+		case R.id.ordena_distancia:
+			ordenado_por = "distancia";
+			ordenar_por = "distancia";
+			menuOrdenar(ordenado_por);
+			return true;
+		case R.id.info_cuenta:
+			menuInfoCuenta();
+			return true;
+
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	public void menuInfoCuenta() {
+
+		Intent i = new Intent(this, InfoCuenta.class);
+		startActivity(i);
+
+	}
+
+	public void TiempoRefresco(int segundos_refresco) {
+
+		Toast.makeText(getApplicationContext(), t_refresco, Toast.LENGTH_SHORT)
+				.show();
+
+		// FALTA QUE CAMBIE EL INTERVALO DE LA ALARMA PARA EL REFRESCO
+
+	}
+
+	public void AreaBusqueda(int distancia_busqueda) {
+
+		Toast.makeText(getApplicationContext(), area_busqueda,
+				Toast.LENGTH_SHORT).show();
+		// FALTA HACER EL PHP para ordenar segun la distancia pasada
+
+	}
+
+	public void menuOrdenar(String ordenador_por) {
+
+		Toast.makeText(getApplicationContext(), ordenar_por, Toast.LENGTH_SHORT)
+				.show();
+		// Falta hacer php para ordenar segun lo que le pases
+
+	}
 
 	@Override
 	public void onTabSelected(ActionBar.Tab tab,
@@ -432,11 +464,10 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			// Return a PlaceholderFragment (defined as a static inner class
 			// below).
 			Fragment fragment;
-			
-			if(position==0){
+
+			if (position == 0) {
 				fragment = new FragmentoMapa();
-			}
-			else{			
+			} else {
 				fragment = new FragmentoHuecos();
 			}
 			return fragment;
@@ -461,7 +492,8 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		}
 	}
 
-	public class FragmentoMapa extends Fragment implements OnMapLongClickListener, OnInfoWindowClickListener{
+	public class FragmentoMapa extends Fragment implements
+			OnMapLongClickListener, OnInfoWindowClickListener {
 
 		private Button save, difundir;
 
@@ -473,48 +505,38 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		@SuppressLint("ValidFragment")
 		public FragmentoMapa() {
 		}
-		
+
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			
-			View rootView = inflater.inflate(R.layout.fragment_mapa, container, false);
+
+			View rootView = inflater.inflate(R.layout.fragment_mapa, container,
+					false);
 			save = (Button) rootView.findViewById(R.id.btnguardar);
 			save.setOnClickListener(new btnGuardarListener());
-			
+
 			difundir = (Button) rootView.findViewById(R.id.btndifundir);
 			difundir.setOnClickListener(new btnDifundir());
-			
+
 			initilizeMap();
 			return rootView;
 		}
-		
-		@Override
-		public void onResume(){
-			super.onResume();
-			if (mapa.getMyLocation() != null)
-				mapa.animateCamera(CameraUpdateFactory.newLatLngZoom(
-						new LatLng( mapa.getMyLocation().getLatitude(), 
-								mapa.getMyLocation().getLongitude()), 15));
-			else
-				Toast.makeText(getApplicationContext(),
-						"Esperando ubicacion", Toast.LENGTH_SHORT).show();
-		}
 
-		/** function to load map. 
-		 *  If map is not created it will create it for you
+		/**
+		 * function to load map. If map is not created it will create it for you
 		 */
 		private void initilizeMap() {
-	
+
 			if (mapa == null) {
-				mapa = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+				mapa = ((SupportMapFragment) getSupportFragmentManager()
+						.findFragmentById(R.id.map)).getMap();
 
 				// check if map is created successfully or not
 				if (mapa == null) {
 					Toast.makeText(getApplicationContext(),
-							"Sorry! unable to create maps", Toast.LENGTH_SHORT).show();
-				}
-				else{
+							"Sorry! unable to create maps", Toast.LENGTH_SHORT)
+							.show();
+				} else {
 					mapa.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 					mapa.setMyLocationEnabled(true);
 					mapa.getUiSettings().setZoomControlsEnabled(false);
@@ -525,26 +547,30 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 
 			}
 		}
-		
-		private void iniciarTask(){
-			//RetrieveFeed task = new RetrieveFeed();
-			//task.execute();
+
+		private void iniciarTask() {
+			// RetrieveFeed task = new RetrieveFeed();
+			// task.execute();
 		}
 
 		@Override
 		public void onMapLongClick(LatLng puntoPulsado) {
-			/*ParserXML_DOM parser = new ParserXML_DOM(getApplicationContext());
-
-			parser.guardarPunto("prueba", puntoPulsado);
-
-			iniciarTask();*/
+			/*
+			 * ParserXML_DOM parser = new
+			 * ParserXML_DOM(getApplicationContext());
+			 * 
+			 * parser.guardarPunto("prueba", puntoPulsado);
+			 * 
+			 * iniciarTask();
+			 */
 			new asyncSendPoint().execute(puntoPulsado);
 		}
 
 		@Override
 		public void onInfoWindowClick(Marker marker) {
 			Intent intent = new Intent(AparkaYa.this, DetailsDialog.class);
-			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+			SimpleDateFormat dateFormat = new SimpleDateFormat(
+					"dd-MM-yyyy HH:mm:ss", Locale.getDefault());
 			WebPoint p = hashmap_idMarker_WebPoint.get(marker.getId());
 			intent.putExtra("user", user);
 			intent.putExtra("pass", pass);
@@ -556,63 +582,75 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			intent.putExtra(Constants.FECHA, dateFormat.format(p.getFecha()));
 			startActivity(intent);
 		}
-		
-		public class btnGuardarListener implements OnClickListener
-		{
+
+		public class btnGuardarListener implements OnClickListener {
 			@Override
 			public void onClick(View v) {
-				ParserXML_DOM parser = new ParserXML_DOM(getApplicationContext());
+				ParserXML_DOM parser = new ParserXML_DOM(
+						getApplicationContext());
 
-				parser.guardarPunto("Coche", new LatLng(mapa.getCameraPosition().target.latitude,
-						mapa.getCameraPosition().target.longitude));
+				parser.guardarPunto("Coche",
+						new LatLng(mapa.getCameraPosition().target.latitude,
+								mapa.getCameraPosition().target.longitude));
 
 				iniciarTask();
 			}
 		}
-		
-		public class btnDifundir implements OnClickListener
-		{
+
+		public class btnDifundir implements OnClickListener {
 			@Override
 			public void onClick(View v) {
 				if (mapa.getMyLocation() != null)
-					new asyncSendPoint().execute(new LatLng( mapa.getMyLocation().getLatitude(), mapa.getMyLocation().getLongitude()));
+					new asyncSendPoint().execute(new LatLng(mapa
+							.getMyLocation().getLatitude(), mapa
+							.getMyLocation().getLongitude()));
 				else
 					Toast.makeText(getApplicationContext(),
-							"Ubicación GPS no detectada", Toast.LENGTH_SHORT).show();
+							"Ubicación GPS no detectada", Toast.LENGTH_SHORT)
+							.show();
 			}
 		}
-		
-		private class asyncSendPoint extends AsyncTask< LatLng, String, String > {
-			
+
+		private class asyncSendPoint extends AsyncTask<LatLng, String, String> {
+
 			protected String doInBackground(LatLng... params) {
 
 				LatLng ll = params[0];
 				int id = -1;
-				/*Creamos un ArrayList del tipo nombre valor para agregar los datos recibidos por los parametros anteriores
-				 * y enviarlo mediante POST a nuestro sistema para relizar la validacion*/ 
-				ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
+				/*
+				 * Creamos un ArrayList del tipo nombre valor para agregar los
+				 * datos recibidos por los parametros anteriores y enviarlo
+				 * mediante POST a nuestro sistema para relizar la validacion
+				 */
+				ArrayList<NameValuePair> postparameters2send = new ArrayList<NameValuePair>();
 
 				SimpleDateFormat dateFormat = new SimpleDateFormat(
-		                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-		        Date date = new Date();
-		        String fecha = dateFormat.format(date);
+						"yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+				Date date = new Date();
+				String fecha = dateFormat.format(date);
 
-				postparameters2send.add(new BasicNameValuePair("user",user));
-				postparameters2send.add(new BasicNameValuePair("password",pass));
-				postparameters2send.add(new BasicNameValuePair("latitud",Double.toString(ll.latitude)));
-				postparameters2send.add(new BasicNameValuePair("longitud",Double.toString(ll.longitude)));
+				postparameters2send.add(new BasicNameValuePair("user", user));
+				postparameters2send
+						.add(new BasicNameValuePair("password", pass));
+				postparameters2send.add(new BasicNameValuePair("latitud",
+						Double.toString(ll.latitude)));
+				postparameters2send.add(new BasicNameValuePair("longitud",
+						Double.toString(ll.longitude)));
 				postparameters2send.add(new BasicNameValuePair("fecha", fecha));
 
-				//realizamos una peticion y como respuesta obtenes un array JSON
-				JSONArray jdata=post.getserverdata(postparameters2send, "http://aparkaya.webcindario.com/enviarPunto.php");
+				// realizamos una peticion y como respuesta obtenes un array
+				// JSON
+				JSONArray jdata = post.getserverdata(postparameters2send,
+						"http://aparkaya.webcindario.com/enviarPunto.php");
 
-				//si lo que obtuvimos no es null
+				// si lo que obtuvimos no es null
 				if (jdata != null && jdata.length() > 0) {
 
 					JSONObject json_data; // creamos un objeto JSON
 					try {
 						json_data = jdata.getJSONObject(0); // leemos el primer
-															// segmento en nuestro
+															// segmento en
+															// nuestro
 															// caso el unico
 						id = json_data.getInt("id");// accedemos al valor
 					} catch (JSONException e) {
@@ -623,9 +661,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 					// validamos el valor obtenido
 					if (id == 1) {
 						return "ok"; //
-					}
-					else if (id == 2)
-					{
+					} else if (id == 2) {
 						return "notUser";
 					}
 				}
@@ -635,168 +671,140 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 
 			protected void onPostExecute(String result) {
 
-				if (result.equals("ok")){
-					Toast.makeText(getApplicationContext(),"Punto enviado correctamente", Toast.LENGTH_SHORT).show();
-				}
-				else if (result.equals("notUser")){
-					Toast.makeText(getApplicationContext(),"Usuario no reconocido", Toast.LENGTH_SHORT).show();
-				}
-				else{
-					Toast.makeText(getApplicationContext(),"Fallo al enviar el punto", Toast.LENGTH_SHORT).show();
+				if (result.equals("ok")) {
+					Toast.makeText(getApplicationContext(),
+							"Punto enviado correctamente", Toast.LENGTH_SHORT)
+							.show();
+				} else if (result.equals("notUser")) {
+					Toast.makeText(getApplicationContext(),
+							"Usuario no reconocido", Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(getApplicationContext(),
+							"Fallo al enviar el punto", Toast.LENGTH_SHORT)
+							.show();
 				}
 			}
 		}
 		/*
-		private class asyncCallPoints extends AsyncTask< Void, String, String > {
-			
-			Vector<Punto> auxpoints = new Vector<Punto>();
-
-			protected String doInBackground(Void... params) {
-
-				ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
-				postparameters2send.add(new BasicNameValuePair("user",user));
-				postparameters2send.add(new BasicNameValuePair("password",pass));
-				
-				//realizamos una peticion y como respuesta obtenes un array JSON
-				JSONArray jdata=post.getserverdata(postparameters2send, "http://aparkaya.webcindario.com/obtenerPuntos.php");
-
-				//si lo que obtuvimos no es null
-				if (jdata!=null && jdata.length() > 0){
-
-					try {
-						for (int i = 0; i < jdata.length(); i++) {
-					        JSONObject jsonObject = jdata.getJSONObject(i);
-					     
-					        auxpoints.add(new Punto(jsonObject.getString("id_usuario"), 
-					    		new LatLng(jsonObject.getDouble("latitud"), 
-					    				jsonObject.getDouble("longitud")),
-					    				jsonObject.getInt("libre")));
-						}
-					    
-					}
-					catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						try {
-							JSONObject json_data = jdata.getJSONObject(0);
-																
-							int id = json_data.getInt("id");
-
-							if (id == 2)
-							{
-								return "notUser";
-							}
-						} catch (JSONException e2) {
-							// TODO Auto-generated catch block
-							e2.printStackTrace();
-						}
-					}              
-					return "ok"; //lista de puntos obtenida correctamente
-
-				}     
-				return "err"; //error
-
-			}
-
-			protected void onPostExecute(String result) {
-
-				if (result.equals("ok")){
-					Toast.makeText(getApplicationContext(),"Puntos obtenidos correctamente", Toast.LENGTH_SHORT).show();
-					points = auxpoints;//Sustituimos la lista de puntos antigua por la nueva
-					mapa.clear();
-
-					for (Punto punto : points) {
-						if (punto.getNombre().equals("Coche"))
-							mapa.addMarker(new MarkerOptions()
-							.position(punto.getCords())
-							.title(punto.getNombre())
-							.snippet(punto.getNombre())
-							.icon(BitmapDescriptorFactory
-									.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-						else
-							mapa.addMarker(new MarkerOptions()
-							.position(punto.getCords())
-							.title(punto.getNombre())
-							.snippet(punto.getNombre())
-							.icon(BitmapDescriptorFactory
-									.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-					}
-				}
-				else if (result.equals("notUser")){
-					Toast.makeText(getApplicationContext(),"Usuario no reconocido", Toast.LENGTH_SHORT).show();
-				}else{
-					Toast.makeText(getApplicationContext(),"No se pudieron obtener los puntos", Toast.LENGTH_SHORT).show();
-				}
-			}
-		}
-		
-		private class RetrieveFeed extends android.os.AsyncTask<String,Integer,Boolean> {
-
-
-			protected Boolean doInBackground(String... params) {
-
-				ParserXML_DOM parser = new ParserXML_DOM(getApplicationContext());
-				points = parser.listaPuntos();
-				
-				return true;
-			}
-
-			protected void onPostExecute(Boolean result) {
-				
-				mapa.clear();
-
-				for (Punto punto : points) {
-					if (punto.getNombre().equals("Coche"))
-						mapa.addMarker(new MarkerOptions()
-						.position(punto.getCords())
-						.title(punto.getNombre())
-						.snippet(punto.getNombre())
-						.icon(BitmapDescriptorFactory
-								.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-					else
-						mapa.addMarker(new MarkerOptions()
-						.position(punto.getCords())
-						.title(punto.getNombre())
-						.snippet(punto.getNombre())
-						.icon(BitmapDescriptorFactory
-								.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-				}
-			}
-
-		}*/	
+		 * private class asyncCallPoints extends AsyncTask< Void, String, String
+		 * > {
+		 * 
+		 * Vector<Punto> auxpoints = new Vector<Punto>();
+		 * 
+		 * protected String doInBackground(Void... params) {
+		 * 
+		 * ArrayList<NameValuePair> postparameters2send= new
+		 * ArrayList<NameValuePair>(); postparameters2send.add(new
+		 * BasicNameValuePair("user",user)); postparameters2send.add(new
+		 * BasicNameValuePair("password",pass));
+		 * 
+		 * //realizamos una peticion y como respuesta obtenes un array JSON
+		 * JSONArray jdata=post.getserverdata(postparameters2send,
+		 * "http://aparkaya.webcindario.com/obtenerPuntos.php");
+		 * 
+		 * //si lo que obtuvimos no es null if (jdata!=null && jdata.length() >
+		 * 0){
+		 * 
+		 * try { for (int i = 0; i < jdata.length(); i++) { JSONObject
+		 * jsonObject = jdata.getJSONObject(i);
+		 * 
+		 * auxpoints.add(new Punto(jsonObject.getString("id_usuario"), new
+		 * LatLng(jsonObject.getDouble("latitud"),
+		 * jsonObject.getDouble("longitud")), jsonObject.getInt("libre"))); }
+		 * 
+		 * } catch (JSONException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); try { JSONObject json_data =
+		 * jdata.getJSONObject(0);
+		 * 
+		 * int id = json_data.getInt("id");
+		 * 
+		 * if (id == 2) { return "notUser"; } } catch (JSONException e2) { //
+		 * TODO Auto-generated catch block e2.printStackTrace(); } } return
+		 * "ok"; //lista de puntos obtenida correctamente
+		 * 
+		 * } return "err"; //error
+		 * 
+		 * }
+		 * 
+		 * protected void onPostExecute(String result) {
+		 * 
+		 * if (result.equals("ok")){
+		 * Toast.makeText(getApplicationContext(),"Puntos obtenidos correctamente"
+		 * , Toast.LENGTH_SHORT).show(); points = auxpoints;//Sustituimos la
+		 * lista de puntos antigua por la nueva mapa.clear();
+		 * 
+		 * for (Punto punto : points) { if (punto.getNombre().equals("Coche"))
+		 * mapa.addMarker(new MarkerOptions() .position(punto.getCords())
+		 * .title(punto.getNombre()) .snippet(punto.getNombre())
+		 * .icon(BitmapDescriptorFactory
+		 * .defaultMarker(BitmapDescriptorFactory.HUE_RED))); else
+		 * mapa.addMarker(new MarkerOptions() .position(punto.getCords())
+		 * .title(punto.getNombre()) .snippet(punto.getNombre())
+		 * .icon(BitmapDescriptorFactory
+		 * .defaultMarker(BitmapDescriptorFactory.HUE_GREEN))); } } else if
+		 * (result.equals("notUser")){
+		 * Toast.makeText(getApplicationContext(),"Usuario no reconocido",
+		 * Toast.LENGTH_SHORT).show(); }else{
+		 * Toast.makeText(getApplicationContext
+		 * (),"No se pudieron obtener los puntos", Toast.LENGTH_SHORT).show(); }
+		 * } }
+		 * 
+		 * private class RetrieveFeed extends
+		 * android.os.AsyncTask<String,Integer,Boolean> {
+		 * 
+		 * 
+		 * protected Boolean doInBackground(String... params) {
+		 * 
+		 * ParserXML_DOM parser = new ParserXML_DOM(getApplicationContext());
+		 * points = parser.listaPuntos();
+		 * 
+		 * return true; }
+		 * 
+		 * protected void onPostExecute(Boolean result) {
+		 * 
+		 * mapa.clear();
+		 * 
+		 * for (Punto punto : points) { if (punto.getNombre().equals("Coche"))
+		 * mapa.addMarker(new MarkerOptions() .position(punto.getCords())
+		 * .title(punto.getNombre()) .snippet(punto.getNombre())
+		 * .icon(BitmapDescriptorFactory
+		 * .defaultMarker(BitmapDescriptorFactory.HUE_RED))); else
+		 * mapa.addMarker(new MarkerOptions() .position(punto.getCords())
+		 * .title(punto.getNombre()) .snippet(punto.getNombre())
+		 * .icon(BitmapDescriptorFactory
+		 * .defaultMarker(BitmapDescriptorFactory.HUE_GREEN))); } }
+		 * 
+		 * }
+		 */
 	}
-	
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
+
 	public class FragmentoHuecos extends Fragment {
-		
+
 		ViewGroup vg;
-		
+
 		@SuppressLint("ValidFragment")
 		public FragmentoHuecos() {
 		}
-					 
-	    @Override
-	    public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState) {
-	    	vg = container;
-	        return inflater.inflate(R.layout.fragment_huecos, container, false);
-	    }
-	    
-	 
-	    @Override
-	    public void onActivityCreated(Bundle state) {
-	        super.onActivityCreated(state);
-	        lstListado = (ListView)getView().findViewById(R.id.listView1);
-	        lstListado.setOnItemClickListener(onclick_punto);
-	        lstListado.setAdapter(adapter);
-	    }
-			
-		OnItemClickListener onclick_punto = new OnItemClickListener() 
-		{
-			public void onItemClick(AdapterView<?> parent,View view, int position, long id)
-			{
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			vg = container;
+			return inflater.inflate(R.layout.fragment_huecos, container, false);
+		}
+
+		@Override
+		public void onActivityCreated(Bundle state) {
+			super.onActivityCreated(state);
+			lstListado = (ListView) getView().findViewById(R.id.listView1);
+			lstListado.setOnItemClickListener(onclick_punto);
+			lstListado.setAdapter(adapter);
+		}
+
+		OnItemClickListener onclick_punto = new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
 			}
-		};	
+		};
 	}
 }

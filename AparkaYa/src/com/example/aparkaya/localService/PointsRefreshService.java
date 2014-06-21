@@ -62,11 +62,11 @@ public class PointsRefreshService extends Service{
 		post = new HttpPostAux();
 		Toast.makeText(getApplicationContext(), "Service Created", Toast.LENGTH_SHORT).show();
 		if (outMessenger == null)
-			   onDestroy();
-			  else{
-			   super.onCreate();
-			   new asyncCallPoints().execute();
-			  }	
+			onDestroy();
+		else{
+			super.onCreate();
+			new asyncCallPoints().execute();
+		}
 	}
 
 	@Override
