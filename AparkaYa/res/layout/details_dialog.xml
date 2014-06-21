@@ -1,26 +1,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#555555"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.aparkaya.DetailsDialog"
-    tools:ignore="NestedWeights"
-    android:background="#555555" >
+    tools:ignore="NestedWeights" >
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginBottom="20dp"
         android:layout_weight="1"
         android:orientation="horizontal" >
 
         <TextView
             android:id="@+id/tvTitUser"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:ems="10"
@@ -33,7 +30,7 @@
 
         <TextView
             android:id="@+id/tvContUser"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:ems="10"
@@ -45,14 +42,14 @@
     
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginBottom="20dp"
         android:layout_weight="1"
         android:orientation="horizontal" >
 
         <TextView
             android:id="@+id/tvTitFecha"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:ems="10"
@@ -65,7 +62,7 @@
 
         <TextView
             android:id="@+id/tvContFecha"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:ems="10"
@@ -77,14 +74,14 @@
     
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginBottom="20dp"
         android:layout_weight="1"
         android:orientation="horizontal" >
 
         <TextView
             android:id="@+id/tvTitLongitude"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:ems="10"
@@ -96,7 +93,7 @@
 
         <TextView
             android:id="@+id/tvContLongitude"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:ems="10"
@@ -108,14 +105,14 @@
     
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginBottom="20dp"
         android:layout_weight="1"
         android:orientation="horizontal" >
 
         <TextView
             android:id="@+id/tvTitLatitude"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:ems="10"
@@ -127,7 +124,7 @@
 
         <TextView
             android:id="@+id/tvContLatitude"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:ems="10"
@@ -139,14 +136,14 @@
     
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginBottom="20dp"
         android:layout_weight="1"
         android:orientation="horizontal" >
 
         <TextView
             android:id="@+id/tvTitReputation"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:ems="10"
@@ -158,7 +155,7 @@
 
         <TextView
             android:id="@+id/tvContReputation"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:ems="10"
@@ -169,43 +166,39 @@
     </LinearLayout>
     
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginBottom="20dp"
         android:layout_weight="1"
-        android:layout_alignParentBottom="true"
         android:orientation="horizontal" >
 
         <Button
             android:id="@+id/btnOcupar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:drawableLeft="@drawable/truck" />
+            android:drawableLeft="@drawable/truck" 
+            android:onClick="Aparcar"/>
 
         <Button
             android:id="@+id/btnVotarPositivo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:background="@android:color/transparent"
-            android:drawableLeft="@drawable/smiley" />
+            android:drawableLeft="@drawable/smiley"  
+            android:onClick="votarPositivo"/>
         
         <Button
             android:id="@+id/btnVotarNegativo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:background="@android:color/transparent"
-            android:drawableLeft="@drawable/sad" />
+            android:drawableLeft="@drawable/sad"  
+            android:onClick="votarNegativo"/>
         
          <Button
             android:id="@+id/btnEliminar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="40dp"
-            android:background="@android:color/transparent"
-            android:drawableLeft="@drawable/untitled" />
+            android:drawableLeft="@drawable/untitled"  
+            android:onClick="Eliminar"/>
 
     </LinearLayout>
 

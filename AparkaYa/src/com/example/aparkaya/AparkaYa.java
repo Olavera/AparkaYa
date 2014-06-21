@@ -4,6 +4,7 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Vector;
@@ -17,6 +18,7 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.ListFragment;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
@@ -56,6 +58,7 @@ import com.example.aparkaya.localService.PointsRefreshService;
 import com.example.aparkaya.model.WebPoint;
 import com.example.aparkaya.parser.ParserXML_DOM;
 import com.example.aparkaya.webService.HttpPostAux;
+import com.google.android.gms.internal.az;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
@@ -91,10 +94,12 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	private HashMap<String, WebPoint> hashmap_idMarker_WebPoint;
 	private SparseArray<String> array_id_point_idMarker;
 	private GoogleMap mapa = null;
+	private ListView lstListado;
 
 	private Handler handler = new Handler() {
 		public void handleMessage(Message message) {
 			repaintPoints(message.arg1, localService.getVectorPoints());
+			actualizaListado();
 		}
 	};
 
@@ -229,6 +234,12 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		}else if (result == Constants.RESULT_ERR){
 			Toast.makeText(getApplicationContext(),"Error al actualizar información", Toast.LENGTH_SHORT).show();
 		}
+	}
+	
+	private void actualizaListado(){
+        WebPoint[] points;
+        points = hashmap_idMarker_WebPoint.values().toArray(new WebPoint[0]);
+        lstListado.setAdapter(new ArrayAdapter<WebPoint>(this, android.R.layout.simple_list_item_1, points));
 	}
 
 	@Override
@@ -399,6 +410,8 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			Intent intent = new Intent(AparkaYa.this, DetailsDialog.class);
 			SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
 			WebPoint p = hashmap_idMarker_WebPoint.get(marker.getId());
+			intent.putExtra("user", user);
+			intent.putExtra("pass", pass);
 			intent.putExtra(Constants.ID_PUNTO, p.getId_punto());
 			intent.putExtra(Constants.USUARIO, p.getUsuario());
 			intent.putExtra(Constants.LATITUD, p.getCords().latitude);
@@ -622,8 +635,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	 */
 	public class FragmentoHuecos extends Fragment {
 		
-		 ArrayList<WebPoint> lista_puntos = GetlistPuntos();
-		 private ListView lstListado;
+		
 		
 		@SuppressLint("ValidFragment")
 		public FragmentoHuecos() {
@@ -640,18 +652,19 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	    public void onActivityCreated(Bundle state) {
 	        super.onActivityCreated(state);
 	 
+
 	        lstListado = (ListView)getView().findViewById(R.id.listView1);
-	 
-	        lstListado.setAdapter(new AdaptadorPuntos(this));
 	        lstListado.setOnItemClickListener(onclick_punto);
+	        actualizaListado();
 	    }
 	 
-	    class AdaptadorPuntos extends ArrayAdapter<WebPoint> {
+	    /*class AdaptadorPuntos extends ArrayAdapter<WebPoint> {
 	 
 	            Activity context;
 	 
 	            AdaptadorPuntos(Fragment context) {
-	                super(context.getActivity(), R.layout.vista_punto, GetlistPuntos());
+	            	//Collection<WebPoint> points = hashmap_idMarker_WebPoint.values();
+	                super(context.getActivity(), R.layout.vista_punto, points.toArray());
 	                this.context = context.getActivity();
 	            }
 	 
@@ -672,59 +685,13 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	 
 	            return v;
 	        }
-	    }
+	    }*/
 			
 		OnItemClickListener onclick_punto = new OnItemClickListener() 
 		{
-			
-		
 			public void onItemClick(AdapterView<?> parent,View view, int position, long id)
 			{
-				
-				Intent i = new Intent(AparkaYa.this, LoginActivity.class);
-				
-				/*
-				Punto punto = lista_puntos.get(position);
-				
-				i.putExtra("name_dt", rst.getName());
-				i.putExtra("country_dt", rst.getCountry());
-				i.putExtra("city_dt", rst.getCity());
-		        i.putExtra("street_type_dt", rst.getStreet_type());
-		        i.putExtra("street_dt", rst.getStreet());
-		        i.putExtra("street_num_dt", String.valueOf(rst.getStreet_num()));
-		        i.putExtra("food_type_dt", rst.getTypeToString());
-		        i.putExtra("food_nac_dt", rst.getOrigen());
-		        i.putExtra("price_dt", String.valueOf(rst.getPrice()));
-		        i.putExtra("img_dt", String.valueOf(rst.getImg()));
-				*/
-		        startActivity(i);
 			}
-		};
-		
-		private ArrayList<WebPoint> GetlistPuntos(){
-			
-			ArrayList<WebPoint> listap = new ArrayList<WebPoint>();
-
-		  /*  Punto punto1 = new Punto();
-		    Punto punto2 = new Punto();
-		    Punto punto3 = new Punto();
-
-		    punto1.setNombre("punto1");
-		    punto1.setCords(new LatLng(40,40));
-		    punto1.setOcupado(0);
-		    listap.add(punto1);
-
-		    punto2.setNombre("punto2");
-		    punto2.setCords(new LatLng(80,50));
-		    punto2.setOcupado(1);
-		    listap.add(punto2);
-
-		    punto3.setNombre("punto3");
-		    punto3.setCords(new LatLng(75,40));
-		    punto3.setOcupado(0);
-		    listap.add(punto3);*/
-
-		    return listap;
-		    }   
-		}	
+		};	
+	}
 }
