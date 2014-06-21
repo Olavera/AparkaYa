@@ -20,6 +20,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -80,9 +81,13 @@ public class DetailsDialog extends Activity {
 			fecha);
 		
 		Button btnAparcar = (Button) dialog.findViewById(R.id.btnOcupar);
+		btnAparcar.setOnClickListener(new Aparcar());
 		Button btnPositivo = (Button) dialog.findViewById(R.id.btnVotarPositivo);
+		btnPositivo.setOnClickListener(new votarPositivo());
 		Button btnNegativo = (Button) dialog.findViewById(R.id.btnVotarNegativo);
+		btnNegativo.setOnClickListener(new votarNegativo());
 		Button btnEliminar = (Button) dialog.findViewById(R.id.btnEliminar);
+		btnEliminar.setOnClickListener(new Eliminar());
 		
 		if(user.equals(wp.getUsuario()))
 		{
@@ -111,20 +116,33 @@ public class DetailsDialog extends Activity {
 		dialog.show();
 	}
 	
-	public void Aparcar(View v) {
-		new asyncPointActions().execute(Constants.ACTION_PARK);
+	
+	public class Aparcar implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			new asyncPointActions().execute(Constants.ACTION_PARK);
+		}
 	}
 	
-	public void votarPositivo(View v) {
-		new asyncPointActions().execute(Constants.ACTION_VOTE_POSSITIVE);
+	public class votarPositivo implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			new asyncPointActions().execute(Constants.ACTION_VOTE_POSSITIVE);
+		}
 	}
 	
-	public void votarNegativo(View v) {
-		new asyncPointActions().execute(Constants.ACTION_VOTE_NEGATIVE);
+	public class votarNegativo implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			new asyncPointActions().execute(Constants.ACTION_VOTE_NEGATIVE);
+		}
 	}
 	
-	public void Eliminar(View v) {
-		new asyncPointActions().execute(Constants.ACTION_DELETE);
+	public class Eliminar implements OnClickListener {
+		@Override
+		public void onClick(View v) {
+			new asyncPointActions().execute(Constants.ACTION_DELETE);
+		}
 	}
 	
 	private class asyncPointActions extends AsyncTask< Integer, String, Integer > {
