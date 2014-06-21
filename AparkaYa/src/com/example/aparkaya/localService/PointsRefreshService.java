@@ -34,7 +34,7 @@ public class PointsRefreshService extends Service{
 	public static final String NOTIFICATION = "com.example.aparkaya";
 	private String user, pass;
 	private Messenger outMessenger;
-	private Vector<WebPoint> points;
+	private ArrayList<WebPoint> points;
 	private HttpPostAux post;
 	private final IBinder mBinder = new MyBinder();
 
@@ -78,14 +78,14 @@ public class PointsRefreshService extends Service{
 		return START_NOT_STICKY;
 	}
 	
-	public Vector<WebPoint> getVectorPoints()
+	public ArrayList<WebPoint> getArrayPoints()
 	{
 		return points;
 	}
 	
 	private class asyncCallPoints extends AsyncTask< Void, String, Integer > {
 		
-		Vector<WebPoint> auxpoints = new Vector<WebPoint>();
+		ArrayList<WebPoint> auxpoints = new ArrayList<WebPoint>();
 
 		protected Integer doInBackground(Void... params) {
 

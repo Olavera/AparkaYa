@@ -3,6 +3,8 @@ package com.example.aparkaya;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -90,6 +92,8 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	private SparseArray<String> array_id_point_idMarker;
 	private GoogleMap mapa = null;
 	private ListView lstListado;
+	private AdaptadorPuntos adapter;
+	private ArrayList<WebPoint> listpoints;
 	
 	
 	private String t_refresco="";
@@ -100,8 +104,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 
 	private Handler handler = new Handler() {
 		public void handleMessage(Message message) {
-			repaintPoints(message.arg1, localService.getVectorPoints());
-			actualizaListado();
+			repaintPoints(message.arg1, localService.getArrayPoints());
 		}
 	};
 
@@ -163,6 +166,8 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		pass = getIntent().getStringExtra("pass");
 		hashmap_idMarker_WebPoint = new HashMap<String, WebPoint>();
 		array_id_point_idMarker = new SparseArray<String>();
+		listpoints = new ArrayList<WebPoint>();
+        adapter = new AdaptadorPuntos(this);
 	}
 	
 	@Override
@@ -230,7 +235,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	    localService.onDestroy();
 	}
 	
-	private void repaintPoints(int result, Vector<WebPoint> auxpoints){
+	private void repaintPoints(int result, ArrayList<WebPoint> auxpoints){
 		if (result == Constants.RESULT_OK){
 			Toast.makeText(getApplicationContext(),"Refresh", Toast.LENGTH_SHORT).show();
 			mapa.clear();
@@ -239,7 +244,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM", Locale.getDefault());
 			SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH:mm", Locale.getDefault());
 			Date datenow = new Date();
-			long timeUmbral= datenow.getTime() - 86400000; // 24h en milisegundos
+			long timeUmbral= datenow.getTime() - Constants.TIME_UMBRAL; // 24h en milisegundos
 			String textoFecha = "No se obtuvo fecha";
 			for (WebPoint punto : auxpoints) {
 				if(punto.getFecha().getTime()<timeUmbral)
@@ -257,6 +262,9 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 					hashmap_idMarker_WebPoint.put(key, punto);
 					array_id_point_idMarker.put(punto.getId_punto(), key);
 			}
+			listpoints = auxpoints;
+			Collections.sort(listpoints, new Id_punto_Comparator());
+			adapter.notifyDataSetChanged();		
 		}
 		else if (result == Constants.RESULT_NOTUSER){
 			Toast.makeText(getApplicationContext(),"Usuario no reconocido", Toast.LENGTH_SHORT).show();
@@ -265,31 +273,28 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 		}
 	}
 	
-	private void actualizaListado(){
-        WebPoint[] points;
-        points = hashmap_idMarker_WebPoint.values().toArray(new WebPoint[0]);
-        lstListado.setAdapter(new AdaptadorPuntos(this, points));
+	class Id_punto_Comparator implements Comparator<WebPoint>{
+		@Override
+		public int compare(WebPoint p1, WebPoint p2) {
+			return Integer.valueOf(p1.getId_punto()).compareTo(Integer.valueOf(p2.getId_punto()));
+		}
+		
 	}
 	
 	class AdaptadorPuntos extends ArrayAdapter<WebPoint> {
-
 		Activity context;
-		WebPoint[] points;
 
-		public AdaptadorPuntos(Activity act, WebPoint[] auxpoints) {
-			super(act, R.layout.vista_punto, auxpoints);
-			points = auxpoints;
+		public AdaptadorPuntos(Activity act) {
+			super(act, R.layout.vista_punto, listpoints);
 			this.context = act;
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
-
 			LayoutInflater inflater = context.getLayoutInflater();
 			View v = inflater.inflate(R.layout.vista_punto, null);
 
-			// Creamos un objeto directivo
-			WebPoint punto = points[position];
-
+			//Creamos un objeto directivo
+			WebPoint punto = listpoints.get(position);
 			//Rellenamos el nombre
 			TextView nombre = (TextView) v.findViewById(R.id.textNameList);
 			nombre.setText(punto.getId_punto() + ": " + punto.getUsuario() + " (" + punto.getReputacion() + ")");
@@ -781,18 +786,15 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	    @Override
 	    public void onActivityCreated(Bundle state) {
 	        super.onActivityCreated(state);
-	 
-
 	        lstListado = (ListView)getView().findViewById(R.id.listView1);
 	        lstListado.setOnItemClickListener(onclick_punto);
-	        actualizaListado();
+	        lstListado.setAdapter(adapter);
 	    }
 			
 		OnItemClickListener onclick_punto = new OnItemClickListener() 
 		{
 			public void onItemClick(AdapterView<?> parent,View view, int position, long id)
 			{
-				mSectionsPagerAdapter.instantiateItem(vg, 0);
 			}
 		};	
 	}

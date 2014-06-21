@@ -11,6 +11,7 @@ public class Constants {
 	public static final int RESULT_ERR = 6;
 	
 	public static final long LOCALSERVER_TIME_REFRESH = 20000;//20segundos por defecto
+	public static final long TIME_UMBRAL = 86400000;//24h en milisegundos
 	
 	public static final String ID_PUNTO = "id_punto";
 	public static final String USUARIO = "usuario";
