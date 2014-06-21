@@ -13,18 +13,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.aparkaya.model.WebPoint;
-import com.example.aparkaya.webService.HttpPostAux;
-import com.google.android.gms.maps.model.LatLng;
-
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.aparkaya.model.WebPoint;
+import com.example.aparkaya.webService.HttpPostAux;
+import com.google.android.gms.maps.model.LatLng;
 
 public class DetailsDialog extends Activity {
 	WebPoint wp;
@@ -34,8 +36,26 @@ public class DetailsDialog extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.details_dialog);
 		
+		Dialog dialog = new Dialog(this, R.style.newDialog);
+		
+		dialog.setContentView(R.layout.details_dialog);
+		dialog.setCancelable(true);
+		dialog.setCanceledOnTouchOutside(false);
+		
+		dialog.setOnKeyListener(new Dialog.OnKeyListener() {
+
+            @Override
+            public boolean onKey(DialogInterface arg0, int keyCode,
+                    KeyEvent event) {
+                // TODO Auto-generated method stub
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    finish();
+                }
+                return true;
+            }
+        });
+				
 		post = new HttpPostAux();
 		user = getIntent().getStringExtra("user");
 		pass = getIntent().getStringExtra("pass");
@@ -59,10 +79,10 @@ public class DetailsDialog extends Activity {
 			getIntent().getExtras().getInt(Constants.REPUTACION),
 			fecha);
 		
-		Button btnAparcar = (Button) findViewById(R.id.btnOcupar);
-		Button btnPositivo = (Button) findViewById(R.id.btnVotarPositivo);
-		Button btnNegativo = (Button) findViewById(R.id.btnVotarNegativo);
-		Button btnEliminar = (Button) findViewById(R.id.btnEliminar);
+		Button btnAparcar = (Button) dialog.findViewById(R.id.btnOcupar);
+		Button btnPositivo = (Button) dialog.findViewById(R.id.btnVotarPositivo);
+		Button btnNegativo = (Button) dialog.findViewById(R.id.btnVotarNegativo);
+		Button btnEliminar = (Button) dialog.findViewById(R.id.btnEliminar);
 		
 		if(user.equals(wp.getUsuario()))
 		{
@@ -75,11 +95,11 @@ public class DetailsDialog extends Activity {
 			btnEliminar.setEnabled(false);
 		}
 		
-		TextView tvContUser = (TextView)findViewById(R.id.tvContUser);
-		TextView tvFecha = (TextView)findViewById(R.id.tvContFecha);
-		TextView tvContLongitude = (TextView)findViewById(R.id.tvContLongitude);
-		TextView tvContLatitude = (TextView)findViewById(R.id.tvContLatitude);
-		TextView tvContReputation = (TextView)findViewById(R.id.tvContReputation);
+		TextView tvContUser = (TextView)dialog.findViewById(R.id.tvContUser);
+		TextView tvFecha = (TextView)dialog.findViewById(R.id.tvContFecha);
+		TextView tvContLongitude = (TextView)dialog.findViewById(R.id.tvContLongitude);
+		TextView tvContLatitude = (TextView)dialog.findViewById(R.id.tvContLatitude);
+		TextView tvContReputation = (TextView)dialog.findViewById(R.id.tvContReputation);
 		
 		DecimalFormat df = new DecimalFormat("#.######");
 		tvContUser.setText(wp.getUsuario());
@@ -87,6 +107,8 @@ public class DetailsDialog extends Activity {
 		tvContLongitude.setText(df.format(wp.getCords().longitude));
 		tvContLatitude.setText(df.format(wp.getCords().latitude));
 		tvContReputation.setText(Integer.toString(wp.getReputacion()));
+		
+		dialog.show();
 	}
 	
 	public void Aparcar(View v) {

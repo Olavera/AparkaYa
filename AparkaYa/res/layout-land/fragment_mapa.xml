@@ -12,14 +12,13 @@
          android:layout_height="fill_parent"
          class="com.google.android.gms.maps.SupportMapFragment" />
      
-
     <Button
         android:id="@+id/btnguardar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/btndifundir"
-        android:text="Save" />
+        android:drawableLeft="@drawable/truck" />
 
     <Button
         android:id="@+id/btndifundir"
@@ -27,6 +26,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:text="Difundir" />
+        android:drawableLeft="@drawable/location" />
 
 </RelativeLayout>

@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center"
-        android:text="No existen puntos"
+        android:text="@string/no_puntos"
         android:textSize="18sp"
         android:visibility="gone" >
 

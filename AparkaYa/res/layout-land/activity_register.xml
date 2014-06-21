@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:background="#555555">
+    android:background="#2d2d2d">
     
 	    <LinearLayout
 	        android:id="@+id/linearLayout0"
@@ -19,10 +19,9 @@
              android:id="@+id/imagen_registro"
              android:layout_width="60dp"
              android:layout_height="60dp"
+             android:layout_marginLeft="135dp"
              android:contentDescription="@string/descripcion_imagen_registro"
-             android:src="@drawable/ic_launcher"
-             android:layout_marginLeft="125dp"
-             />
+             android:src="@drawable/ic_launcher" />
  		
          <TextView
 	        android:id="@+id/cabecera_registro"
@@ -115,22 +114,25 @@
 	        
 	    </LinearLayout>
 	    
-	     <LinearLayout 
-        android:id="@+id/linearLayout3"
+	    <LinearLayout 
+        android:id="@+id/linearLayout5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        >
  		
          <Button
              android:id="@+id/boton_registro"
-             android:layout_width="wrap_content"
+             android:layout_width="0dp"
              android:layout_height="wrap_content"
-             android:layout_marginLeft="225dp"
-             android:layout_marginTop="20dp"
+             android:layout_marginLeft="150dp"
+             android:layout_marginRight="150dp"
+             android:layout_marginTop="30dp"
+             android:layout_weight="0.76"
+             android:background="#0099cc"
              android:drawableLeft="@drawable/ic_registro"
+             android:gravity="center_vertical|center_horizontal"
              android:onClick="Registra"
              android:text="@string/boton_registro"
-             android:background="#0099cc"
              android:textColor="#FFFFFF" />
         
     </LinearLayout>

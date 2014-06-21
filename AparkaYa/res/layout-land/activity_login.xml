@@ -8,7 +8,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".LoginActivity" 
-    android:background="#555555">
+    android:background="#2d2d2d">
     
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,7 +30,8 @@
              android:layout_gravity="center_vertical|center_horizontal"
              android:text="@string/aparkaya_login"
              android:textColor="#FFFFFF"
-             android:textSize="40sp" />
+             android:textSize="40sp"
+             android:textStyle="bold" />
 
     </LinearLayout>
 
@@ -83,11 +84,10 @@
             android:id="@+id/boton_registro"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
             android:layout_marginRight="20dp"
             android:layout_weight="1"
             android:background="#0099cc"
-            android:drawableStart="@drawable/ic_registrarme"
+            android:drawableLeft="@drawable/ic_registrarme"
             android:onClick="registrarUsuario"
             android:text="@string/boton_registro_login"
             android:textColor="#FFFFFF" />
