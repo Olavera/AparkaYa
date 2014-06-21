@@ -239,7 +239,37 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	private void actualizaListado(){
         WebPoint[] points;
         points = hashmap_idMarker_WebPoint.values().toArray(new WebPoint[0]);
-        lstListado.setAdapter(new ArrayAdapter<WebPoint>(this, android.R.layout.simple_list_item_1, points));
+        lstListado.setAdapter(new AdaptadorPuntos(this, points));
+	}
+	
+	class AdaptadorPuntos extends ArrayAdapter<WebPoint> {
+
+		Activity context;
+		WebPoint[] points;
+
+		public AdaptadorPuntos(Activity act, WebPoint[] auxpoints) {
+			super(act, R.layout.vista_punto, auxpoints);
+			points = auxpoints;
+			this.context = act;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+
+			LayoutInflater inflater = context.getLayoutInflater();
+			View v = inflater.inflate(R.layout.vista_punto, null);
+
+			// Creamos un objeto directivo
+			WebPoint punto = points[position];
+
+			//Rellenamos el nombre
+			TextView nombre = (TextView) v.findViewById(R.id.textNameList);
+			nombre.setText(punto.getId_punto() + ": " + punto.getUsuario() + " (" + punto.getReputacion() + ")");
+			//Rellenamos el cargo
+			TextView coordenadas = (TextView) v.findViewById(R.id.textLatLng);
+			coordenadas.setText(punto.getCords().toString());
+
+			return v;
+		}
 	}
 
 	@Override
@@ -635,7 +665,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	 */
 	public class FragmentoHuecos extends Fragment {
 		
-		
+		ViewGroup vg;
 		
 		@SuppressLint("ValidFragment")
 		public FragmentoHuecos() {
@@ -643,7 +673,7 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 					 
 	    @Override
 	    public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState) {
-	 
+	    	vg = container;
 	        return inflater.inflate(R.layout.fragment_huecos, container, false);
 	    }
 	    
@@ -657,40 +687,12 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	        lstListado.setOnItemClickListener(onclick_punto);
 	        actualizaListado();
 	    }
-	 
-	    /*class AdaptadorPuntos extends ArrayAdapter<WebPoint> {
-	 
-	            Activity context;
-	 
-	            AdaptadorPuntos(Fragment context) {
-	            	//Collection<WebPoint> points = hashmap_idMarker_WebPoint.values();
-	                super(context.getActivity(), R.layout.vista_punto, points.toArray());
-	                this.context = context.getActivity();
-	            }
-	 
-	            public View getView(int position, View convertView, ViewGroup parent) {
-	            	
-	            LayoutInflater inflater = context.getLayoutInflater();
-	            View v = inflater.inflate(R.layout.vista_punto, null);
-	            
-	            // Creamos un objeto directivo
-		        WebPoint punto = lista_puntos.get(position);
-	 
-		      //Rellenamos el nombre
-		        TextView nombre = (TextView) v.findViewById(R.id.textNameList);
-		        nombre.setText(punto.getUsuario());
-		        //Rellenamos el cargo
-		        TextView coordenadas = (TextView) v.findViewById(R.id.textLatLng);
-		        coordenadas.setText(punto.getCords().toString());
-	 
-	            return v;
-	        }
-	    }*/
 			
 		OnItemClickListener onclick_punto = new OnItemClickListener() 
 		{
 			public void onItemClick(AdapterView<?> parent,View view, int position, long id)
 			{
+				mSectionsPagerAdapter.instantiateItem(vg, 0);
 			}
 		};	
 	}
