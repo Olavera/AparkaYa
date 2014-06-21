@@ -22,7 +22,7 @@
             android:layout_weight="2"
             android:ems="10"
             android:gravity="center_vertical"
-            android:text="Usuario"
+            android:text="@string/usuario_details"
             android:textColor="#FFFFFF"
             android:textSize="23sp"
             android:textStyle="bold"
@@ -54,7 +54,7 @@
             android:layout_weight="2"
             android:ems="10"
             android:gravity="center_vertical"
-            android:text="Difundido"
+            android:text="@string/difundido_details"
             android:textColor="#FFFFFF"
             android:textSize="23sp"
             android:textStyle="bold"
@@ -86,7 +86,7 @@
             android:layout_weight="2"
             android:ems="10"
             android:gravity="left|center_vertical"
-            android:text="Longitud"
+            android:text="@string/longitud_details"
             android:textColor="#FFFFFF"
             android:textSize="23sp"
             android:textStyle="bold" />
@@ -117,7 +117,7 @@
             android:layout_weight="2"
             android:ems="10"
             android:gravity="left|center_vertical"
-            android:text="Latitud"
+            android:text="@string/latitud_details"
             android:textColor="#FFFFFF"
             android:textSize="23sp"
             android:textStyle="bold" />
@@ -148,9 +148,9 @@
             android:layout_weight="2"
             android:ems="10"
             android:gravity="left|center_vertical"
-            android:text="Reputacion"
+            android:text="@string/reputacion_details"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="23sp"
             android:textStyle="bold" />
 
         <TextView

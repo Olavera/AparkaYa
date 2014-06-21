@@ -25,5 +25,12 @@ public class Constants {
 	public static final int ACTION_DELETE = 4;
 	
 	public static final String ACTION = "action";
+	
+	public static final String TIEMPO_REFRESCO = "tiempo_refresco";
+	public static final String AREA_BUSQUEDA = "area_busqueda";
+	public static final String ORDENAR_POR = "ordenar_por";
+	
+	public static final String USUARIO_PREFS = "nombre_usuario";
+	public static final String CONTRASENIA_PREFS = "contrasenia_usuario";
 
 }

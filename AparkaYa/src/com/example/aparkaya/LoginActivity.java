@@ -8,11 +8,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.aparkaya.webService.HttpPostAux;
-
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -20,12 +19,18 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.aparkaya.webService.HttpPostAux;
+
 
 public class LoginActivity extends Activity {
 
 	
 	private EditText usuario, contrasenia;
-	HttpPostAux post;
+	private HttpPostAux post;
+	
+	private SharedPreferences prefs;
+	
+	private String nombre_usuario,contrasenia_usuario;
 	
 
 	@Override
@@ -40,6 +45,43 @@ public class LoginActivity extends Activity {
 	protected void onSaveInstanceState(Bundle outState) {
 		// TODO Auto-generated method stub
 		super.onSaveInstanceState(outState);
+	}
+
+	
+	
+
+
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		
+		prefs=getSharedPreferences("MisPreferencias",Context.MODE_PRIVATE);
+		
+		nombre_usuario = prefs.getString(Constants.USUARIO_PREFS,"");
+		contrasenia_usuario = prefs.getString(Constants.CONTRASENIA_PREFS, "");
+		
+		if(nombre_usuario!=""){
+			usuario.setText(nombre_usuario);
+		}
+		if(contrasenia_usuario!=""){
+			contrasenia.setText(contrasenia_usuario);
+		}
+
+	}
+
+
+
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		
+		SharedPreferences prefs =getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
+		   SharedPreferences.Editor editor = prefs.edit();
+		   editor.putString(Constants.USUARIO_PREFS,usuario.getText().toString());		   
+		   editor.putString(Constants.CONTRASENIA_PREFS,contrasenia.getText().toString());
+		   editor.commit();
 	}
 
 
@@ -61,7 +103,14 @@ public class LoginActivity extends Activity {
 	}
 	
 	public void validarUsuario(View v) {
+		
+		if(nombre_usuario!="" && contrasenia_usuario!=""){
+			new asynclogin().execute(nombre_usuario,contrasenia_usuario);
+
+		}
+		else{
 		new asynclogin().execute(usuario.getText().toString(),contrasenia.getText().toString());
+		}
 	}
 
 	public void registrarUsuario(View v) {

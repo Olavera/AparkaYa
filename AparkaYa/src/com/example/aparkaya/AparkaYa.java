@@ -1,10 +1,9 @@
 package com.example.aparkaya;
 
-import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Vector;
@@ -18,12 +17,12 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.ListFragment;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -37,14 +36,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.text.method.DateTimeKeyListener;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -58,11 +55,9 @@ import com.example.aparkaya.localService.PointsRefreshService;
 import com.example.aparkaya.model.WebPoint;
 import com.example.aparkaya.parser.ParserXML_DOM;
 import com.example.aparkaya.webService.HttpPostAux;
-import com.google.android.gms.internal.az;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
-import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -95,6 +90,13 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	private SparseArray<String> array_id_point_idMarker;
 	private GoogleMap mapa = null;
 	private ListView lstListado;
+	
+	
+	private String t_refresco="";
+	private String area_busqueda="";
+	private String ordenar_por="";
+	
+	private SharedPreferences prefs;
 
 	private Handler handler = new Handler() {
 		public void handleMessage(Message message) {
@@ -167,6 +169,20 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	protected void onStart() {
 		super.onStart();
 		
+		//SHARED PREFERENCES
+		
+		prefs=getSharedPreferences("MisPreferencias",Context.MODE_PRIVATE);
+		
+		t_refresco = prefs.getString(Constants.TIEMPO_REFRESCO,"5 segundos");
+		Toast.makeText(getApplicationContext(),t_refresco, Toast.LENGTH_SHORT).show();
+		area_busqueda = prefs.getString(Constants.AREA_BUSQUEDA, "500 metros");
+		Toast.makeText(getApplicationContext(),area_busqueda, Toast.LENGTH_SHORT).show();
+		ordenar_por = prefs.getString(Constants.ORDENAR_POR, "nombre");
+		Toast.makeText(getApplicationContext(),ordenar_por, Toast.LENGTH_SHORT).show();
+
+		
+		//-----------------------------------------------------------------------
+		
 		mConnection = new MyServiceConnection();
 		
         messenger = new Messenger(handler);
@@ -190,6 +206,19 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	@Override
 	protected void onStop() {
 		super.onStop();
+		
+		//SHARED PREFERENCES
+		
+		SharedPreferences prefs =getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
+			   SharedPreferences.Editor editor = prefs.edit();
+			   editor.putString(Constants.TIEMPO_REFRESCO,t_refresco);
+			   
+			   editor.putString(Constants.AREA_BUSQUEDA,area_busqueda);
+			   editor.putString(Constants.ORDENAR_POR,ordenar_por);
+			   editor.commit();
+		
+		//----------------------------------------------------------
+		
 		Intent intt = new Intent(this, PointsRefreshService.class);
         intt.putExtra("MESSENGER", messenger);
         PendingIntent pintent = PendingIntent.getService(this, 0, intt, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -276,21 +305,92 @@ public class AparkaYa extends ActionBarActivity implements ActionBar.TabListener
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.menu_opciones_aparkaya, menu);
 		return true;
 	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+	
+	 //código para cada opción de menú
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) 
+    {
+    	int segundos=0;
+    	int distancia_busqueda=0;
+    	String ordenado_por="";
+    	
+        switch (item.getItemId()) 
+        {
+            case R.id.t_refresco_5:
+            	t_refresco="5 segundos";
+            	segundos=5;
+                TiempoRefresco(segundos);
+                return true;
+            case R.id.t_refresco_10:
+            	t_refresco="10 segundos";
+            	segundos=10;
+            	TiempoRefresco(segundos);
+                return true;                
+            case R.id.t_refresco_15:
+            	t_refresco="15 segundos";
+            	segundos=15;
+            	TiempoRefresco(segundos);
+                return true;
+            case R.id.area_500m:
+            	distancia_busqueda=500;
+            	area_busqueda="500 metros";
+            	AreaBusqueda(distancia_busqueda);
+                return true;
+            case R.id.area_1km:
+            	distancia_busqueda=1000;
+            	area_busqueda="1 km";
+            	AreaBusqueda(distancia_busqueda);
+                return true; 
+            case R.id.ordena_nombre:
+            	ordenado_por="nombre";
+            	ordenar_por="nombre";
+            	menuOrdenar(ordenado_por);
+                return true;
+            case R.id.ordena_distancia:
+            	ordenado_por="distancia";
+            	ordenar_por="distancia";
+            	menuOrdenar(ordenado_por);
+                return true;
+            case R.id.info_cuenta:
+            	menuInfoCuenta();
+                return true;
+                
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    public void menuInfoCuenta(){
+    	
+    	Intent i = new Intent(this,InfoCuenta.class);   	
+        	startActivity(i);
+    	
+    }
+    
+    public void TiempoRefresco(int segundos_refresco){
+    	
+    	Toast.makeText(getApplicationContext(),t_refresco, Toast.LENGTH_SHORT).show();
+   	
+    	//FALTA QUE CAMBIE EL INTERVALO DE LA ALARMA PARA EL REFRESCO
+    	
+    }
+    
+    public void AreaBusqueda(int area_busqueda){
+    	
+    	Toast.makeText(getApplicationContext(),area_busqueda, Toast.LENGTH_SHORT).show();
+		//FALTA HACER EL PHP para ordenar segun la distancia pasada
+    	
+    }
+    
+    public void menuOrdenar(String ordenador_por){
+    	
+    	Toast.makeText(getApplicationContext(),ordenar_por, Toast.LENGTH_SHORT).show();
+    	//Falta hacer php para ordenar segun lo que le pases
+    	
+    }
 
 	@Override
 	public void onTabSelected(ActionBar.Tab tab,

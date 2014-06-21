@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" 
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="#555555">
+    
+	    <LinearLayout
+	        android:id="@+id/linearLayout0"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+
+         <ImageView
+             android:id="@+id/imagen_registro"
+             android:layout_width="60dp"
+             android:layout_height="60dp"
+             android:contentDescription="@string/descripcion_imagen_registro"
+             android:src="@drawable/ic_launcher"
+             android:layout_marginLeft="125dp"
+             />
+ 		
+         <TextView
+	        android:id="@+id/cabecera_registro"
+	        android:layout_width="wrap_content"
+	        android:layout_height="fill_parent"
+	        android:text="@string/cabecera_registro"
+	        android:textSize="28sp"
+	        android:textStyle="bold"
+	        android:gravity="center_vertical"
+	        android:layout_marginLeft="20dp"
+	        android:textColor="#FFFFFF"
+	        android:textColorHint="#FFFFFF"
+        	/>
+        
+    </LinearLayout>
+	    
+	    <LinearLayout 
+	        android:id="@+id/linearLayout1"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+	 		
+	        <EditText
+	            android:id="@+id/usuario_registro"
+	            android:layout_width="245dp"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="15dp"
+	            android:ems="10"
+	            android:hint="@string/usuario_registro"
+	            android:inputType="text"
+	            android:layout_marginLeft="20dp" 
+	            android:textColor="#FFFFFF"
+	            android:textColorHint="#FFFFFF">
+	
+	            <requestFocus />
+	        </EditText>
+	        
+	         <EditText
+	            android:id="@+id/email_registro"
+	            android:layout_width="245dp"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="15dp"
+	            android:ems="10"
+	            android:hint="@string/email_registro"
+	            android:inputType="textEmailAddress"
+	            android:layout_marginLeft="40dp"
+	            android:textColor="#FFFFFF"
+	            android:textColorHint="#FFFFFF" >
+	
+	            <requestFocus />
+	        </EditText>
+	        
+	    </LinearLayout>
+	        
+	    <LinearLayout 
+	        android:id="@+id/linearLayout2"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal" >
+	 		
+	        <EditText
+	            android:id="@+id/contrasenia_registro"
+	            android:layout_width="245dp"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="21dp"
+	            android:ems="10"
+	            android:hint="@string/contrasenia_registro"
+	            android:inputType="textPassword"
+	            android:layout_marginLeft="20dp"
+	            android:textColor="#FFFFFF"
+	            android:textColorHint="#FFFFFF" >
+	
+	            <requestFocus />
+	        </EditText>
+	        
+	        <EditText
+	            android:id="@+id/contrasenia2_registro"
+	            android:layout_width="245dp"
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="21dp"
+	            android:ems="10"
+	            android:hint="@string/contrasenia2_registro"
+	            android:inputType="textPassword"
+	            android:layout_marginLeft="40dp"
+	            android:textColor="#FFFFFF"
+	            android:textColorHint="#FFFFFF" >
+	
+	            <requestFocus />
+	        </EditText>
+	        
+	    </LinearLayout>
+	    
+	     <LinearLayout 
+        android:id="@+id/linearLayout3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+ 		
+         <Button
+             android:id="@+id/boton_registro"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginLeft="225dp"
+             android:layout_marginTop="20dp"
+             android:drawableLeft="@drawable/ic_registro"
+             android:onClick="Registra"
+             android:text="@string/boton_registro"
+             android:background="#0099cc"
+             android:textColor="#FFFFFF" />
+        
+    </LinearLayout>
+	    
+	    
+</LinearLayout>
+

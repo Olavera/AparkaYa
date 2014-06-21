@@ -13,4 +13,22 @@
 <string name="boton_registro_login">Registro</string>
 <string name="boton_login_login">Login</string>
 <string name="aparkaya_login">AparkaYa</string>
+<string name="usuario_details">Usuario</string>
+<string name="difundido_details">Difundido</string>
+<string name="longitud_details">Longitud</string>
+<string name="latitud_details">Latitud</string>
+<string name="reputacion_details">Reputación</string>
+<string name="usuario_cuenta">Usuario</string>
+<string name="reputacion_cuenta">Reputación</string>
+<string name="t_refresco">Tiempo de refresco</string>
+<string name="t_refresco_5">5 segundos</string>
+<string name="t_refresco_10">10 segundos</string>
+<string name="t_refresco_15">15 segundos</string>
+<string name="area_busqueda">Área de búsqueda</string>
+<string name="area_500m">500 metros</string>
+<string name="area_1km">1 km</string>
+<string name="ordenar_por">Ordenar por</string>
+<string name="ordena_nombre">Nombre</string>
+<string name="ordena_distancia">Distancia</string>
+<string name="info_cuenta">Info de cuenta</string>
 </resources>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AparkaYa</string>
+   <string name="app_name">AparkaYa</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
@@ -11,5 +11,38 @@
     <string name="Opciones">Opciones</string>
     <string name="title_activity_register">RegisterActivity</string>
     <string name="hello_world">Hello world!</string>
+    
+    <string name="cabecera_registro">REGISTER</string>
+	<string name="usuario_registro">User</string>
+	<string name="email_registro">Email</string>
+	<string name="contrasenia_registro">Password</string>
+	<string name="contrasenia2_registro">Verify Password</string>
+	<string name="boton_registro">Confirm</string>
+	<string name="descripcion_imagen_registro">Register</string>
+	<string name="descripcion_imagen_logo">AparkaYa</string>
+	<string name="usuario_login">User</string>
+	<string name="contrasenia_login">Password</string>
+	<string name="boton_registro_login">Register</string>
+	<string name="boton_login_login">Login</string>
+	<string name="aparkaya_login">AparkaYa</string>
+	<string name="usuario_details">User</string>
+	<string name="difundido_details">Diffused</string>
+	<string name="longitud_details">Length</string>
+	<string name="latitud_details">Latitude</string>
+	<string name="reputacion_details">Reputation</string>
+	<string name="usuario_cuenta">User</string>
+	<string name="reputacion_cuenta">Reputation</string>
+	<string name="t_refresco">Refresh Time</string>
+	<string name="t_refresco_5">5 seconds</string>
+	<string name="t_refresco_10">10 seconds</string>
+	<string name="t_refresco_15">15 seconds</string>
+	<string name="area_busqueda">Search Area</string>
+	<string name="area_500m">500 meters</string>
+	<string name="area_1km">1 km</string>
+	<string name="ordenar_por">Order by</string>
+	<string name="ordena_nombre">Name</string>
+	<string name="ordena_distancia">Distance</string>
+	<string name="info_cuenta">Info Account</string>
+	
 
 </resources>

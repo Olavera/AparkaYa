@@ -63,6 +63,12 @@
             android:name="com.example.aparkaya.DetailsDialog"
             android:theme="@android:style/Theme.Dialog">
         </activity>
+        
+        <activity
+            android:name="com.example.aparkaya.InfoCuenta"
+            android:label="@string/app_name" >
+        </activity>
+        
     </application>
 
 </manifest>
