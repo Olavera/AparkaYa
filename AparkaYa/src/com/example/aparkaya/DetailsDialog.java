@@ -89,7 +89,7 @@ public class DetailsDialog extends Activity {
 		Button btnEliminar = (Button) dialog.findViewById(R.id.btnEliminar);
 		btnEliminar.setOnClickListener(new Eliminar());
 		
-		if(user.equals(wp.getUsuario()))
+		if(user.equalsIgnoreCase(wp.getUsuario()))
 		{
 			btnAparcar.setEnabled(false);
 			btnPositivo.setEnabled(false);

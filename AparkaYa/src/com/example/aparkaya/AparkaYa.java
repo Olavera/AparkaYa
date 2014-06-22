@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -158,12 +159,8 @@ public class AparkaYa extends ActionBarActivity implements
 
 		// For each of the sections in the app, add a tab to the action bar.
 		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-			// Create a tab with text corresponding to the page title defined by
-			// the adapter. Also specify this Activity object, which implements
-			// the TabListener interface, as the callback (listener) for when
-			// this tab is selected.
 			actionBar.addTab(actionBar.newTab()
-					.setText(mSectionsPagerAdapter.getPageTitle(i))
+					.setIcon(mSectionsPagerAdapter.getPageIcon(i))
 					.setTabListener(this));
 		}
 		post = new HttpPostAux();
@@ -257,7 +254,7 @@ public class AparkaYa extends ActionBarActivity implements
 		if (result == Constants.RESULT_OK) {
 			Toast.makeText(getApplicationContext(), "Strart refresh",
 					Toast.LENGTH_SHORT).show();
-			new asyncSendPoint().execute(auxpoints);
+			new asyncRefreshPoint().execute(auxpoints);
 		} else if (result == Constants.RESULT_NOTUSER) {
 			Toast.makeText(getApplicationContext(), "Usuario no reconocido",
 					Toast.LENGTH_SHORT).show();
@@ -269,7 +266,7 @@ public class AparkaYa extends ActionBarActivity implements
 		
 	}
 	
-	private class asyncSendPoint extends AsyncTask<ArrayList<WebPoint>, String, Integer> {
+	private class asyncRefreshPoint extends AsyncTask<ArrayList<WebPoint>, String, Integer> {
 
 		// Lista de acciones de refresco que se ejecutaran sobre los puntos del mapa
 		// en la fase de PostExecute
@@ -602,6 +599,17 @@ public class AparkaYa extends ActionBarActivity implements
 				return getString(R.string.Mapa).toUpperCase(l);
 			case 1:
 				return getString(R.string.Huecos).toUpperCase(l);
+			}
+			return null;
+		}
+		
+		public Drawable getPageIcon(int position) {
+			Locale l = Locale.getDefault();
+			switch (position) {
+			case 0:
+				return getResources().getDrawable(R.drawable.icon_map);
+			case 1:
+				return getResources().getDrawable(R.drawable.icon_list);
 			}
 			return null;
 		}
