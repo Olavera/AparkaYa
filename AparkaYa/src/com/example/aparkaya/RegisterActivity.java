@@ -47,8 +47,10 @@ public class RegisterActivity extends Activity {
 		post = new HttpPostAux();
 
 		usuario = (EditText) findViewById(R.id.usuario_registro);
+		usuario.setText(getIntent().getStringExtra("user"));
 		email = (EditText) findViewById(R.id.email_registro);
 		contrasenia1 = (EditText) findViewById(R.id.contrasenia_registro);
+		contrasenia1.setText(getIntent().getStringExtra("pass"));
 		contrasenia2 = (EditText) findViewById(R.id.contrasenia2_registro);
 
 	}

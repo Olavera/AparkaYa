@@ -50,6 +50,7 @@ public class PointsRefreshService extends Service{
 			user = extras.getString("user");
 			pass = extras.getString("pass");
 		}
+		new asyncCallPoints().execute();	
 		return mBinder;
 	}
 
@@ -58,7 +59,6 @@ public class PointsRefreshService extends Service{
 		post = new HttpPostAux();
 		Toast.makeText(getApplicationContext(), "Service Created", Toast.LENGTH_SHORT).show();
 		super.onCreate();
-		new asyncCallPoints().execute();
 	}
 
 	@Override

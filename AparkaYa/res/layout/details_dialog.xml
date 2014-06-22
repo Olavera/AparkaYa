@@ -174,7 +174,7 @@
 
     </LinearLayout>
     
-    <LinearLayout
+   <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="center_horizontal|center"
@@ -183,42 +183,46 @@
         android:gravity="center_horizontal|center"
         android:orientation="horizontal" 
         >
-
-        <Button
+        
+        <ImageButton
             android:id="@+id/btnOcupar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/truck"
-            android:background="@drawable/shape"
-            android:padding="7sp"
-            />
-
-        <Button
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="5dp"
+            android:background="@android:color/transparent"
+            android:padding="3dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/states_ocupado" />
+        
+        <ImageButton
             android:id="@+id/btnVotarPositivo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/smiley"
-            android:background="@drawable/shape"
-            android:padding="5sp"
-            android:layout_marginLeft="20sp"/>
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="5dp"
+            android:background="@android:color/transparent"
+            android:padding="3dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/states_positivo" />
         
-        <Button
+        <ImageButton
             android:id="@+id/btnVotarNegativo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/sad"
-            android:background="@drawable/shape"
-            android:padding="5sp"
-            android:layout_marginLeft="20sp"/>
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="5dp"
+            android:background="@android:color/transparent"
+            android:padding="3dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/states_negativo" />
         
-         <Button
+        <ImageButton
             android:id="@+id/btnEliminar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/untitled"
-            android:background="@drawable/shape"
-            android:padding="5sp"
-            android:layout_marginLeft="20sp"/>
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="5dp"
+            android:background="@android:color/transparent"
+            android:padding="3dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/states_eliminar" />
 
     </LinearLayout>
 

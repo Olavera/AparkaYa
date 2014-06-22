@@ -181,28 +181,28 @@
             android:id="@+id/btnOcupar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/truck" 
+            android:drawableLeft="@drawable/truck_enable" 
             android:onClick="Aparcar"/>
 
         <Button
             android:id="@+id/btnVotarPositivo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/smiley"  
+            android:drawableLeft="@drawable/smiley_enable"  
             android:onClick="votarPositivo"/>
         
         <Button
             android:id="@+id/btnVotarNegativo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/sad"  
+            android:drawableLeft="@drawable/sad_enable"  
             android:onClick="votarNegativo"/>
         
          <Button
             android:id="@+id/btnEliminar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/untitled"  
+            android:drawableLeft="@drawable/delete_enable"  
             android:onClick="Eliminar"/>
 
     </LinearLayout>

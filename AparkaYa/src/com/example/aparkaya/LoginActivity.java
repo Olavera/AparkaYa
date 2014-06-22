@@ -64,20 +64,6 @@ public class LoginActivity extends Activity {
 	}
 
 	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
-
-		SharedPreferences prefs = getSharedPreferences("MisPreferencias",
-				Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putString(Constants.USUARIO_PREFS, usuario.getText().toString());
-		editor.putString(Constants.CONTRASENIA_PREFS, contrasenia.getText()
-				.toString());
-		editor.commit();
-	}
-
-	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
@@ -98,16 +84,14 @@ public class LoginActivity extends Activity {
 		pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 		pDialog.setMessage(getResources().getString(R.string.loading));
 		pDialog.setCancelable(true);
-		if (nombre_usuario != "" && contrasenia_usuario != "") {
-			new asynclogin().execute(nombre_usuario, contrasenia_usuario);
-		} else {
-			new asynclogin().execute(usuario.getText().toString(), contrasenia
+		new asynclogin().execute(usuario.getText().toString(), contrasenia
 					.getText().toString());
-		}
 	}
 
 	public void registrarUsuario(View v) {
 		Intent i = new Intent(this, RegisterActivity.class);
+		i.putExtra("user", usuario.getText().toString());
+		i.putExtra("pass", contrasenia.getText().toString());
 		startActivity(i);
 	}
 

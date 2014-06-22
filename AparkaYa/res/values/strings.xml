@@ -45,5 +45,6 @@
 	<string name="info_cuenta">Info Account</string>
 	<string name="no_puntos">There are no free slots in the list</string>
 	<string name="loading">process...</string>
+	<string name="err_force_refresh">Error at force update points</string>
 	
 </resources>

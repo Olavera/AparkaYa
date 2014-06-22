@@ -24,6 +24,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,13 +84,13 @@ public class DetailsDialog extends Activity {
 			getIntent().getExtras().getInt(Constants.REPUTACION),
 			fecha);
 		
-		Button btnAparcar = (Button) dialog.findViewById(R.id.btnOcupar);
+		ImageButton btnAparcar = (ImageButton) dialog.findViewById(R.id.btnOcupar);
 		btnAparcar.setOnClickListener(new Aparcar());
-		Button btnPositivo = (Button) dialog.findViewById(R.id.btnVotarPositivo);
+		ImageButton btnPositivo = (ImageButton) dialog.findViewById(R.id.btnVotarPositivo);
 		btnPositivo.setOnClickListener(new votarPositivo());
-		Button btnNegativo = (Button) dialog.findViewById(R.id.btnVotarNegativo);
+		ImageButton btnNegativo = (ImageButton) dialog.findViewById(R.id.btnVotarNegativo);
 		btnNegativo.setOnClickListener(new votarNegativo());
-		Button btnEliminar = (Button) dialog.findViewById(R.id.btnEliminar);
+		ImageButton btnEliminar = (ImageButton) dialog.findViewById(R.id.btnEliminar);
 		btnEliminar.setOnClickListener(new Eliminar());
 		
 		if(user.equalsIgnoreCase(wp.getUsuario()))
