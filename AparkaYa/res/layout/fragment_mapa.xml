@@ -12,25 +12,27 @@
          android:layout_height="fill_parent"
          class="com.google.android.gms.maps.SupportMapFragment" />
      
-     
-    <Button
+    <ImageButton
         android:id="@+id/btnguardar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_alignParentBottom="true"
+        android:layout_margin="5dp"
         android:layout_toLeftOf="@+id/btndifundir"
-        android:drawableLeft="@drawable/location" 
-        android:paddingLeft="15sp"
-        />
+        android:padding="3dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/refresh_icon" />
 
-    <Button
+    <ImageButton
         android:id="@+id/btndifundir"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:paddingLeft="15sp"
-        android:drawableLeft="@drawable/location" 
-        />
+        android:layout_margin="5dp"
+        android:adjustViewBounds="true"
+        android:padding="3dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/green_marker" />
 
 </RelativeLayout>

@@ -11,8 +11,8 @@
         android:layout_height="match_parent"
         android:layout_weight="2"
         android:adjustViewBounds="true"
-        android:padding="3dp"
-        android:src="@drawable/ic_launcher" />
+        android:scaleType="centerInside"
+        android:padding="3dp"/>
 
     <LinearLayout
         android:layout_width="0dp"
@@ -22,16 +22,25 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/textNameList"
+            android:id="@+id/txt_point_title"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:gravity="center"
             android:text="Large Text"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
-            android:id="@+id/textLatLng"
+            android:id="@+id/txt_point_sub1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+        <TextView
+            android:id="@+id/txt_point_sub2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"

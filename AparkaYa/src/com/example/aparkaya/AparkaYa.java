@@ -1,5 +1,6 @@
 package com.example.aparkaya;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,6 +53,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -155,6 +158,7 @@ public class AparkaYa extends ActionBarActivity implements
 					@Override
 					public void onPageSelected(int position) {
 						actionBar.setSelectedNavigationItem(position);
+						reordenarLista();
 					}
 				});
 
@@ -445,6 +449,32 @@ public class AparkaYa extends ActionBarActivity implements
 		}
 		return color;
 	}
+	
+	public int obtenerIdRecursoIconoFranja(int franja) {
+		int color;
+
+		switch (franja) {
+		case 0:
+			color = R.drawable.violet_marker;
+			break;
+		case 1:
+			color = R.drawable.red_marker;
+			break;
+		case 2:
+			color = R.drawable.orange_marker;
+			break;
+		case 3:
+			color = R.drawable.yellow_marker;
+			break;
+		case 4:
+			color = R.drawable.green_marker;
+			break;
+		default:
+			color = R.drawable.rose_marker;
+			break;
+		}
+		return color;
+	}
 
 	public void reordenarLista() {
 		Collections.sort(listpoints, new Fecha_Comparator());
@@ -470,8 +500,9 @@ public class AparkaYa extends ActionBarActivity implements
 	class Fecha_Comparator implements Comparator<WebPoint> {
 		@Override
 		public int compare(WebPoint p1, WebPoint p2) {
-			return Long.valueOf(p1.getFecha().getTime()).compareTo(
-					Long.valueOf(p2.getFecha().getTime()));
+			int flag = Long.valueOf(p2.getFecha().getTime()).compareTo(
+					Long.valueOf(p1.getFecha().getTime()));
+			return flag;
 		}
 	}
 
@@ -497,13 +528,25 @@ public class AparkaYa extends ActionBarActivity implements
 
 			// Creamos un objeto directivo
 			WebPoint punto = listpoints.get(position);
-			// Rellenamos el nombre
-			TextView nombre = (TextView) v.findViewById(R.id.textNameList);
-			nombre.setText(punto.getId_punto() + ": " + punto.getUsuario()
+			
+			DecimalFormat df = new DecimalFormat("#.####");
+			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM", Locale.getDefault());
+			SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH:mm", Locale.getDefault());
+			
+			//Colocamos la imagen correspondiente
+			ImageView img = (ImageView) v.findViewById(R.id.imagenListView);
+			img.setImageResource(obtenerIdRecursoIconoFranja(obtenerFranja(punto.getFecha())));
+			
+
+			TextView tit = (TextView) v.findViewById(R.id.txt_point_title);
+			tit.setText(punto.getId_punto() + ": " + punto.getUsuario()
 					+ " (" + punto.getReputacion() + ")");
-			// Rellenamos el cargo
-			TextView coordenadas = (TextView) v.findViewById(R.id.textLatLng);
-			coordenadas.setText(punto.getCords().toString());
+			
+			TextView sub1 = (TextView) v.findViewById(R.id.txt_point_sub1);
+			sub1.setText("Difundido a las " + dateFormat2.format(punto.getFecha()) + " el " + dateFormat1.format(punto.getFecha()));
+			
+			TextView sub2 = (TextView) v.findViewById(R.id.txt_point_sub2);
+			sub2.setText("Coords: (" + df.format(punto.getCords().latitude) + " / " + df.format(punto.getCords().longitude) + ")");
 
 			return v;
 		}
@@ -677,7 +720,7 @@ public class AparkaYa extends ActionBarActivity implements
 	public class FragmentoMapa extends Fragment implements
 			OnMapLongClickListener, OnInfoWindowClickListener {
 
-		private Button save, difundir;
+		private ImageButton save, difundir;
 
 		/**
 		 * The fragment argument representing the section number for this
@@ -694,10 +737,10 @@ public class AparkaYa extends ActionBarActivity implements
 
 			View rootView = inflater.inflate(R.layout.fragment_mapa, container,
 					false);
-			save = (Button) rootView.findViewById(R.id.btnguardar);
+			save = (ImageButton) rootView.findViewById(R.id.btnguardar);
 			save.setOnClickListener(new btnGuardarListener());
 
-			difundir = (Button) rootView.findViewById(R.id.btndifundir);
+			difundir = (ImageButton) rootView.findViewById(R.id.btndifundir);
 			difundir.setOnClickListener(new btnDifundir());
 
 			initilizeMap();
@@ -964,11 +1007,6 @@ public class AparkaYa extends ActionBarActivity implements
 			lstListado.setAdapter(adapter);
 		}
 
-		@Override
-		public void onResume() {
-			super.onResume();
-			reordenarLista();
-		}
 
 		OnItemClickListener onclick_punto = new OnItemClickListener() {
 			@SuppressLint("NewApi")
