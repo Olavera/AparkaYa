@@ -22,9 +22,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -96,7 +98,6 @@ public class AparkaYa extends ActionBarActivity implements
 
 	private HttpPostAux post;
 	private String user, pass;
-	private Messenger messenger;
 	private PointsRefreshService localService;
 	private HashMap<String, WebPoint> hashmap_idMarker_WebPoint;
 	private SparseArray<String> array_idPoint_idMarker;
@@ -111,12 +112,6 @@ public class AparkaYa extends ActionBarActivity implements
 
 	private SharedPreferences prefs;
 
-	private Handler handler = new Handler() {
-		public void handleMessage(Message message) {
-			repaintPoints(message.arg1, localService.getArrayPoints());
-		}
-	};
-
 	private MyServiceConnection mConnection;
 
 	public class MyServiceConnection implements ServiceConnection {
@@ -126,9 +121,22 @@ public class AparkaYa extends ActionBarActivity implements
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
-			localService.onDestroy();
 			localService = null;
 		}
+	};
+	
+	private BroadcastReceiver receiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Toast.makeText(getApplicationContext(), "Recibido Broadcast",
+					Toast.LENGTH_SHORT).show();
+			Bundle bundle = intent.getExtras();
+			if (bundle != null) {
+				int result = bundle.getInt("RESULT");
+				repaintPoints(result, localService.getArrayPoints());
+			}
+		}
+
 	};
 
 	@Override
@@ -206,13 +214,14 @@ public class AparkaYa extends ActionBarActivity implements
 
 		mConnection = new MyServiceConnection();
 
-		messenger = new Messenger(handler);
+		registerReceiver(receiver, new IntentFilter(PointsRefreshService.NOTIFICATION));
 
 		// Start service using AlarmManager
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.SECOND, 10);
 		Intent intt = new Intent(this, PointsRefreshService.class);
-		intt.putExtra("MESSENGER", messenger);
+		intt.putExtra("user", user);
+		intt.putExtra("pass", pass);
 		PendingIntent pintent = PendingIntent.getService(this, 0, intt,
 				PendingIntent.FLAG_CANCEL_CURRENT);
 		AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -221,7 +230,6 @@ public class AparkaYa extends ActionBarActivity implements
 				pintent);
 
 		Intent intent = new Intent(this, PointsRefreshService.class);
-		intent.putExtra("MESSENGER", messenger);
 		intent.putExtra("user", user);
 		intent.putExtra("pass", pass);
 		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -245,15 +253,15 @@ public class AparkaYa extends ActionBarActivity implements
 		// ----------------------------------------------------------
 
 		Intent intt = new Intent(this, PointsRefreshService.class);
-		intt.putExtra("MESSENGER", messenger);
 		PendingIntent pintent = PendingIntent.getService(this, 0, intt,
 				PendingIntent.FLAG_CANCEL_CURRENT);
 		AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		alarm.cancel(pintent);
 
 		unbindService(mConnection);
-		mConnection = null;
 		localService.onDestroy();
+		stopService(new Intent(getBaseContext(), PointsRefreshService.class));
+		unregisterReceiver(receiver);
 	}
 
 	private void repaintPoints(int result, ArrayList<WebPoint> auxpoints) {

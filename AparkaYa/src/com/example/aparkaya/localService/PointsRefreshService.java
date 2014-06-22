@@ -33,7 +33,6 @@ public class PointsRefreshService extends Service{
 
 	public static final String NOTIFICATION = "com.example.aparkaya";
 	private String user, pass;
-	private Messenger outMessenger;
 	private ArrayList<WebPoint> points;
 	private HttpPostAux post;
 	private final IBinder mBinder = new MyBinder();
@@ -47,13 +46,10 @@ public class PointsRefreshService extends Service{
 	@Override
 	public IBinder onBind(Intent intent) {
 		Bundle extras = intent.getExtras();
-		// Get messenger from the Activity
 		if (extras != null) {
-			outMessenger = (Messenger) extras.get("MESSENGER");
 			user = extras.getString("user");
 			pass = extras.getString("pass");
 		}
-		// Return our messenger to the Activity to get commands
 		return mBinder;
 	}
 
@@ -61,12 +57,8 @@ public class PointsRefreshService extends Service{
 	public void onCreate() {
 		post = new HttpPostAux();
 		Toast.makeText(getApplicationContext(), "Service Created", Toast.LENGTH_SHORT).show();
-		if (outMessenger == null)
-			onDestroy();
-		else{
-			super.onCreate();
-			new asyncCallPoints().execute();
-		}
+		super.onCreate();
+		new asyncCallPoints().execute();
 	}
 
 	@Override
@@ -77,14 +69,17 @@ public class PointsRefreshService extends Service{
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		if (outMessenger!=null)
-			new asyncCallPoints().execute();	
+		new asyncCallPoints().execute();	
 		return START_NOT_STICKY;
 	}
 	
 	public ArrayList<WebPoint> getArrayPoints()
 	{
 		return points;
+	}
+	
+	public void forceRefresh(){
+		new asyncCallPoints().execute();
 	}
 	
 	private class asyncCallPoints extends AsyncTask< Void, String, Integer > {
@@ -155,14 +150,9 @@ public class PointsRefreshService extends Service{
 			if (result == Constants.RESULT_OK){
 				points = auxpoints;
 			}
-			Message backMsg = Message.obtain();
-			backMsg.arg1 = result;
-			try {
-				if (outMessenger != null)
-					outMessenger.send(backMsg);
-			} catch (android.os.RemoteException e1) {
-				Log.w(getClass().getName(), "Excepción enviando mensaje", e1);
-			}
+			Intent intent = new Intent(NOTIFICATION);
+			intent.putExtra("RESULT", result);
+			sendBroadcast(intent);
 		}
 	}
 
