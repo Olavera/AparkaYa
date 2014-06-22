@@ -12,7 +12,7 @@ public class Constants {
 	
 	public static final long LOCALSERVER_TIME_REFRESH = 20000;//20segundos por defecto
 	public static final long TIME_UMBRAL = 86400000;//24h en milisegundos
-	public static final long TIME_GOOD = 300000;//5 min
+	public static final long TIME_GOOD = 600000;//10 min
 	public static final long TIME_REGULAR = 1800000;//30 min
 	public static final long TIME_BAD = 3600000;//1 h
 	
