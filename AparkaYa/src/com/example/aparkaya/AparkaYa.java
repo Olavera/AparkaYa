@@ -333,8 +333,10 @@ public class AparkaYa extends ActionBarActivity implements
 			key = 0;
 			for(int i = 0; i < copyOf_idPoint_idMarker.size(); i++) {
 			   key = copyOf_idPoint_idMarker.keyAt(i);
-			   refreshActions.add(new RefreshAction( hashmap_idMarker_WebPoint.get(key)//new WebPoint(key, "", null, 0, null)
-			   , EnumTypeRefreshAction.REMOVE, 0, "", array_idPoint_idMarker.get(key)));
+			   String idMarker = copyOf_idPoint_idMarker.get(key);
+			   if(hashmap_idMarker_WebPoint.get(idMarker)!=null)
+				   refreshActions.add(new RefreshAction( hashmap_idMarker_WebPoint.get(idMarker)//new WebPoint(key, "", null, 0, null)
+						   	, EnumTypeRefreshAction.REMOVE, 0, "", array_idPoint_idMarker.get(key)));
 			}
 			
 			return Constants.RESULT_OK;
