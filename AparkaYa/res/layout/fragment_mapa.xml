@@ -19,7 +19,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/btndifundir"
-        android:drawableLeft="@drawable/truck" 
+        android:drawableLeft="@drawable/difundir" 
+        android:paddingLeft="15sp"
         />
 
     <Button
@@ -28,6 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:paddingLeft="15sp"
         android:drawableLeft="@drawable/location" 
         />
 
