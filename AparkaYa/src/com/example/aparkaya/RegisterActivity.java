@@ -11,8 +11,10 @@ import org.json.JSONObject;
 import com.example.aparkaya.webService.HttpPostAux;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -23,8 +25,7 @@ public class RegisterActivity extends Activity {
 
 	private EditText usuario, email, contrasenia1, contrasenia2;
 	HttpPostAux post;
-	
-	
+	private ProgressDialog pDialog;
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -42,7 +43,7 @@ public class RegisterActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_register);		
+		setContentView(R.layout.activity_register);
 		post = new HttpPostAux();
 
 		usuario = (EditText) findViewById(R.id.usuario_registro);
@@ -53,16 +54,24 @@ public class RegisterActivity extends Activity {
 	}
 
 	public void Registra(View view) {
-		if (contrasenia1.getText().equals(contrasenia2.getText()) ) {
-		
-			Toast.makeText(getApplicationContext(),"Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
-		} else {//pasamos los posibles filtros tambien podemos comprobar si el usuario ya esta registrado
-			new asyncRegister().execute(email.getText().toString(),usuario.getText().toString(),contrasenia1.getText().toString());
+		if (contrasenia1.getText().equals(contrasenia2.getText())) {
+
+			Toast.makeText(getApplicationContext(),
+					"Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+		} else {// pasamos los posibles filtros tambien podemos comprobar si el
+				// usuario ya esta registrado
+			pDialog = new ProgressDialog(RegisterActivity.this);
+			pDialog.setProgressStyle(ProgressDialog.THEME_HOLO_DARK);
+			pDialog.setMessage("Procesando...");
+			pDialog.setCancelable(true);
+			pDialog.setMax(100);
+			new asyncRegister().execute(email.getText().toString(), usuario
+					.getText().toString(), contrasenia1.getText().toString());
 		}
 
 	}
 
-	private class asyncRegister extends AsyncTask<String, String, Integer> {
+	private class asyncRegister extends AsyncTask<String, Integer, Integer> {
 		String email, user, pass;
 
 		protected Integer doInBackground(String... params) {
@@ -85,7 +94,8 @@ public class RegisterActivity extends Activity {
 			postparameters2send.add(new BasicNameValuePair("password", pass));
 
 			// realizamos una peticion y como respuesta obtenes un array JSON
-			JSONArray jdata = post.getserverdata(postparameters2send,"http://aparkaya.webcindario.com/registro.php");
+			JSONArray jdata = post.getserverdata(postparameters2send,
+					"http://aparkaya.webcindario.com/registro.php");
 
 			// si lo que obtuvimos no es null
 			if (jdata != null && jdata.length() > 0) {
@@ -108,33 +118,55 @@ public class RegisterActivity extends Activity {
 					return Constants.RESULT_USER_EXISTS; // usuario ya existe
 				} else if (id == 3) {
 					return Constants.RESULT_EMAIL_EXISTS; // email ya existe
-				} 
+				}
 			}
 			return Constants.RESULT_ERR; // registro invalido
 
 		}
+		
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			int progreso = values[0].intValue();
+			pDialog.setProgress(progreso);
+		}
+
+		@Override
+		protected void onPreExecute() {
+			pDialog.setOnCancelListener(new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					asyncRegister.this.cancel(true);
+				}
+			});
+			pDialog.setProgress(0);
+			pDialog.show();
+		}
 
 		protected void onPostExecute(Integer result) {
 
-			if (result==Constants.RESULT_OK){
-				Toast.makeText(getApplicationContext(),"Registrado correctamente", Toast.LENGTH_SHORT).show();
+			if (result == Constants.RESULT_OK) {
+				Toast.makeText(getApplicationContext(),
+						"Registrado correctamente", Toast.LENGTH_SHORT).show();
 
-				//Inicia la actividad
+				// Inicia la actividad
 				Intent i = new Intent(RegisterActivity.this, AparkaYa.class);
 				i.putExtra("user", user);
 				i.putExtra("pass", pass);
 				startActivity(i);
-			} 
-			else if(result==Constants.RESULT_USER_EXISTS){
-				Toast.makeText(getApplicationContext(),"Nombre de usuario ya en uso", Toast.LENGTH_SHORT).show();
+			} else if (result == Constants.RESULT_USER_EXISTS) {
+				Toast.makeText(getApplicationContext(),
+						"Nombre de usuario ya en uso", Toast.LENGTH_SHORT)
+						.show();
+			} else if (result == Constants.RESULT_EMAIL_EXISTS) {
+				Toast.makeText(getApplicationContext(), "Email ya en uso",
+						Toast.LENGTH_SHORT).show();
+			} else {
+				Toast.makeText(getApplicationContext(),
+						"No se pudo conectar con el servidor",
+						Toast.LENGTH_SHORT).show();
 			}
-			else if(result==Constants.RESULT_EMAIL_EXISTS){
-				Toast.makeText(getApplicationContext(),"Email ya en uso", Toast.LENGTH_SHORT).show();
-			}
-			else{
-				Toast.makeText(getApplicationContext(),"No se pudo conectar con el servidor", Toast.LENGTH_SHORT).show();
-			}
-		}  
+			pDialog.dismiss();
+		}
 
 	}
 }
