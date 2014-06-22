@@ -19,7 +19,5 @@
             <item android:id="@+id/ordena_distancia" android:title="@string/ordena_distancia"/>
         </menu>
     </item>
-    <item android:id="@+id/info_cuenta" android:title="@string/info_cuenta"></item>
-    
-
+    <item android:id="@+id/info_cuenta" android:title="Prueba" android:icon="@drawable/ic_login" android:showAsAction="always"></item>
 </menu>

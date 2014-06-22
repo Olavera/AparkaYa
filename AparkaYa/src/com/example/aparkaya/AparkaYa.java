@@ -321,7 +321,7 @@ public class AparkaYa extends ActionBarActivity implements
 						hashmap_idMarker_WebPoint.put(idMarker, punto);
 					}
 					else if(oldP.getReputacion() != punto.getReputacion()){
-						
+						hashmap_idMarker_WebPoint.get(idMarker).setReputacion(punto.getReputacion());
 					}
 					copyOf_idPoint_idMarker.remove(punto.getId_punto());
 				}
@@ -373,19 +373,9 @@ public class AparkaYa extends ActionBarActivity implements
 					listpoints.remove(act.getnewPointInfo());
 				}
 			}
-			//Collections.sort(listpoints, new Id_punto_Comparator());
 			adapter.notifyDataSetChanged();
 			Toast.makeText(getApplicationContext(), "Stop refresh", Toast.LENGTH_SHORT).show();
 		}
-	}
-	
-	class Id_punto_Comparator implements Comparator<WebPoint> {
-		@Override
-		public int compare(WebPoint p1, WebPoint p2) {
-			return Integer.valueOf(p1.getId_punto()).compareTo(
-					Integer.valueOf(p2.getId_punto()));
-		}
-
 	}
 	
 	public int obtenerFranja(Date d){
@@ -421,8 +411,40 @@ public class AparkaYa extends ActionBarActivity implements
 		}
 		return color;
 	}
-
 	
+	public void reordenarLista(){
+		Collections.sort(listpoints, new Fecha_Comparator());
+		adapter.notifyDataSetChanged();
+	}
+	
+	class Id_punto_Comparator implements Comparator<WebPoint> {
+		@Override
+		public int compare(WebPoint p1, WebPoint p2) {
+			return Integer.valueOf(p1.getId_punto()).compareTo(
+					Integer.valueOf(p2.getId_punto()));
+		}
+	}
+	
+	class User_Comparator implements Comparator<WebPoint> {
+		@Override
+		public int compare(WebPoint p1, WebPoint p2) {
+			return p1.getUsuario().toUpperCase().compareTo(p2.getUsuario().toUpperCase());
+		}
+	}
+	
+	class Fecha_Comparator implements Comparator<WebPoint> {
+		@Override
+		public int compare(WebPoint p1, WebPoint p2) {
+			return Long.valueOf(p1.getFecha().getTime()).compareTo(Long.valueOf(p2.getFecha().getTime()));
+		}
+	}
+
+	class Rep_Comparator implements Comparator<WebPoint> {
+		@Override
+		public int compare(WebPoint p1, WebPoint p2) {
+			return Integer.valueOf(p1.getReputacion()).compareTo(Integer.valueOf(p2.getReputacion()));
+		}
+	}
 
 	class AdaptadorPuntos extends ArrayAdapter<WebPoint> {
 		Activity context;
@@ -923,6 +945,12 @@ public class AparkaYa extends ActionBarActivity implements
 			lstListado.setOnItemClickListener(onclick_punto);
 			lstListado.setAdapter(adapter);
 		}
+		
+		@Override
+		public void onResume(){
+			super.onResume();
+			reordenarLista();
+		}
 
 		OnItemClickListener onclick_punto = new OnItemClickListener() {
 			@SuppressLint("NewApi")
@@ -934,5 +962,8 @@ public class AparkaYa extends ActionBarActivity implements
 			    punto_selec.getMarker().showInfoWindow();
 			}
 		};
+		
+		
+		
 	}
 }

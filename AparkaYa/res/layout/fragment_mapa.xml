@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/btndifundir"
-        android:drawableLeft="@drawable/difundir" 
+        android:drawableLeft="@drawable/location" 
         android:paddingLeft="15sp"
         />
 
