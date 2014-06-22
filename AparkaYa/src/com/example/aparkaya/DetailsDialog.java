@@ -15,7 +15,9 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -33,6 +35,7 @@ public class DetailsDialog extends Activity {
 	WebPoint wp;
 	HttpPostAux post;
 	String user, pass;
+	private ProgressDialog pDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -116,10 +119,18 @@ public class DetailsDialog extends Activity {
 		dialog.show();
 	}
 	
+	public void iniciarProgressDialog(){
+		pDialog = new ProgressDialog(DetailsDialog.this);
+		pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		pDialog.setMessage(getResources().getString(R.string.loading));
+		pDialog.setCancelable(true);
+	}
+	
 	
 	public class Aparcar implements OnClickListener {
 		@Override
 		public void onClick(View v) {
+			iniciarProgressDialog();
 			new asyncPointActions().execute(Constants.ACTION_PARK);
 		}
 	}
@@ -127,6 +138,7 @@ public class DetailsDialog extends Activity {
 	public class votarPositivo implements OnClickListener {
 		@Override
 		public void onClick(View v) {
+			iniciarProgressDialog();
 			new asyncPointActions().execute(Constants.ACTION_VOTE_POSSITIVE);
 		}
 	}
@@ -134,6 +146,7 @@ public class DetailsDialog extends Activity {
 	public class votarNegativo implements OnClickListener {
 		@Override
 		public void onClick(View v) {
+			iniciarProgressDialog();
 			new asyncPointActions().execute(Constants.ACTION_VOTE_NEGATIVE);
 		}
 	}
@@ -141,11 +154,12 @@ public class DetailsDialog extends Activity {
 	public class Eliminar implements OnClickListener {
 		@Override
 		public void onClick(View v) {
+			iniciarProgressDialog();
 			new asyncPointActions().execute(Constants.ACTION_DELETE);
 		}
 	}
 	
-	private class asyncPointActions extends AsyncTask< Integer, String, Integer > {
+	private class asyncPointActions extends AsyncTask< Integer, Integer, Integer > {
 
 		protected Integer doInBackground(Integer... params) {
 			//obtenemos user y pass
@@ -184,11 +198,21 @@ public class DetailsDialog extends Activity {
 
 			}     
 			return Constants.RESULT_ERR; //login invalido 
-
+		}
+		
+		@Override
+		protected void onPreExecute() {
+			pDialog.setOnCancelListener(new OnCancelListener() {
+				@Override
+				public void onCancel(DialogInterface dialog) {
+					asyncPointActions.this.cancel(true);
+				}
+			});
+			pDialog.show();
 		}
 
 		protected void onPostExecute(Integer result) {
-
+			pDialog.dismiss();
 			if (result==Constants.RESULT_OK){
 				Toast.makeText(getApplicationContext(),"Punto actualizado", Toast.LENGTH_SHORT).show();
 				finish();

@@ -44,5 +44,6 @@
 	<string name="ordena_distancia">Distance</string>
 	<string name="info_cuenta">Info Account</string>
 	<string name="no_puntos">There are no free slots in the list</string>
+	<string name="loading">process...</string>
 	
 </resources>

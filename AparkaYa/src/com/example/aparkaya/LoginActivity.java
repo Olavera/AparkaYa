@@ -95,10 +95,9 @@ public class LoginActivity extends Activity {
 
 	public void validarUsuario(View v) {
 		pDialog = new ProgressDialog(LoginActivity.this);
-		pDialog.setProgressStyle(ProgressDialog.THEME_HOLO_DARK);
-		pDialog.setMessage("Procesando...");
+		pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		pDialog.setMessage(getResources().getString(R.string.loading));
 		pDialog.setCancelable(true);
-		pDialog.setMax(100);
 		if (nombre_usuario != "" && contrasenia_usuario != "") {
 			new asynclogin().execute(nombre_usuario, contrasenia_usuario);
 		} else {
@@ -164,12 +163,6 @@ public class LoginActivity extends Activity {
 		}
 
 		@Override
-		protected void onProgressUpdate(Integer... values) {
-			int progreso = values[0].intValue();
-			pDialog.setProgress(progreso);
-		}
-
-		@Override
 		protected void onPreExecute() {
 			pDialog.setOnCancelListener(new OnCancelListener() {
 				@Override
@@ -177,7 +170,6 @@ public class LoginActivity extends Activity {
 					asynclogin.this.cancel(true);
 				}
 			});
-			pDialog.setProgress(0);
 			pDialog.show();
 		}
 

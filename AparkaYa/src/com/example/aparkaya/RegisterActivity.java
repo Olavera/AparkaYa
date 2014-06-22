@@ -61,10 +61,9 @@ public class RegisterActivity extends Activity {
 		} else {// pasamos los posibles filtros tambien podemos comprobar si el
 				// usuario ya esta registrado
 			pDialog = new ProgressDialog(RegisterActivity.this);
-			pDialog.setProgressStyle(ProgressDialog.THEME_HOLO_DARK);
-			pDialog.setMessage("Procesando...");
+			pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			pDialog.setMessage(getResources().getString(R.string.loading));
 			pDialog.setCancelable(true);
-			pDialog.setMax(100);
 			new asyncRegister().execute(email.getText().toString(), usuario
 					.getText().toString(), contrasenia1.getText().toString());
 		}
@@ -123,12 +122,6 @@ public class RegisterActivity extends Activity {
 			return Constants.RESULT_ERR; // registro invalido
 
 		}
-		
-		@Override
-		protected void onProgressUpdate(Integer... values) {
-			int progreso = values[0].intValue();
-			pDialog.setProgress(progreso);
-		}
 
 		@Override
 		protected void onPreExecute() {
@@ -138,7 +131,6 @@ public class RegisterActivity extends Activity {
 					asyncRegister.this.cancel(true);
 				}
 			});
-			pDialog.setProgress(0);
 			pDialog.show();
 		}
 

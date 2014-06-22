@@ -1,5 +1,6 @@
 package com.example.aparkaya;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -192,8 +193,10 @@ public class AparkaYa extends ActionBarActivity implements
 		t_refresco = prefs.getString(Constants.TIEMPO_REFRESCO, "5 segundos");
 		area_busqueda = prefs.getString(Constants.AREA_BUSQUEDA, "500 metros");
 		ordenar_por = prefs.getString(Constants.ORDENAR_POR, "nombre");
-		Toast.makeText(getApplicationContext(), "Preferencias:"  + t_refresco + " | " + area_busqueda + " | " + ordenar_por, Toast.LENGTH_LONG)
-				.show();
+		Toast.makeText(
+				getApplicationContext(),
+				"Preferencias:" + t_refresco + " | " + area_busqueda + " | "
+						+ ordenar_por, Toast.LENGTH_LONG).show();
 
 		// -----------------------------------------------------------------------
 
@@ -250,7 +253,7 @@ public class AparkaYa extends ActionBarActivity implements
 	}
 
 	private void repaintPoints(int result, ArrayList<WebPoint> auxpoints) {
-		
+
 		if (result == Constants.RESULT_OK) {
 			Toast.makeText(getApplicationContext(), "Strart refresh",
 					Toast.LENGTH_SHORT).show();
@@ -263,34 +266,37 @@ public class AparkaYa extends ActionBarActivity implements
 					"Error al actualizar información", Toast.LENGTH_SHORT)
 					.show();
 		}
-		
-	}
-	
-	private class asyncRefreshPoint extends AsyncTask<ArrayList<WebPoint>, String, Integer> {
 
-		// Lista de acciones de refresco que se ejecutaran sobre los puntos del mapa
+	}
+
+	private class asyncRefreshPoint extends
+			AsyncTask<ArrayList<WebPoint>, String, Integer> {
+
+		// Lista de acciones de refresco que se ejecutaran sobre los puntos del
+		// mapa
 		// en la fase de PostExecute
 		ArrayList<RefreshAction> refreshActions;
 
 		protected Integer doInBackground(ArrayList<WebPoint>... params) {
 			ArrayList<WebPoint> auxpoints = params[0];
 			refreshActions = new ArrayList<RefreshAction>();
-			
+
 			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM",
 					Locale.getDefault());
 			SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH:mm",
 					Locale.getDefault());
 			Date datenow = new Date();
 			long timeUmbral = datenow.getTime() - Constants.TIME_UMBRAL;
-			
+
 			SparseArray<String> copyOf_idPoint_idMarker = new SparseArray<String>();
-			
+
 			int key = 0;
-			for(int i = 0; i < array_idPoint_idMarker.size(); i++) {
-			   key = array_idPoint_idMarker.keyAt(i);
-			   copyOf_idPoint_idMarker.put(key, array_idPoint_idMarker.get(key));
+			for (int i = 0; i < array_idPoint_idMarker.size(); i++) {
+				key = array_idPoint_idMarker.keyAt(i);
+				copyOf_idPoint_idMarker.put(key,
+						array_idPoint_idMarker.get(key));
 			}
-			
+
 			for (WebPoint punto : auxpoints) {
 				int franja = obtenerFranja(punto.getFecha());
 				String textDate = "No se obtuvo fecha";
@@ -301,122 +307,150 @@ public class AparkaYa extends ActionBarActivity implements
 					textDate = "Difundido a las "
 							+ dateFormat2.format(punto.getFecha());
 				}
-				
-				String idMarker = copyOf_idPoint_idMarker.get(punto.getId_punto(), Constants.POINT_NO_MAPPED);
-				if (idMarker.equals(Constants.POINT_NO_MAPPED))
-				{
-					refreshActions.add(new RefreshAction(punto, EnumTypeRefreshAction.ADD, franja, textDate, idMarker));
-				}
-				else
-				{
+
+				String idMarker = copyOf_idPoint_idMarker.get(
+						punto.getId_punto(), Constants.POINT_NO_MAPPED);
+				if (idMarker.equals(Constants.POINT_NO_MAPPED)) {
+					refreshActions.add(new RefreshAction(punto,
+							EnumTypeRefreshAction.ADD, franja, textDate,
+							idMarker));
+				} else {
 					WebPoint oldP = hashmap_idMarker_WebPoint.get(idMarker);
 					Marker m = oldP.getMarker();
 					punto.setMarker(m);
-					if(/*((m.getPosition().latitude!=punto.getCords().latitude) ||
-							(m.getPosition().longitude!=punto.getCords().longitude)) ||*/
-							(obtenerFranja(oldP.getFecha()) != franja))
-					{
+					if (/*
+						 * ((m.getPosition().latitude!=punto.getCords().latitude)
+						 * ||
+						 * (m.getPosition().longitude!=punto.getCords().longitude
+						 * )) ||
+						 */
+					(obtenerFranja(oldP.getFecha()) != franja)) {
 
-						refreshActions.add(new RefreshAction(punto, EnumTypeRefreshAction.UPDATE, franja, textDate, idMarker));
+						refreshActions.add(new RefreshAction(punto,
+								EnumTypeRefreshAction.UPDATE, franja, textDate,
+								idMarker));
 						hashmap_idMarker_WebPoint.put(idMarker, punto);
-					}
-					else if(oldP.getReputacion() != punto.getReputacion()){
-						hashmap_idMarker_WebPoint.get(idMarker).setReputacion(punto.getReputacion());
+					} else if (oldP.getReputacion() != punto.getReputacion()) {
+						hashmap_idMarker_WebPoint.get(idMarker).setReputacion(
+								punto.getReputacion());
 					}
 					copyOf_idPoint_idMarker.remove(punto.getId_punto());
 				}
 			}
-			
+
 			key = 0;
-			for(int i = 0; i < copyOf_idPoint_idMarker.size(); i++) {
-			   key = copyOf_idPoint_idMarker.keyAt(i);
-			   String idMarker = copyOf_idPoint_idMarker.get(key);
-			   if(hashmap_idMarker_WebPoint.get(idMarker)!=null)
-				   refreshActions.add(new RefreshAction( hashmap_idMarker_WebPoint.get(idMarker)//new WebPoint(key, "", null, 0, null)
-						   	, EnumTypeRefreshAction.REMOVE, 0, "", array_idPoint_idMarker.get(key)));
+			for (int i = 0; i < copyOf_idPoint_idMarker.size(); i++) {
+				key = copyOf_idPoint_idMarker.keyAt(i);
+				String idMarker = copyOf_idPoint_idMarker.get(key);
+				if (hashmap_idMarker_WebPoint.get(idMarker) != null)
+					refreshActions.add(new RefreshAction(
+							hashmap_idMarker_WebPoint.get(idMarker)// new
+																	// WebPoint(key,
+																	// "", null,
+																	// 0, null)
+							, EnumTypeRefreshAction.REMOVE, 0, "",
+							array_idPoint_idMarker.get(key)));
 			}
-			
+
 			return Constants.RESULT_OK;
 		}
-		
+
 		protected void onPostExecute(Integer result) {
-			for (RefreshAction act : refreshActions)
-			{
-				if(act.getTypeAction()==EnumTypeRefreshAction.ADD){
-					Marker marker = mapa
-							.addMarker(new MarkerOptions()
-									.position(act.getnewPointInfo().getCords())
-									.title(act.getTextDate())
-									.snippet(
-											act.getnewPointInfo().getUsuario()
-													+ " ("
-													+ Integer.toString(act.getnewPointInfo()
-															.getReputacion()) + ")")
-									.icon(BitmapDescriptorFactory.defaultMarker(obtenerIconoFranja(act.getFranja()))));
+			for (RefreshAction act : refreshActions) {
+				if (act.getTypeAction() == EnumTypeRefreshAction.ADD) {
+					Marker marker = mapa.addMarker(new MarkerOptions()
+							.position(act.getnewPointInfo().getCords())
+							.title(act.getTextDate())
+							.snippet(
+									act.getnewPointInfo().getUsuario()
+											+ " ("
+											+ Integer.toString(act
+													.getnewPointInfo()
+													.getReputacion()) + ")")
+							.icon(BitmapDescriptorFactory
+									.defaultMarker(obtenerIconoFranja(act
+											.getFranja()))));
 					String key = marker.getId();
 					WebPoint punto = act.getnewPointInfo();
 					punto.setMarker(marker);
 					hashmap_idMarker_WebPoint.put(key, punto);
 					array_idPoint_idMarker.put(punto.getId_punto(), key);
 					listpoints.add(punto);
-				}else if(act.getTypeAction()==EnumTypeRefreshAction.UPDATE){
+				} else if (act.getTypeAction() == EnumTypeRefreshAction.UPDATE) {
 					WebPoint newP = act.getnewPointInfo();
 					Marker m = newP.getMarker();
-					//m.setPosition(newP.getCords());
-					m.setIcon(BitmapDescriptorFactory.defaultMarker(obtenerIconoFranja(act.getFranja())));
+					// m.setPosition(newP.getCords());
+					m.setIcon(BitmapDescriptorFactory
+							.defaultMarker(obtenerIconoFranja(act.getFranja())));
 					m.setTitle(act.getTextDate());
-				}else if(act.getTypeAction()==EnumTypeRefreshAction.REMOVE){
-					String idMarker = array_idPoint_idMarker.get(act.getnewPointInfo().getId_punto());
-					array_idPoint_idMarker.remove(act.getnewPointInfo().getId_punto());
-					hashmap_idMarker_WebPoint.get(idMarker).getMarker().remove();
+				} else if (act.getTypeAction() == EnumTypeRefreshAction.REMOVE) {
+					String idMarker = array_idPoint_idMarker.get(act
+							.getnewPointInfo().getId_punto());
+					array_idPoint_idMarker.remove(act.getnewPointInfo()
+							.getId_punto());
+					hashmap_idMarker_WebPoint.get(idMarker).getMarker()
+							.remove();
 					hashmap_idMarker_WebPoint.remove(idMarker);
 					listpoints.remove(act.getnewPointInfo());
 				}
 			}
 			adapter.notifyDataSetChanged();
-			Toast.makeText(getApplicationContext(), "Stop refresh", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "Stop refresh",
+					Toast.LENGTH_SHORT).show();
 		}
 	}
-	
-	public int obtenerFranja(Date d){
+
+	public int obtenerFranja(Date d) {
 		int franja;
 		long dateNow = new Date().getTime();
 		long datePoint = d.getTime();
-		
-		if (datePoint < (dateNow - Constants.TIME_UMBRAL)){
+
+		if (datePoint < (dateNow - Constants.TIME_UMBRAL)) {
 			franja = 0;
-		}else if (datePoint < (dateNow - Constants.TIME_BAD)){
+		} else if (datePoint < (dateNow - Constants.TIME_BAD)) {
 			franja = 1;
-		}else if (datePoint < (dateNow - Constants.TIME_REGULAR)){
+		} else if (datePoint < (dateNow - Constants.TIME_REGULAR)) {
 			franja = 2;
-		}else if (datePoint < (dateNow - Constants.TIME_GOOD)){
+		} else if (datePoint < (dateNow - Constants.TIME_GOOD)) {
 			franja = 3;
-		}else{
+		} else {
 			franja = 4;
 		}
-		
+
 		return franja;
 	}
-	
-	public float obtenerIconoFranja(int franja){
+
+	public float obtenerIconoFranja(int franja) {
 		float color;
-		
-		switch (franja){
-			case 0: color = BitmapDescriptorFactory.HUE_VIOLET; break;
-			case 1: color = BitmapDescriptorFactory.HUE_RED; break;
-			case 2: color = BitmapDescriptorFactory.HUE_ORANGE; break;
-			case 3: color = BitmapDescriptorFactory.HUE_YELLOW; break;
-			case 4: color = BitmapDescriptorFactory.HUE_GREEN; break;
-			default: color = BitmapDescriptorFactory.HUE_ROSE; break;
+
+		switch (franja) {
+		case 0:
+			color = BitmapDescriptorFactory.HUE_VIOLET;
+			break;
+		case 1:
+			color = BitmapDescriptorFactory.HUE_RED;
+			break;
+		case 2:
+			color = BitmapDescriptorFactory.HUE_ORANGE;
+			break;
+		case 3:
+			color = BitmapDescriptorFactory.HUE_YELLOW;
+			break;
+		case 4:
+			color = BitmapDescriptorFactory.HUE_GREEN;
+			break;
+		default:
+			color = BitmapDescriptorFactory.HUE_ROSE;
+			break;
 		}
 		return color;
 	}
-	
-	public void reordenarLista(){
+
+	public void reordenarLista() {
 		Collections.sort(listpoints, new Fecha_Comparator());
 		adapter.notifyDataSetChanged();
 	}
-	
+
 	class Id_punto_Comparator implements Comparator<WebPoint> {
 		@Override
 		public int compare(WebPoint p1, WebPoint p2) {
@@ -424,25 +458,28 @@ public class AparkaYa extends ActionBarActivity implements
 					Integer.valueOf(p2.getId_punto()));
 		}
 	}
-	
+
 	class User_Comparator implements Comparator<WebPoint> {
 		@Override
 		public int compare(WebPoint p1, WebPoint p2) {
-			return p1.getUsuario().toUpperCase().compareTo(p2.getUsuario().toUpperCase());
+			return p1.getUsuario().toUpperCase()
+					.compareTo(p2.getUsuario().toUpperCase());
 		}
 	}
-	
+
 	class Fecha_Comparator implements Comparator<WebPoint> {
 		@Override
 		public int compare(WebPoint p1, WebPoint p2) {
-			return Long.valueOf(p1.getFecha().getTime()).compareTo(Long.valueOf(p2.getFecha().getTime()));
+			return Long.valueOf(p1.getFecha().getTime()).compareTo(
+					Long.valueOf(p2.getFecha().getTime()));
 		}
 	}
 
 	class Rep_Comparator implements Comparator<WebPoint> {
 		@Override
 		public int compare(WebPoint p1, WebPoint p2) {
-			return Integer.valueOf(p1.getReputacion()).compareTo(Integer.valueOf(p2.getReputacion()));
+			return Integer.valueOf(p1.getReputacion()).compareTo(
+					Integer.valueOf(p2.getReputacion()));
 		}
 	}
 
@@ -624,7 +661,7 @@ public class AparkaYa extends ActionBarActivity implements
 			}
 			return null;
 		}
-		
+
 		public Drawable getPageIcon(int position) {
 			Locale l = Locale.getDefault();
 			switch (position) {
@@ -700,14 +737,6 @@ public class AparkaYa extends ActionBarActivity implements
 
 		@Override
 		public void onMapLongClick(LatLng puntoPulsado) {
-			/*
-			 * ParserXML_DOM parser = new
-			 * ParserXML_DOM(getApplicationContext());
-			 * 
-			 * parser.guardarPunto("prueba", puntoPulsado);
-			 * 
-			 * iniciarTask();
-			 */
 			new asyncSendPoint().execute(puntoPulsado);
 		}
 
@@ -731,14 +760,17 @@ public class AparkaYa extends ActionBarActivity implements
 		public class btnGuardarListener implements OnClickListener {
 			@Override
 			public void onClick(View v) {
-				ParserXML_DOM parser = new ParserXML_DOM(
-						getApplicationContext());
-
-				parser.guardarPunto("Coche",
-						new LatLng(mapa.getCameraPosition().target.latitude,
-								mapa.getCameraPosition().target.longitude));
-
-				iniciarTask();
+				/*
+				 * ParserXML_DOM parser = new ParserXML_DOM(
+				 * getApplicationContext());
+				 * 
+				 * parser.guardarPunto("Coche", new
+				 * LatLng(mapa.getCameraPosition().target.latitude,
+				 * mapa.getCameraPosition().target.longitude));
+				 * 
+				 * iniciarTask();
+				 */
+				new asyncCallPoints().execute();
 			}
 		}
 
@@ -830,97 +862,83 @@ public class AparkaYa extends ActionBarActivity implements
 				}
 			}
 		}
-		/*
-		 * private class asyncCallPoints extends AsyncTask< Void, String, String
-		 * > {
-		 * 
-		 * Vector<Punto> auxpoints = new Vector<Punto>();
-		 * 
-		 * protected String doInBackground(Void... params) {
-		 * 
-		 * ArrayList<NameValuePair> postparameters2send= new
-		 * ArrayList<NameValuePair>(); postparameters2send.add(new
-		 * BasicNameValuePair("user",user)); postparameters2send.add(new
-		 * BasicNameValuePair("password",pass));
-		 * 
-		 * //realizamos una peticion y como respuesta obtenes un array JSON
-		 * JSONArray jdata=post.getserverdata(postparameters2send,
-		 * "http://aparkaya.webcindario.com/obtenerPuntos.php");
-		 * 
-		 * //si lo que obtuvimos no es null if (jdata!=null && jdata.length() >
-		 * 0){
-		 * 
-		 * try { for (int i = 0; i < jdata.length(); i++) { JSONObject
-		 * jsonObject = jdata.getJSONObject(i);
-		 * 
-		 * auxpoints.add(new Punto(jsonObject.getString("id_usuario"), new
-		 * LatLng(jsonObject.getDouble("latitud"),
-		 * jsonObject.getDouble("longitud")), jsonObject.getInt("libre"))); }
-		 * 
-		 * } catch (JSONException e) { // TODO Auto-generated catch block
-		 * e.printStackTrace(); try { JSONObject json_data =
-		 * jdata.getJSONObject(0);
-		 * 
-		 * int id = json_data.getInt("id");
-		 * 
-		 * if (id == 2) { return "notUser"; } } catch (JSONException e2) { //
-		 * TODO Auto-generated catch block e2.printStackTrace(); } } return
-		 * "ok"; //lista de puntos obtenida correctamente
-		 * 
-		 * } return "err"; //error
-		 * 
-		 * }
-		 * 
-		 * protected void onPostExecute(String result) {
-		 * 
-		 * if (result.equals("ok")){
-		 * Toast.makeText(getApplicationContext(),"Puntos obtenidos correctamente"
-		 * , Toast.LENGTH_SHORT).show(); points = auxpoints;//Sustituimos la
-		 * lista de puntos antigua por la nueva mapa.clear();
-		 * 
-		 * for (Punto punto : points) { if (punto.getNombre().equals("Coche"))
-		 * mapa.addMarker(new MarkerOptions() .position(punto.getCords())
-		 * .title(punto.getNombre()) .snippet(punto.getNombre())
-		 * .icon(BitmapDescriptorFactory
-		 * .defaultMarker(BitmapDescriptorFactory.HUE_RED))); else
-		 * mapa.addMarker(new MarkerOptions() .position(punto.getCords())
-		 * .title(punto.getNombre()) .snippet(punto.getNombre())
-		 * .icon(BitmapDescriptorFactory
-		 * .defaultMarker(BitmapDescriptorFactory.HUE_GREEN))); } } else if
-		 * (result.equals("notUser")){
-		 * Toast.makeText(getApplicationContext(),"Usuario no reconocido",
-		 * Toast.LENGTH_SHORT).show(); }else{
-		 * Toast.makeText(getApplicationContext
-		 * (),"No se pudieron obtener los puntos", Toast.LENGTH_SHORT).show(); }
-		 * } }
-		 * 
-		 * private class RetrieveFeed extends
-		 * android.os.AsyncTask<String,Integer,Boolean> {
-		 * 
-		 * 
-		 * protected Boolean doInBackground(String... params) {
-		 * 
-		 * ParserXML_DOM parser = new ParserXML_DOM(getApplicationContext());
-		 * points = parser.listaPuntos();
-		 * 
-		 * return true; }
-		 * 
-		 * protected void onPostExecute(Boolean result) {
-		 * 
-		 * mapa.clear();
-		 * 
-		 * for (Punto punto : points) { if (punto.getNombre().equals("Coche"))
-		 * mapa.addMarker(new MarkerOptions() .position(punto.getCords())
-		 * .title(punto.getNombre()) .snippet(punto.getNombre())
-		 * .icon(BitmapDescriptorFactory
-		 * .defaultMarker(BitmapDescriptorFactory.HUE_RED))); else
-		 * mapa.addMarker(new MarkerOptions() .position(punto.getCords())
-		 * .title(punto.getNombre()) .snippet(punto.getNombre())
-		 * .icon(BitmapDescriptorFactory
-		 * .defaultMarker(BitmapDescriptorFactory.HUE_GREEN))); } }
-		 * 
-		 * }
-		 */
+
+		private class asyncCallPoints extends AsyncTask<Void, String, Integer> {
+
+			ArrayList<WebPoint> auxpoints = new ArrayList<WebPoint>();
+
+			protected Integer doInBackground(Void... params) {
+
+				/*
+				 * Creamos un ArrayList del tipo nombre valor para agregar los
+				 * datos recibidos por los parametros anteriores y enviarlo
+				 * mediante POST a nuestro sistema para relizar la validacion
+				 */
+				ArrayList<NameValuePair> postparameters2send = new ArrayList<NameValuePair>();
+				postparameters2send.add(new BasicNameValuePair("user", user));
+				postparameters2send
+						.add(new BasicNameValuePair("password", pass));
+
+				// realizamos una peticion y como respuesta obtenes un array
+				// JSON
+				JSONArray jdata = post.getserverdata(postparameters2send,
+						"http://aparkaya.webcindario.com/obtenerPuntos.php");
+
+				// si lo que obtuvimos no es null
+				if (jdata != null && jdata.length() > 0) {
+
+					try {
+						for (int i = 0; i < jdata.length(); i++) {
+							JSONObject jsonObject = jdata.getJSONObject(i);
+
+							String fechaString = jsonObject
+									.getString(Constants.FECHA);
+							SimpleDateFormat dateFormat = new SimpleDateFormat(
+									"yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+							Date fecha;
+							try {
+								if (!fechaString.equals("null"))
+									fecha = dateFormat.parse(fechaString);
+								else
+									fecha = new Date();
+							} catch (ParseException e) {
+								fecha = null;
+							}
+							auxpoints.add(new WebPoint(jsonObject
+									.getInt(Constants.ID_PUNTO), jsonObject
+									.getString(Constants.USUARIO), new LatLng(
+									jsonObject.getDouble(Constants.LATITUD),
+									jsonObject.getDouble(Constants.LONGITUD)),
+									jsonObject.getInt(Constants.REPUTACION),
+									fecha));
+						}
+
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						try {
+							JSONObject json_data = jdata.getJSONObject(0);
+
+							int id = json_data.getInt("id");
+
+							if (id == 2) {
+								return Constants.RESULT_NOTUSER;
+							}
+						} catch (JSONException e2) {
+							// TODO Auto-generated catch block
+							e2.printStackTrace();
+						}
+					}
+					return Constants.RESULT_OK; // lista de puntos obtenida
+												// correctamente
+				}
+				return Constants.RESULT_ERR; // error
+			}
+
+			protected void onPostExecute(Integer result) {
+				repaintPoints(result, auxpoints);
+			}
+		}
 	}
 
 	public class FragmentoHuecos extends Fragment {
@@ -945,9 +963,9 @@ public class AparkaYa extends ActionBarActivity implements
 			lstListado.setOnItemClickListener(onclick_punto);
 			lstListado.setAdapter(adapter);
 		}
-		
+
 		@Override
-		public void onResume(){
+		public void onResume() {
 			super.onResume();
 			reordenarLista();
 		}
@@ -956,14 +974,14 @@ public class AparkaYa extends ActionBarActivity implements
 			@SuppressLint("NewApi")
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				WebPoint punto_selec=(WebPoint) lstListado.getItemAtPosition(position);
-			    getActivity().getActionBar().setSelectedNavigationItem(0);
-			    mapa.animateCamera(CameraUpdateFactory.newLatLngZoom(punto_selec.getCords(), 15));
-			    punto_selec.getMarker().showInfoWindow();
+				WebPoint punto_selec = (WebPoint) lstListado
+						.getItemAtPosition(position);
+				getActivity().getActionBar().setSelectedNavigationItem(0);
+				mapa.animateCamera(CameraUpdateFactory.newLatLngZoom(
+						punto_selec.getCords(), 15));
+				punto_selec.getMarker().showInfoWindow();
 			}
 		};
-		
-		
-		
+
 	}
 }
