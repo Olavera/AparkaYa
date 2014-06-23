@@ -41,7 +41,7 @@
 	<string name="area_busqueda_op_1">500 metres</string>
 	<string name="area_busqueda_op_2">1 kilometre</string>
 	<string name="area_busqueda_op_3">1.5 kilometres</string>
-	<string name="area_busqueda_op_4">All</string>
+	<string name="area_busqueda_op_4">Global</string>
 	<string name="ordenar_lista_por">Order list by</string>
 	<string name="ordenar_lista_por_op_1">Time</string>
 	<string name="ordenar_lista_por_op_2">Distance</string>
@@ -51,7 +51,7 @@
 	<string name="t_max_en_difusion_op_1">10 minutes</string>
 	<string name="t_max_en_difusion_op_2">30 minutes</string>
 	<string name="t_max_en_difusion_op_3">1 hour</string>
-	<string name="t_max_en_difusion_op_4">All</string>
+	<string name="t_max_en_difusion_op_4">Always</string>
 	<string name="info_cuenta">Info Account</string>
 	<string name="no_puntos">There are no free slots in the list</string>
 	<string name="loading">process...</string>

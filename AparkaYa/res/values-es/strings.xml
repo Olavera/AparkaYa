@@ -30,7 +30,7 @@
     <string name="area_busqueda_op_1">500 metros</string>
     <string name="area_busqueda_op_2">1 kilómetro</string>
     <string name="area_busqueda_op_3">1.5 kilómetros</string>
-    <string name="area_busqueda_op_4">Todo</string>
+    <string name="area_busqueda_op_4">Global</string>
     <string name="ordenar_lista_por">Ordenar lista por</string>
     <string name="ordenar_lista_por_op_1">Tiempo</string>
     <string name="ordenar_lista_por_op_2">Distancia</string>
@@ -40,7 +40,7 @@
     <string name="t_max_en_difusion_op_1">10 minutos</string>
     <string name="t_max_en_difusion_op_2">30 minutos</string>
     <string name="t_max_en_difusion_op_3">1 hora</string>
-    <string name="t_max_en_difusion_op_4">Todo</string>
+    <string name="t_max_en_difusion_op_4">Desde siempre</string>
     <string name="info_cuenta">Info de cuenta</string>
     <string name="no_puntos">No existen huecos libres en la lista</string>
     <string name="loading">procesando...</string>

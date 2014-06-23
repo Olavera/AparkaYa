@@ -268,23 +268,6 @@ public class AparkaYa extends ActionBarActivity implements
 		unregisterReceiver(receiver);
 	}
 
-	private void repaintPoints(int result, ArrayList<WebPoint> auxpoints) {
-
-		if (result == Constants.RESULT_OK) {
-			Toast.makeText(getApplicationContext(), "Strart refresh",
-					Toast.LENGTH_SHORT).show();
-			new asyncRefreshPoint().execute(auxpoints);
-		} else if (result == Constants.RESULT_NOTUSER) {
-			Toast.makeText(getApplicationContext(), "Usuario no reconocido",
-					Toast.LENGTH_SHORT).show();
-		} else if (result == Constants.RESULT_ERR) {
-			Toast.makeText(getApplicationContext(),
-					"Error al actualizar información", Toast.LENGTH_SHORT)
-					.show();
-		}
-
-	}
-
 	private class asyncRefreshPoint extends
 			AsyncTask<ArrayList<WebPoint>, String, Integer> {
 
@@ -410,49 +393,6 @@ public class AparkaYa extends ActionBarActivity implements
 		}
 	}
 
-	class AdaptadorPuntos extends ArrayAdapter<WebPoint> {
-		Activity context;
-
-		public AdaptadorPuntos(Activity act) {
-			super(act, R.layout.vista_punto, listpoints);
-			this.context = act;
-		}
-
-		public View getView(int position, View convertView, ViewGroup parent) {
-			LayoutInflater inflater = context.getLayoutInflater();
-			View v = inflater.inflate(R.layout.vista_punto, null);
-
-			// Creamos un objeto directivo
-			WebPoint punto = listpoints.get(position);
-
-			DecimalFormat df = new DecimalFormat("#.####");
-			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM",
-					Locale.getDefault());
-			SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH:mm",
-					Locale.getDefault());
-
-			// Colocamos la imagen correspondiente
-			ImageView img = (ImageView) v.findViewById(R.id.imagenListView);
-			img.setImageResource(obtenerIdRecursoIconoFranja(obtenerFranja(punto
-					.getFecha())));
-
-			TextView tit = (TextView) v.findViewById(R.id.txt_point_title);
-			tit.setText(punto.getId_punto() + ": " + punto.getUsuario() + " ("
-					+ punto.getReputacion() + ")");
-
-			TextView sub1 = (TextView) v.findViewById(R.id.txt_point_sub1);
-			sub1.setText("Difundido a las "
-					+ dateFormat2.format(punto.getFecha()) + " el "
-					+ dateFormat1.format(punto.getFecha()));
-
-			TextView sub2 = (TextView) v.findViewById(R.id.txt_point_sub2);
-			sub2.setText("Coords: (" + df.format(punto.getCords().latitude)
-					+ " / " + df.format(punto.getCords().longitude) + ")");
-
-			return v;
-		}
-	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -548,60 +488,8 @@ public class AparkaYa extends ActionBarActivity implements
 	public void onTabReselected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
 	}
-
-	/**
-	 * Adaptador para el tab de fragmentos.
-	 */
-	public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-		public SectionsPagerAdapter(FragmentManager fm) {
-			super(fm);
-		}
-
-		@Override
-		public Fragment getItem(int position) {
-			// getItem is called to instantiate the fragment for the given page.
-			// Return a PlaceholderFragment (defined as a static inner class
-			// below).
-			Fragment fragment;
-
-			if (position == 0) {
-				fragment = new FragmentoMapa();
-			} else {
-				fragment = new FragmentoLista();
-			}
-			return fragment;
-		}
-
-		@Override
-		public int getCount() {
-			// Show 2 total pages.
-			return 2;
-		}
-
-		@Override
-		public CharSequence getPageTitle(int position) {
-			Locale l = Locale.getDefault();
-			switch (position) {
-			case 0:
-				return getString(R.string.Mapa).toUpperCase(l);
-			case 1:
-				return getString(R.string.Huecos).toUpperCase(l);
-			}
-			return null;
-		}
-
-		public Drawable getPageIcon(int position) {
-			Locale l = Locale.getDefault();
-			switch (position) {
-			case 0:
-				return getResources().getDrawable(R.drawable.icon_map);
-			case 1:
-				return getResources().getDrawable(R.drawable.icon_list);
-			}
-			return null;
-		}
-	}
+	
+	// -------------------------- FRAGMENTOS --------------------------
 
 	/**
 	 * Fragmento correspondiente al mapa de puntos libres. 
@@ -810,8 +698,8 @@ public class AparkaYa extends ActionBarActivity implements
 	}
 
 	/**
-	 * Fragmento correspondiente a la lista de puntos libres en el visibles en
-	 * el fragmento mapa. 
+	 * Fragmento correspondiente a la lista de puntos libres
+	 *  visibles en el fragmento mapa. 
 	 * Corresponde al fragmento con indice 1 en el tab.
 	 */
 	public class FragmentoLista extends Fragment {
@@ -851,14 +739,80 @@ public class AparkaYa extends ActionBarActivity implements
 		};
 
 	}
+	
+	// ------------------ METODOS DE REFRESCO DE INFORMACION DE FRAGMENTOS ------------------
+	
+	/**
+	 * Comprueba el resultado de obtener la lista de nuevos puntos del servidor
+	 * y ejecuta el proceso si la lista es correcta
+	 */
+	private void repaintPoints(int result, ArrayList<WebPoint> auxpoints) {
+
+		if (result == Constants.RESULT_OK) {
+			Toast.makeText(getApplicationContext(), "Strart refresh",
+					Toast.LENGTH_SHORT).show();
+			new asyncRefreshPoint().execute(auxpoints);
+		} else if (result == Constants.RESULT_NOTUSER) {
+			Toast.makeText(getApplicationContext(), "Usuario no reconocido",
+					Toast.LENGTH_SHORT).show();
+		} else if (result == Constants.RESULT_ERR) {
+			Toast.makeText(getApplicationContext(),
+					"Error al actualizar información", Toast.LENGTH_SHORT)
+					.show();
+		}
+
+	}
+	
+	/**
+	 * Selecciona un metodo de ordenacion para la lista a partir 
+	 * de la variable "ordenar_lista_por", reordena y notifica los cambios
+	 *  al adaptador de la lista
+	 */
+	public void reordenarLista() {
+		// Ordenacion por id (por defecto)
+		Comparator<WebPoint> comparator = new Id_punto_Comparator();
+		switch (ordenar_lista_por) {
+			// Ordenar por fecha
+			case Constants.ORDENAR_LISTA_POR_OPCION_1: 
+				comparator = new Fecha_Comparator();
+				break;
+			// Ordenar por distacia
+			case Constants.ORDENAR_LISTA_POR_OPCION_2:
+				if (mapa != null) 
+					if (mapa.getMyLocation() != null)
+						comparator = new Distancia_Comparator(
+								new LatLng(mapa.getMyLocation().getLatitude(), mapa.getMyLocation().getLongitude()));
+					else
+						Toast.makeText(getApplicationContext(), getResources().getString(R.string.GPS_no_detected),
+								Toast.LENGTH_SHORT).show();
+				break;
+			// Ordenar por nombre de usuario
+			case Constants.ORDENAR_LISTA_POR_OPCION_3:
+				comparator = new User_Comparator();
+				break;
+			// Ordenar por reputacion de usuario
+			case Constants.ORDENAR_LISTA_POR_OPCION_4:
+				comparator = new Rep_Comparator();
+				break;
+			default:
+				break;
+		}
+		// Ejecuta la ordenacion
+		Collections.sort(listpoints, comparator);
+		// Notifica los cambios al adaptador de la lista
+		adapter.notifyDataSetChanged();
+	}
+	
+	
+	// -------------------------- METODOS AUXILIARES --------------------------
+	
 
 	
 	// -------------------------METODOS AUXILIARES-------------------------
 	
 	/**
-	 * 
-	 * @param d
-	 * @return
+	 *  Obtiene a que franja pertenece una fecha a partir de las marca de tiempo
+	 *  declaradas en constantes y la codifica como un entero
 	 */
 	public int obtenerFranja(Date d) {
 		int franja;
@@ -880,11 +834,11 @@ public class AparkaYa extends ActionBarActivity implements
 		return franja;
 	}
 
+	
 	/**
-	 * 
-	 * @param franja
-	 * @return
-	 */
+	 * Apartir de una franja de tiempo devuelve el color de marker 
+	 * correspondiente en codificacion HUE
+	 */	
 	public float obtenerIconoFranja(int franja) {
 		float color;
 
@@ -911,11 +865,11 @@ public class AparkaYa extends ActionBarActivity implements
 		return color;
 	}
 
+
 	/**
-	 * 
-	 * @param franja
-	 * @return
-	 */
+	 * Apartir de una franja de tiempo devuelve la referencia de resources
+	 * del icnono marker asociado
+	 */	
 	public int obtenerIdRecursoIconoFranja(int franja) {
 		int color;
 
@@ -942,43 +896,120 @@ public class AparkaYa extends ActionBarActivity implements
 		return color;
 	}
 
+	
+	// -------------------------- ADAPTADORES --------------------------
+	
 	/**
-	 * 
+	 * Adaptador para el tab de seleccion de fragmentos
 	 */
-	public void reordenarLista() {
-		Comparator<WebPoint> comparator = new Id_punto_Comparator();
-		switch (ordenar_lista_por) {
-			case Constants.ORDENAR_LISTA_POR_OPCION_1: 
-				comparator = new Fecha_Comparator();
-				break;
-			case Constants.ORDENAR_LISTA_POR_OPCION_2:
-				if (mapa != null) 
-					if (mapa.getMyLocation() != null)
-						comparator = new Distancia_Comparator(
-								new LatLng(mapa.getMyLocation().getLatitude(), mapa.getMyLocation().getLongitude()));
-					else
-						Toast.makeText(getApplicationContext(), getResources().getString(R.string.GPS_no_detected),
-								Toast.LENGTH_SHORT).show();
-				break;
-			case Constants.ORDENAR_LISTA_POR_OPCION_3:
-				comparator = new User_Comparator();
-				break;
-			case Constants.ORDENAR_LISTA_POR_OPCION_4:
-				comparator = new Rep_Comparator();
-				break;
-			default:
-				break;
+	public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+		public SectionsPagerAdapter(FragmentManager fm) {
+			super(fm);
 		}
-		Collections.sort(listpoints, comparator);
-		adapter.notifyDataSetChanged();
+
+		@Override
+		public Fragment getItem(int position) {
+			// getItem is called to instantiate the fragment for the given page.
+			// Return a PlaceholderFragment (defined as a static inner class
+			// below).
+			Fragment fragment;
+
+			if (position == 0) {
+				fragment = new FragmentoMapa();
+			} else {
+				fragment = new FragmentoLista();
+			}
+			return fragment;
+		}
+
+		@Override
+		public int getCount() {
+			// Show 2 total pages.
+			return 2;
+		}
+
+		@Override
+		public CharSequence getPageTitle(int position) {
+			Locale l = Locale.getDefault();
+			switch (position) {
+			case 0:
+				return getString(R.string.Mapa).toUpperCase(l);
+			case 1:
+				return getString(R.string.Huecos).toUpperCase(l);
+			}
+			return null;
+		}
+
+		public Drawable getPageIcon(int position) {
+			Locale l = Locale.getDefault();
+			switch (position) {
+			case 0:
+				return getResources().getDrawable(R.drawable.icon_map);
+			case 1:
+				return getResources().getDrawable(R.drawable.icon_list);
+			}
+			return null;
+		}
 	}
+	
+	/**
+	 * Adaptador de la lista de puntos del fragmento FragmentoLista
+	 */
+	class AdaptadorPuntos extends ArrayAdapter<WebPoint> {
+		Activity context;
+
+		public AdaptadorPuntos(Activity act) {
+			super(act, R.layout.vista_punto, listpoints);
+			this.context = act;
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+			LayoutInflater inflater = context.getLayoutInflater();
+			View v = inflater.inflate(R.layout.vista_punto, null);
+
+			// Creamos un objeto directivo
+			WebPoint punto = listpoints.get(position);
+
+			DecimalFormat df = new DecimalFormat("#.####");
+			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM",
+					Locale.getDefault());
+			SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH:mm",
+					Locale.getDefault());
+
+			// Colocamos la imagen correspondiente
+			ImageView img = (ImageView) v.findViewById(R.id.imagenListView);
+			img.setImageResource(obtenerIdRecursoIconoFranja(obtenerFranja(punto
+					.getFecha())));
+
+			TextView tit = (TextView) v.findViewById(R.id.txt_point_title);
+			tit.setText(punto.getId_punto() + ": " + punto.getUsuario() + " ("
+					+ punto.getReputacion() + ")");
+
+			TextView sub1 = (TextView) v.findViewById(R.id.txt_point_sub1);
+			sub1.setText("Difundido a las "
+					+ dateFormat2.format(punto.getFecha()) + " el "
+					+ dateFormat1.format(punto.getFecha()));
+
+			TextView sub2 = (TextView) v.findViewById(R.id.txt_point_sub2);
+			sub2.setText("Coords: (" + df.format(punto.getCords().latitude)
+					+ " / " + df.format(punto.getCords().longitude) + ")");
+
+			return v;
+		}
+	}
+	
 	
 	public double distanciaEntreCoordenadas(LatLng coord1, LatLng coord2){
-		return Math.abs(Math.sqrt(Math.pow(coord2.latitude - coord1.latitude, 2) + Math.pow(coord2.longitude - coord1.longitude, 2)));
+		return Math.abs(Math.sqrt(Math.pow(coord2.latitude - coord1.latitude, 2) +
+				Math.pow(coord2.longitude - coord1.longitude, 2)));
 	}
 	
-	// -------------------------COMPARADORES------------------------- 
+	// -------------------------COMPARADORES------------------------- 	// -------------------------- COMPARADORES --------------------------
+	// Comparadores usados para ordenar la lista de puntos a partir 
+	// de diferentes atributos de los puntos.
 	
+	// Ordenar por fecha, mas nuevos primero
 	class Fecha_Comparator implements Comparator<WebPoint> {
 		@Override
 		public int compare(WebPoint p1, WebPoint p2) {
@@ -988,6 +1019,7 @@ public class AparkaYa extends ActionBarActivity implements
 		}
 	}
 	
+	// Ordenar por coordenadas, mas cercanos primero
 	class Distancia_Comparator implements Comparator<WebPoint> {
 		
 		LatLng posicion;
@@ -1003,6 +1035,7 @@ public class AparkaYa extends ActionBarActivity implements
 		}
 	}
 
+	// Ordenar por nombre de usuario
 	class User_Comparator implements Comparator<WebPoint> {
 		@Override
 		public int compare(WebPoint p1, WebPoint p2) {
@@ -1011,6 +1044,7 @@ public class AparkaYa extends ActionBarActivity implements
 		}
 	}
 
+	// Ordenar por reputacion de usuario, mayor reputacion primero
 	class Rep_Comparator implements Comparator<WebPoint> {
 		@Override
 		public int compare(WebPoint p1, WebPoint p2) {
@@ -1019,6 +1053,7 @@ public class AparkaYa extends ActionBarActivity implements
 		}
 	}
 	
+	// Ordenar por id del punto, menor id primero
 	class Id_punto_Comparator implements Comparator<WebPoint> {
 		@Override
 		public int compare(WebPoint p1, WebPoint p2) {
@@ -1026,4 +1061,5 @@ public class AparkaYa extends ActionBarActivity implements
 					Integer.valueOf(p2.getId_punto()));
 		}
 	}
+	
 }
