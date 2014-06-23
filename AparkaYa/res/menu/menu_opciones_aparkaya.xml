@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.aparkaya.MainActivity"
+    tools:context="com.example.aparkaya.AparkaYa"
      >
     <item android:id="@+id/info_cuenta" android:title="@string/info_cuenta" android:icon="@android:drawable/ic_menu_info_details" android:showAsAction="always" android:orderInCategory="85"></item>
     <item android:id="@+id/t_refresco" android:title="@string/t_refresco" android:icon="@android:drawable/ic_menu_rotate" android:showAsAction="ifRoom" android:orderInCategory="90">

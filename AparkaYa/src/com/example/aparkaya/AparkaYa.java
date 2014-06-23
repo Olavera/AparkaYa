@@ -213,10 +213,10 @@ public class AparkaYa extends ActionBarActivity implements
 		ordenar_lista_por = prefs.getInt(Constants.ORDENAR_LISTA_POR, Constants.ORDENAR_LISTA_POR_OPCION_1);
 		t_max_en_difusion = prefs.getInt(Constants.TIEMPO_MAXIMO_EN_DIFUSION, Constants.TIEMPO_MAXIMO_EN_DIFUSION_OPCION_1);
 		
-		Toast.makeText(
+		/*Toast.makeText(
 				getApplicationContext(),
 				"Preferencias:" + t_refresco + " | " + area_busqueda + " | "
-						+ ordenar_lista_por, Toast.LENGTH_LONG).show();
+						+ ordenar_lista_por, Toast.LENGTH_LONG).show();*/
 
 		// -----------------------------------------------------------------------
 
@@ -733,8 +733,8 @@ public class AparkaYa extends ActionBarActivity implements
 				}
 			}
 			adapter.notifyDataSetChanged();
-			Toast.makeText(getApplicationContext(), "Stop refresh",
-					Toast.LENGTH_SHORT).show();
+			/*Toast.makeText(getApplicationContext(), "Stop refresh",
+					Toast.LENGTH_SHORT).show();*/
 		}
 	}
 	
@@ -810,14 +810,14 @@ public class AparkaYa extends ActionBarActivity implements
 
 			if (result.equals("ok")) {
 				Toast.makeText(getApplicationContext(),
-						"Punto enviado correctamente", Toast.LENGTH_SHORT)
+						"Punto difundido", Toast.LENGTH_SHORT)
 						.show();
 			} else if (result.equals("notUser")) {
 				Toast.makeText(getApplicationContext(),
 						"Usuario no reconocido", Toast.LENGTH_SHORT).show();
 			} else {
 				Toast.makeText(getApplicationContext(),
-						"Fallo al enviar el punto", Toast.LENGTH_SHORT)
+						"Fallo al difundir el punto", Toast.LENGTH_SHORT)
 						.show();
 			}
 			pDialog.dismiss();
