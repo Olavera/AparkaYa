@@ -68,7 +68,6 @@ import com.example.aparkaya.localService.PointsRefreshService;
 import com.example.aparkaya.model.EnumTypeRefreshAction;
 import com.example.aparkaya.model.RefreshAction;
 import com.example.aparkaya.model.WebPoint;
-import com.example.aparkaya.parser.ParserXML_DOM;
 import com.example.aparkaya.webService.HttpPostAux;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -552,7 +551,7 @@ public class AparkaYa extends ActionBarActivity implements
 	
 	/**
 	 * Comprueba el resultado de obtener la lista de nuevos puntos del servidor
-	 * y ejecuta el proceso si la lista es correcta
+	 * y ejecuta el proceso de refresco si la lista se obtuvo correctamente
 	 */
 	private void repaintPoints(int result, ArrayList<WebPoint> auxpoints) {
 
@@ -738,61 +737,53 @@ public class AparkaYa extends ActionBarActivity implements
 		}
 	}
 	
-	public class asyncSendPoint extends AsyncTask<LatLng, Integer, String> {
+	/**
+	 * Proceso asincrono que realiza la llamada al servicio web para difundir un punto
+	 * y recoge el valor de respuesta
+	 */
+	public class asyncSendPoint extends AsyncTask<LatLng, Integer, Integer> {
 
-		protected String doInBackground(LatLng... params) {
-
-			LatLng ll = params[0];
+		protected Integer doInBackground(LatLng... params) {
+			// Coordenadas del punto a difundir
+			LatLng latlng = params[0];
+			// 
 			int id = -1;
-			/*
-			 * Creamos un ArrayList del tipo nombre valor para agregar los
-			 * datos recibidos por los parametros anteriores y enviarlo
-			 * mediante POST a nuestro sistema para relizar la validacion
-			 */
-			ArrayList<NameValuePair> postparameters2send = new ArrayList<NameValuePair>();
 
-			SimpleDateFormat dateFormat = new SimpleDateFormat(
-					"yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+			// Format para que la base de datos lo pueda reconoces como tipo DateTime
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+			// Obtenemos la hora actual y la formateamos
 			Date date = new Date();
 			String fecha = dateFormat.format(date);
-
-			postparameters2send.add(new BasicNameValuePair("user", user));
+			
+			// Creamos un ArrayList del tipo clave-valor y agregamos los valores necesarios
+			ArrayList<NameValuePair> postparameters2send = new ArrayList<NameValuePair>();
+			postparameters2send.add(new BasicNameValuePair(Constants.USER, user));
 			postparameters2send
-					.add(new BasicNameValuePair("password", pass));
-			postparameters2send.add(new BasicNameValuePair("latitud",
-					Double.toString(ll.latitude)));
-			postparameters2send.add(new BasicNameValuePair("longitud",
-					Double.toString(ll.longitude)));
-			postparameters2send.add(new BasicNameValuePair("fecha", fecha));
+					.add(new BasicNameValuePair(Constants.PASSWORD, pass));
+			postparameters2send.add(new BasicNameValuePair(Constants.LATITUD,
+					Double.toString(latlng.latitude)));
+			postparameters2send.add(new BasicNameValuePair(Constants.LONGITUD,
+					Double.toString(latlng.longitude)));
+			postparameters2send.add(new BasicNameValuePair(Constants.FECHA, fecha));
 
-			// realizamos una peticion y como respuesta obtenes un array
-			// JSON
+			// Realiza una peticion enviando los datos mediante el metodo POST 
+			// y obtiene como respuesta un array JSON
 			JSONArray jdata = post.getserverdata(postparameters2send, Constants.php_enviarPunto);
 
-			// si lo que obtuvimos no es null
+			// Si no obtenemos una respuesta nula de la direccion parseamos la informacion
+			// En este caso la informacion devuelta sera solo un identificador con el resultado de la consulta
 			if (jdata != null && jdata.length() > 0) {
-
-				JSONObject json_data; // creamos un objeto JSON
+				JSONObject json_data;
 				try {
-					json_data = jdata.getJSONObject(0); // leemos el primer
-														// segmento en
-														// nuestro
-														// caso el unico
-					id = json_data.getInt("id");// accedemos al valor
+					json_data = jdata.getJSONObject(0);
+					id = json_data.getInt(Constants.ID);
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
-				// validamos el valor obtenido
-				if (id == 1) {
-					return "ok"; //
-				} else if (id == 2) {
-					return "notUser";
-				}
+				return id;
 			}
-			return "err"; //
-
+			return Constants.RESULT_ERR; //
 		}
 
 		@Override
@@ -803,16 +794,16 @@ public class AparkaYa extends ActionBarActivity implements
 					asyncSendPoint.this.cancel(true);
 				}
 			});
+			// Mostramos el progress dialog
 			pDialog.show();
 		}
 		
-		protected void onPostExecute(String result) {
-
-			if (result.equals("ok")) {
+		protected void onPostExecute(Integer result) {
+			if (result == Constants.RESULT_OK) {
 				Toast.makeText(getApplicationContext(),
-						"Punto difundido", Toast.LENGTH_SHORT)
+						getResources().getString(R.string.point_spread), Toast.LENGTH_SHORT)
 						.show();
-			} else if (result.equals("notUser")) {
+			} else if (result == Constants.RESULT_NOTUSER) {
 				Toast.makeText(getApplicationContext(),
 						"Usuario no reconocido", Toast.LENGTH_SHORT).show();
 			} else {
@@ -820,13 +811,10 @@ public class AparkaYa extends ActionBarActivity implements
 						"Fallo al difundir el punto", Toast.LENGTH_SHORT)
 						.show();
 			}
+			// Terminamos el progress dialog
 			pDialog.dismiss();
 		}
 	}
-	
-	// -------------------------- METODOS AUXILIARES --------------------------
-	
-
 	
 	// -------------------------METODOS AUXILIARES-------------------------
 	
@@ -854,7 +842,6 @@ public class AparkaYa extends ActionBarActivity implements
 		return franja;
 	}
 
-	
 	/**
 	 * Apartir de una franja de tiempo devuelve el color de marker 
 	 * correspondiente en codificacion HUE
@@ -885,7 +872,6 @@ public class AparkaYa extends ActionBarActivity implements
 		return color;
 	}
 
-
 	/**
 	 * Apartir de una franja de tiempo devuelve la referencia de resources
 	 * del icnono marker asociado
@@ -915,10 +901,18 @@ public class AparkaYa extends ActionBarActivity implements
 		}
 		return color;
 	}
+	
+	/**
+	 * Metodo que vuelve la distancia entre dos coordenadas
+	 */
+	public double distanciaEntreCoordenadas(LatLng coord1, LatLng coord2){
+		return Math.abs(Math.sqrt(Math.pow(coord2.latitude - coord1.latitude, 2) +
+				Math.pow(coord2.longitude - coord1.longitude, 2)));
+	}
 
 	/**
 	 * Inicia el dialogo de progreso para acciones 
-	 * que necesitan una respuest antes de continuar
+	 * que necesitan una respuesta antes de continuar
 	 */
 	public void starProgressDialog(){
 		pDialog = new ProgressDialog(AparkaYa.this);
@@ -926,6 +920,7 @@ public class AparkaYa extends ActionBarActivity implements
 		pDialog.setMessage(getResources().getString(R.string.loading));
 		pDialog.setCancelable(true);
 	}
+	
 	
 	// -------------------------- ADAPTADORES --------------------------
 	
@@ -938,11 +933,12 @@ public class AparkaYa extends ActionBarActivity implements
 			super(fm);
 		}
 
+		/**
+		 * Devuelve una instancia del fragmento correspondiente al indice
+		 * de la pestaña pasada como argumento
+		 */
 		@Override
 		public Fragment getItem(int position) {
-			// getItem is called to instantiate the fragment for the given page.
-			// Return a PlaceholderFragment (defined as a static inner class
-			// below).
 			Fragment fragment;
 
 			if (position == 0) {
@@ -958,21 +954,11 @@ public class AparkaYa extends ActionBarActivity implements
 			// Show 2 total pages.
 			return 2;
 		}
-
-		@Override
-		public CharSequence getPageTitle(int position) {
-			Locale l = Locale.getDefault();
-			switch (position) {
-			case 0:
-				return getString(R.string.Mapa).toUpperCase(l);
-			case 1:
-				return getString(R.string.Huecos).toUpperCase(l);
-			}
-			return null;
-		}
-
+		
+		/**
+		 * Devuelve el drawable correspondiente a la pestaña
+		 */
 		public Drawable getPageIcon(int position) {
-			Locale l = Locale.getDefault();
 			switch (position) {
 			case 0:
 				return getResources().getDrawable(R.drawable.icon_map);
@@ -984,7 +970,7 @@ public class AparkaYa extends ActionBarActivity implements
 	}
 	
 	/**
-	 * Adaptador de la lista de puntos del fragmento FragmentoLista
+	 * Adaptador para los elementos de la lista de puntos del fragmento FragmentoLista
 	 */
 	class AdaptadorPuntos extends ArrayAdapter<WebPoint> {
 		Activity context;
@@ -1001,26 +987,28 @@ public class AparkaYa extends ActionBarActivity implements
 			// Creamos un objeto directivo
 			WebPoint punto = listpoints.get(position);
 
+			// Format para mostrar las coordenadas con un limite de decimales
 			DecimalFormat df = new DecimalFormat("#.####");
+			// Format para mostrar el dia y el mes de la fecha
 			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM",
 					Locale.getDefault());
+			// Format para mostrar la hora de la fecha
 			SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH:mm",
 					Locale.getDefault());
 
 			// Colocamos la imagen correspondiente
 			ImageView img = (ImageView) v.findViewById(R.id.imagenListView);
-			img.setImageResource(obtenerIdRecursoIconoFranja(obtenerFranja(punto
-					.getFecha())));
-
+			img.setImageResource(obtenerIdRecursoIconoFranja(obtenerFranja(punto.getFecha())));
+			// Rellenamos el titulo con el nombre y la reputacion de usuario
 			TextView tit = (TextView) v.findViewById(R.id.txt_point_title);
 			tit.setText(punto.getId_punto() + ": " + punto.getUsuario() + " ("
 					+ punto.getReputacion() + ")");
-
+			// Rellenamos el subtitulo 1 con la fecha de difusion
 			TextView sub1 = (TextView) v.findViewById(R.id.txt_point_sub1);
 			sub1.setText("Difundido a las "
 					+ dateFormat2.format(punto.getFecha()) + " el "
 					+ dateFormat1.format(punto.getFecha()));
-
+			// Rellenamos el subtitulo 3 con las coordenadas
 			TextView sub2 = (TextView) v.findViewById(R.id.txt_point_sub2);
 			sub2.setText("Coords: (" + df.format(punto.getCords().latitude)
 					+ " / " + df.format(punto.getCords().longitude) + ")");
@@ -1030,12 +1018,7 @@ public class AparkaYa extends ActionBarActivity implements
 	}
 	
 	
-	public double distanciaEntreCoordenadas(LatLng coord1, LatLng coord2){
-		return Math.abs(Math.sqrt(Math.pow(coord2.latitude - coord1.latitude, 2) +
-				Math.pow(coord2.longitude - coord1.longitude, 2)));
-	}
-	
-	// -------------------------COMPARADORES------------------------- 	// -------------------------- COMPARADORES --------------------------
+	// -------------------------COMPARADORES------------------------- 
 	// Comparadores usados para ordenar la lista de puntos a partir 
 	// de diferentes atributos de los puntos.
 	
@@ -1049,7 +1032,7 @@ public class AparkaYa extends ActionBarActivity implements
 		}
 	}
 	
-	// Ordenar por coordenadas, mas cercanos primero
+	// Ordenar por coordenadas respecto a posicion actual, mas cercanos  primero
 	class Distancia_Comparator implements Comparator<WebPoint> {
 		
 		LatLng posicion;

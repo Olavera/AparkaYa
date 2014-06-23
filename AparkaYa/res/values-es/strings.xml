@@ -46,5 +46,6 @@
     <string name="loading">procesando...</string>
     <string name="err_force_refresh">Error al forzar la actualización de puntos</string>
 	<string name="GPS_no_detected">Localización GPS no detectada</string>
+	<string name="point_spread">Punto difundido</string>
 
 </resources>

@@ -57,5 +57,7 @@
 	<string name="loading">process...</string>
 	<string name="err_force_refresh">Error at force update points</string>
 	<string name="GPS_no_detected">GPS location undetected</string>
+	<string name="point_spread">Point spread</string>
+	
 	
 </resources>
