@@ -189,6 +189,15 @@ public class AparkaYa extends ActionBarActivity implements
 		listpoints = new ArrayList<WebPoint>();
 		adapter = new AdaptadorPuntos(this);
 	}
+	
+	/**
+	 * Al iniciar la actividad buscamos la localización en el mapa, miramos
+	 * si en la Shared Preferences hay datos guardados por el usuario para
+	 * iniciar con esos datos. Conectamos con el servicio, registramos el
+	 * BroadcastReceiver para mandar la notificación a él implementando
+	 * PointRefreshService, iniciamosuna alarma que mandara peticiones 
+	 * al servicio cada 10 segundos y hacemos un bind al servicio
+	 */
 
 	@Override
 	protected void onStart() {
@@ -243,6 +252,13 @@ public class AparkaYa extends ActionBarActivity implements
 		intent.putExtra(Constants.TIEMPO_MAXIMO_EN_DIFUSION, t_max_en_difusion);
 		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	}
+	
+	/**
+	 * Al cerrar actividad guardamos los valores de las preferencias elegidos
+	 * en el menu de opciones, mandamos una señal a la alarma para que se cancele,
+	 * desconectamos del servicio y lo destruimos. Finalmente dejamos de recibir
+	 * intents con el BroadcastReceiver
+	 */
 
 	@Override
 	protected void onStop() {
@@ -259,7 +275,7 @@ public class AparkaYa extends ActionBarActivity implements
 		editor.putInt(Constants.TIEMPO_MAXIMO_EN_DIFUSION, t_max_en_difusion);
 		editor.commit();
 
-		// ----------------------------------------------------------
+		// ------------------------------------------------------------------------
 
 		Intent intt = new Intent(this, PointsRefreshService.class);
 		PendingIntent pintent = PendingIntent.getService(this, 0, intt,
@@ -273,7 +289,10 @@ public class AparkaYa extends ActionBarActivity implements
 		unregisterReceiver(receiver);
 	}
 
-	
+	/**
+	 * Infla nuestro menu de opciones implementado en el archivo
+	 *  xml de la carpeta menu
+	 */
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

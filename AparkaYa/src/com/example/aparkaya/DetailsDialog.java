@@ -34,10 +34,24 @@ import com.example.aparkaya.webService.HttpPostAux;
 import com.google.android.gms.maps.model.LatLng;
 
 public class DetailsDialog extends Activity {
-	WebPoint wp;
-	HttpPostAux post;
-	String user, pass;
+	
+	//Referencia del punto
+	private WebPoint wp;
+	// Objeto para la conexion http
+	private HttpPostAux post;
+	//Variables de sesión
+	private String user, pass;
+	// Dialogo de progreso que se muestra cuando el usuario debe
+	// esperar un proceso del programa antes de seguir interactuando
 	private ProgressDialog pDialog;
+	
+	/**
+	 * Se crea un cuadro de diálogo que tiene contenida una vista
+	 * a la que añadimos todos los elementos descritos en el layout
+	 * Para los botones se comprueba si es el usuario logueado o
+	 * es otro usuario distinto para deshabilitar botones.Finalmente,
+	 * se muestra el cuadro de diálogo.
+	 */
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +133,12 @@ public class DetailsDialog extends Activity {
 		dialog.show();
 	}
 	
+	/**
+	 * Método para mostrar un ProgressDialog al usuario de Procesando...
+	 * para que el usuario no mande varias peticiones y mejorar la 
+	 * usabilidad de la aplicación
+	 */
+	
 	public void iniciarProgressDialog(){
 		pDialog = new ProgressDialog(DetailsDialog.this);
 		pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -164,6 +184,12 @@ public class DetailsDialog extends Activity {
 			new asyncPointActions().execute(Constants.ACTION_DELETE);
 		}
 	}
+	
+	/**
+	 * Método asíncrono que envía los datos al php que se encarga de
+	 * la acción ejecutada de cada botón
+	 *
+	 */
 	
 	private class asyncPointActions extends AsyncTask< Integer, Integer, Integer > {
 
@@ -216,6 +242,7 @@ public class DetailsDialog extends Activity {
 			});
 			pDialog.show();
 		}
+		
 
 		protected void onPostExecute(Integer result) {
 			pDialog.dismiss();

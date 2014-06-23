@@ -32,6 +32,16 @@ public class InfoCuenta extends Activity {
 	// Textview correspondientes a los campos donde se muestra
 	// la informacion de la cuenta recuperada del servidor
 	private TextView tvuser, tvemail, tvrep;
+	
+	
+	/**
+	 * Creamos un cuadro de diálogo que contiene una vista asociada
+	 * a la información de la cuenta del usuario, donde referenciamos
+	 * al Dialog todos los elementos de la vista para mostrar. Finalmente
+	 * ejecutamos el método asíncrono que devuelve la información asociada
+	 * al usuario actual
+	 */
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +146,11 @@ public class InfoCuenta extends Activity {
 			});
 			pDialog.show();
 		}
+		
+		/**
+		 * Método que ejecuta e introduce en los campos de la vista asociada.
+		 * En caso de fallo mostramos mensaje de error
+		 */
 
 		protected void onPostExecute(Integer result) {
 			pDialog.dismiss();
