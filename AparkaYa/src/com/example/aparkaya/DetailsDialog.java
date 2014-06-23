@@ -49,11 +49,9 @@ public class DetailsDialog extends Activity {
 		dialog.setCanceledOnTouchOutside(false);
 		
 		dialog.setOnKeyListener(new Dialog.OnKeyListener() {
-
             @Override
             public boolean onKey(DialogInterface arg0, int keyCode,
                     KeyEvent event) {
-                // TODO Auto-generated method stub
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
                     finish();
                 }
@@ -127,6 +125,12 @@ public class DetailsDialog extends Activity {
 		pDialog.setCancelable(true);
 	}
 	
+	// ---------------- LISTENERS PARA LOS BOTONES DEL DIALOG ----------------
+	/**
+	 * Todos hacen lo mismo, iniciar el progress dialog y llamar al proceso asincrono
+	 * que hace la peticion al servidor.
+	 * Pero cada uno pasa en la llama el tipo de accion que corresponde a su boton.
+	 */
 	
 	public class Aparcar implements OnClickListener {
 		@Override
@@ -169,8 +173,8 @@ public class DetailsDialog extends Activity {
 			int id=-1;
 
 			ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
-			postparameters2send.add(new BasicNameValuePair("user",user));
-			postparameters2send.add(new BasicNameValuePair("password",pass));
+			postparameters2send.add(new BasicNameValuePair(Constants.USER,user));
+			postparameters2send.add(new BasicNameValuePair(Constants.PASSWORD,pass));
 			postparameters2send.add(new BasicNameValuePair(Constants.ACTION, Integer.toString(action)));
 			postparameters2send.add(new BasicNameValuePair(Constants.ID_PUNTO, Integer.toString(wp.getId_punto())));
 

@@ -5,6 +5,10 @@ import java.util.Date;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
+/**
+ * Clase que implementa la representacion del punto
+ * para poder mostrarlo en el mapa y obtener informacion
+ */
 public class WebPoint {
 	
 	private Integer id_punto;
@@ -12,6 +16,7 @@ public class WebPoint {
 	private LatLng cords;
 	private int reputacion;
 	private Date fecha;
+	// Referencia al marker introducido en el mapa representado al punto
 	private Marker marker;
 	
 	public WebPoint(Integer id_punto, String usuario, LatLng cords, int reputacion, Date fecha){

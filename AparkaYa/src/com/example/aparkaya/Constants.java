@@ -10,6 +10,7 @@ public class Constants {
 	public static final String php_obtenerPuntos = DOMINIO + "obtenerPuntos.php";
 	public static final String php_enviarPunto = DOMINIO + "enviarPunto.php";
 	public static final String php_cambiarPuntos = DOMINIO + "cambiarPuntos.php";
+	public static final String php_obtenerInfoCuenta = DOMINIO + "obtenerInfoCuenta.php";
 	
 	// Valores de resultado de las llamadas al servicio web
 	public static final int RESULT_OK = 1;
@@ -29,13 +30,14 @@ public class Constants {
 	public static final long TIME_BAD = 3600000; //1 h
 	public static final long TIME_UMBRAL = 86400000; //24h
 	
-	// Claves referidas a los atributos de la clase WebPoint
+	// Claves referidas a los nombres de la columnas de la bbdd
 	public static final String ID_PUNTO = "id_punto";
 	public static final String USUARIO = "usuario";
 	public static final String LATITUD = "latitud";
 	public static final String LONGITUD = "longitud";
 	public static final String REPUTACION = "reputacion";
 	public static final String FECHA = "fecha";
+	public static final String EMAIL = "email";
 	
 	// Claves para enviar objetos JSON al servicio web
 	public static final String ACTION = "action";

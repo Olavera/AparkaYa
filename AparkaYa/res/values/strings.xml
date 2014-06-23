@@ -58,6 +58,8 @@
 	<string name="err_force_refresh">Error at force update points</string>
 	<string name="GPS_no_detected">GPS location undetected</string>
 	<string name="point_spread">Point spread</string>
+	<string name="err_cant_connect">Failed to server connection</string>
+	<string name="err_cant_find_user">No user was found</string>
 	
 	
 </resources>

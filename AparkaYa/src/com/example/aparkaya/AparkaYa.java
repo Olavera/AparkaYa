@@ -274,17 +274,27 @@ public class AparkaYa extends ActionBarActivity implements
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.menu_opciones_aparkaya, menu);
-		
 		return true;
 	}
 
-	// Código para cada opción de menú
+	/**
+	 * Cuando se pulsa un boton del menu detecta el elemento pulsado
+	 * y ejecuta las acciones correspondientes
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+			// Iniciamos la actividad que muestra 
+			// la informacion de la cuenta del usuario
+			case R.id.info_cuenta:
+				Intent i = new Intent(this, InfoCuenta.class);
+				i.putExtra(Constants.USER, user);
+				i.putExtra(Constants.PASSWORD, pass);
+				startActivity(i);
+				return true;
+			// Para cada caso actualizamos la variable correspondiente
+			// con el nuevo valor
 			case R.id.t_refresco_op_1:
 				t_refresco = Constants.TIEMPO_REFRESCO_OPCION_1;
 				return true;
@@ -337,17 +347,9 @@ public class AparkaYa extends ActionBarActivity implements
 			case R.id.t_max_en_difusion_op_4:
 				t_max_en_difusion = Constants.TIEMPO_MAXIMO_EN_DIFUSION_OPCION_4;
 				return true;
-			case R.id.info_cuenta:
-				menuInfoCuenta();
-				return true;
 			default:
 				return super.onOptionsItemSelected(item);
 		}
-	}
-
-	public void menuInfoCuenta() {
-		Intent i = new Intent(this, InfoCuenta.class);
-		startActivity(i);
 	}
 
 	@Override
@@ -746,7 +748,7 @@ public class AparkaYa extends ActionBarActivity implements
 		protected Integer doInBackground(LatLng... params) {
 			// Coordenadas del punto a difundir
 			LatLng latlng = params[0];
-			// 
+			
 			int id = -1;
 
 			// Format para que la base de datos lo pueda reconoces como tipo DateTime
@@ -775,6 +777,7 @@ public class AparkaYa extends ActionBarActivity implements
 			if (jdata != null && jdata.length() > 0) {
 				JSONObject json_data;
 				try {
+					// Obtenemos el primer objeto que tiene el id de respuesta del servidor
 					json_data = jdata.getJSONObject(0);
 					id = json_data.getInt(Constants.ID);
 				} catch (JSONException e) {
@@ -805,10 +808,10 @@ public class AparkaYa extends ActionBarActivity implements
 						.show();
 			} else if (result == Constants.RESULT_NOTUSER) {
 				Toast.makeText(getApplicationContext(),
-						"Usuario no reconocido", Toast.LENGTH_SHORT).show();
+						getResources().getString(R.string.err_cant_find_user), Toast.LENGTH_SHORT).show();
 			} else {
 				Toast.makeText(getApplicationContext(),
-						"Fallo al difundir el punto", Toast.LENGTH_SHORT)
+						getResources().getString(R.string.err_cant_connect), Toast.LENGTH_SHORT)
 						.show();
 			}
 			// Terminamos el progress dialog

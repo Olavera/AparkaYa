@@ -27,6 +27,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
+import android.view.View.OnCreateContextMenuListener;
 import android.widget.Toast;
 
 public class PointsRefreshService extends Service{
@@ -53,18 +54,11 @@ public class PointsRefreshService extends Service{
 		new asyncCallPoints().execute();	
 		return mBinder;
 	}
-
+	
 	@Override
 	public void onCreate() {
 		post = new HttpPostAux();
-		//Toast.makeText(getApplicationContext(), "Service Created", Toast.LENGTH_SHORT).show();
 		super.onCreate();
-	}
-
-	@Override
-	public void onDestroy() {
-		//Toast.makeText(getApplicationContext(), "Service Destroy", Toast.LENGTH_SHORT).show();
-		super.onDestroy();
 	}
 
 	@Override
@@ -91,8 +85,8 @@ public class PointsRefreshService extends Service{
 			/*Creamos un ArrayList del tipo nombre valor para agregar los datos recibidos por los parametros anteriores
 			 * y enviarlo mediante POST a nuestro sistema para relizar la validacion*/ 
 			ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
-			postparameters2send.add(new BasicNameValuePair("user",user));
-			postparameters2send.add(new BasicNameValuePair("password",pass));
+			postparameters2send.add(new BasicNameValuePair(Constants.USER, user));
+			postparameters2send.add(new BasicNameValuePair(Constants.PASSWORD, pass));
 			
 			//realizamos una peticion y como respuesta obtenes un array JSON
 			JSONArray jdata=post.getserverdata(postparameters2send, Constants.php_obtenerPuntos);

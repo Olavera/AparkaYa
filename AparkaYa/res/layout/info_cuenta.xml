@@ -2,76 +2,107 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#2d2d2d"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.aparkaya.InfoCuenta"
-    android:background="#2d2d2d" >
+    tools:ignore="NestedWeights" >
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginBottom="20dp"
         android:layout_weight="1"
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/tvTitUser"
+            android:id="@+id/tvTitUser_info"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_marginLeft="35dp"
+            android:layout_weight="0.76"
             android:ems="10"
             android:gravity="center_vertical"
-            android:text="@string/usuario_cuenta"
+            android:text="@string/usuario_details"
             android:textColor="#FFFFFF"
             android:textSize="23sp"
             android:textStyle="bold"
             tools:ignore="NestedWeights" />
 
         <TextView
-            android:id="@+id/tvContUser"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvContUser_info"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:layout_weight="1"
             android:ems="10"
             android:gravity="center_vertical|center_horizontal"
             android:textColor="#FFFFFF"
             android:textSize="15sp" />
-
     </LinearLayout>
-    
-  
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginBottom="20dp"
         android:layout_weight="1"
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/tvTitReputation"
-            android:layout_width="111dp"
+            android:id="@+id/tvTitEmail_info"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginLeft="35dp"
+            android:layout_weight="0.76"
             android:ems="10"
-            android:gravity="left|center_vertical"
-            android:text="@string/reputacion_cuenta"
+            android:gravity="center_vertical"
+            android:text="@string/email_registro"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="23sp"
+            android:textStyle="bold"
+            tools:ignore="NestedWeights" />
 
         <TextView
-            android:id="@+id/tvContReputation"
-            android:layout_width="match_parent"
+            android:id="@+id/tvContEmail_info"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:layout_weight="1"
             android:ems="10"
             android:gravity="center_vertical|center_horizontal"
             android:textColor="#FFFFFF"
             android:textSize="15sp" />
-
     </LinearLayout>
-    
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="20dp"
+        android:layout_weight="1"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/tvTitRep_info"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="35dp"
+            android:layout_weight="0.76"
+            android:ems="10"
+            android:gravity="left|center_vertical"
+            android:text="@string/reputacion_details"
+            android:textColor="#FFFFFF"
+            android:textSize="23sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvContRep_info"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="left"
+            android:layout_weight="1"
+            android:ems="10"
+            android:gravity="center_vertical|center_horizontal"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp" />
+    </LinearLayout>
 
 </LinearLayout>
-

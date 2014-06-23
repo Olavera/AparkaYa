@@ -13,7 +13,7 @@
             <item android:id="@+id/t_refresco_op_4" android:title="@string/t_refresco_op_4"/>
         </menu>
     </item>
-    <item android:id="@+id/area_busqueda" android:title="@string/area_busqueda" android:icon="@android:drawable/ic_menu_myplaces" android:showAsAction="ifRoom" android:orderInCategory="95">
+    <item android:id="@+id/area_busqueda" android:title="@string/area_busqueda" android:icon="@android:drawable/ic_menu_myplaces" android:showAsAction="ifRoom|withText" android:orderInCategory="95">
         <menu>
             <item android:id="@+id/area_busqueda_op_1" android:title="@string/area_busqueda_op_1"/>
             <item android:id="@+id/area_busqueda_op_2" android:title="@string/area_busqueda_op_2"/>
