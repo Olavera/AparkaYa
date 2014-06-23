@@ -29,6 +29,8 @@ public class Constants {
 	public static final int ACTION_DELETE = 4;
 	
 	public static final String ACTION = "action";
+
+	public static final String MyPreferences = "MisPreferencias";
 	
 	public static final String TIEMPO_REFRESCO = "tiempo_refresco";
 	public static final int TIEMPO_REFRESCO_OPCION_1 = 5;
@@ -49,10 +51,10 @@ public class Constants {
 	public static final int ORDENAR_LISTA_POR_OPCION_4 = 4; //Reputacion
 	
 	public static final String TIEMPO_MAXIMO_EN_DIFUSION = "tiempo_maximo_difusion";
-	public static final int TIEMPO_MAXIMO_EN_DIFUSION_OPCION_1 = 1;
-	public static final int TIEMPO_MAXIMO_EN_DIFUSION_OPCION_2 = 2;
-	public static final int TIEMPO_MAXIMO_EN_DIFUSION_OPCION_3 = 3;
-	public static final int TIEMPO_MAXIMO_EN_DIFUSION_OPCION_4 = 4;
+	public static final int TIEMPO_MAXIMO_EN_DIFUSION_OPCION_1 = 600;
+	public static final int TIEMPO_MAXIMO_EN_DIFUSION_OPCION_2 = 1800;
+	public static final int TIEMPO_MAXIMO_EN_DIFUSION_OPCION_3 = 3600;
+	public static final int TIEMPO_MAXIMO_EN_DIFUSION_OPCION_4 = 0;
 	
 	public static final String USUARIO_PREFS = "nombre_usuario";
 	public static final String CONTRASENIA_PREFS = "contrasenia_usuario";

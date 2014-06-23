@@ -12,8 +12,10 @@ import com.example.aparkaya.webService.HttpPostAux;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -142,6 +144,12 @@ public class RegisterActivity extends Activity {
 				Toast.makeText(getApplicationContext(),
 						"Registrado correctamente", Toast.LENGTH_SHORT).show();
 
+				SharedPreferences prefs = getSharedPreferences(Constants.MyPreferences, Context.MODE_PRIVATE);
+				SharedPreferences.Editor editor = prefs.edit();
+				editor.putString(Constants.USUARIO_PREFS, user);
+				editor.putString(Constants.CONTRASENIA_PREFS, pass);
+				editor.commit();
+				
 				// Inicia la actividad
 				Intent i = new Intent(RegisterActivity.this, AparkaYa.class);
 				i.putExtra("user", user);

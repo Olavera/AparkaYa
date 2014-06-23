@@ -106,10 +106,11 @@ public class AparkaYa extends ActionBarActivity implements
 	private AdaptadorPuntos adapter;
 	private ArrayList<WebPoint> listpoints;
 
+	// Variables sobres las preferencias del usuario
 	private int t_refresco;
 	private int area_busqueda;
 	private int ordenar_lista_por;
-	private int t_max_en_fiducion;
+	private int t_max_en_difusion;
 
 	private SharedPreferences prefs;
 
@@ -200,12 +201,12 @@ public class AparkaYa extends ActionBarActivity implements
 
 		// SHARED PREFERENCES
 
-		prefs = getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
+		prefs = getSharedPreferences(Constants.MyPreferences, Context.MODE_PRIVATE);
 
 		t_refresco = prefs.getInt(Constants.TIEMPO_REFRESCO, Constants.TIEMPO_REFRESCO_OPCION_1);
 		area_busqueda = prefs.getInt(Constants.AREA_BUSQUEDA, Constants.AREA_BUSQUEDA_OPCION_1);
 		ordenar_lista_por = prefs.getInt(Constants.ORDENAR_LISTA_POR, Constants.ORDENAR_LISTA_POR_OPCION_1);
-		t_max_en_fiducion = prefs.getInt(Constants.TIEMPO_MAXIMO_EN_DIFUSION, Constants.TIEMPO_MAXIMO_EN_DIFUSION_OPCION_1);
+		t_max_en_difusion = prefs.getInt(Constants.TIEMPO_MAXIMO_EN_DIFUSION, Constants.TIEMPO_MAXIMO_EN_DIFUSION_OPCION_1);
 		
 		Toast.makeText(
 				getApplicationContext(),
@@ -244,13 +245,13 @@ public class AparkaYa extends ActionBarActivity implements
 
 		// SHARED PREFERENCES
 
-		SharedPreferences prefs = getSharedPreferences("MisPreferencias",
+		SharedPreferences prefs = getSharedPreferences(Constants.MyPreferences,
 				Context.MODE_PRIVATE);
 		SharedPreferences.Editor editor = prefs.edit();
-		editor.putLong(Constants.TIEMPO_REFRESCO, t_refresco);
-
-		editor.putString(Constants.AREA_BUSQUEDA, area_busqueda);
-		editor.putString(Constants.ORDENAR_POR, ordenar_lista_por);
+		editor.putInt(Constants.TIEMPO_REFRESCO, t_refresco);
+		editor.putInt(Constants.AREA_BUSQUEDA, area_busqueda);
+		editor.putInt(Constants.ORDENAR_LISTA_POR, ordenar_lista_por);
+		editor.putInt(Constants.TIEMPO_MAXIMO_EN_DIFUSION, t_max_en_difusion);
 		editor.commit();
 
 		// ----------------------------------------------------------
@@ -376,12 +377,7 @@ public class AparkaYa extends ActionBarActivity implements
 					Marker marker = mapa.addMarker(new MarkerOptions()
 							.position(act.getnewPointInfo().getCords())
 							.title(act.getTextDate())
-							.snippet(
-									act.getnewPointInfo().getUsuario()
-											+ " ("
-											+ Integer.toString(act
-													.getnewPointInfo()
-													.getReputacion()) + ")")
+							.snippet(act.getnewPointInfo().getUsuario())
 							.icon(BitmapDescriptorFactory
 									.defaultMarker(obtenerIconoFranja(act
 											.getFranja()))));
@@ -462,91 +458,77 @@ public class AparkaYa extends ActionBarActivity implements
 
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.menu_opciones_aparkaya, menu);
+		
 		return true;
 	}
 
-	// código para cada opción de menú
+	// Código para cada opción de menú
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		int segundos = 0;
-		int distancia_busqueda = 0;
-		String ordenado_por = "";
-
 		switch (item.getItemId()) {
-		case R.id.t_refresco_5:
-			t_refresco = "5 segundos";
-			segundos = 5;
-			TiempoRefresco(segundos);
-			return true;
-		case R.id.t_refresco_10:
-			t_refresco = "10 segundos";
-			segundos = 10;
-			TiempoRefresco(segundos);
-			return true;
-		case R.id.t_refresco_15:
-			t_refresco = "15 segundos";
-			segundos = 15;
-			TiempoRefresco(segundos);
-			return true;
-		case R.id.area_500m:
-			distancia_busqueda = 500;
-			area_busqueda = "500 metros";
-			AreaBusqueda(distancia_busqueda);
-			return true;
-		case R.id.area_1km:
-			distancia_busqueda = 1000;
-			area_busqueda = "1 km";
-			AreaBusqueda(distancia_busqueda);
-			return true;
-		case R.id.ordena_nombre:
-			ordenado_por = "nombre";
-			ordenar_lista_por = "nombre";
-			menuOrdenar(ordenado_por);
-			return true;
-		case R.id.ordena_distancia:
-			ordenado_por = "distancia";
-			ordenar_lista_por = "distancia";
-			menuOrdenar(ordenado_por);
-			return true;
-		case R.id.info_cuenta:
-			menuInfoCuenta();
-			return true;
-
-		default:
-			return super.onOptionsItemSelected(item);
+			case R.id.t_refresco_op_1:
+				t_refresco = Constants.TIEMPO_REFRESCO_OPCION_1;
+				return true;
+			case R.id.t_refresco_op_2:
+				t_refresco = Constants.TIEMPO_REFRESCO_OPCION_2;
+				return true;
+			case R.id.t_refresco_op_3:
+				t_refresco = Constants.TIEMPO_REFRESCO_OPCION_3;
+				return true;
+			case R.id.t_refresco_op_4:
+				t_refresco = Constants.TIEMPO_REFRESCO_OPCION_4;
+				return true;
+			case R.id.area_busqueda_op_1:
+				area_busqueda = Constants.AREA_BUSQUEDA_OPCION_1;
+				return true;
+			case R.id.area_busqueda_op_2:
+				area_busqueda = Constants.AREA_BUSQUEDA_OPCION_2;
+				return true;
+			case R.id.area_busqueda_op_3:
+				area_busqueda = Constants.AREA_BUSQUEDA_OPCION_3;
+				return true;
+			case R.id.area_busqueda_op_4:
+				area_busqueda = Constants.AREA_BUSQUEDA_OPCION_4;
+				return true;
+			case R.id.ordenar_lista_por_op_1:
+				ordenar_lista_por = Constants.ORDENAR_LISTA_POR_OPCION_1;
+				reordenarLista();
+				return true;
+			case R.id.ordenar_lista_por_op_2:
+				ordenar_lista_por = Constants.ORDENAR_LISTA_POR_OPCION_2;
+				reordenarLista();
+				return true;
+			case R.id.ordenar_lista_por_op_3:
+				ordenar_lista_por = Constants.ORDENAR_LISTA_POR_OPCION_3;
+				reordenarLista();
+				return true;
+			case R.id.ordenar_lista_por_op_4:
+				ordenar_lista_por = Constants.ORDENAR_LISTA_POR_OPCION_4;
+				reordenarLista();
+				return true;
+			case R.id.t_max_en_difusion_op_1:
+				t_max_en_difusion = Constants.TIEMPO_MAXIMO_EN_DIFUSION_OPCION_1;
+				return true;
+			case R.id.t_max_en_difusion_op_2:
+				t_max_en_difusion = Constants.TIEMPO_MAXIMO_EN_DIFUSION_OPCION_2;
+				return true;
+			case R.id.t_max_en_difusion_op_3:
+				t_max_en_difusion = Constants.TIEMPO_MAXIMO_EN_DIFUSION_OPCION_3;
+				return true;
+			case R.id.t_max_en_difusion_op_4:
+				t_max_en_difusion = Constants.TIEMPO_MAXIMO_EN_DIFUSION_OPCION_4;
+				return true;
+			case R.id.info_cuenta:
+				menuInfoCuenta();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 
 	public void menuInfoCuenta() {
-
 		Intent i = new Intent(this, InfoCuenta.class);
 		startActivity(i);
-
-	}
-
-	public void TiempoRefresco(int segundos_refresco) {
-
-		Toast.makeText(getApplicationContext(), t_refresco, Toast.LENGTH_SHORT)
-				.show();
-
-		// FALTA QUE CAMBIE EL INTERVALO DE LA ALARMA PARA EL REFRESCO
-
-	}
-
-	public void AreaBusqueda(int distancia_busqueda) {
-
-		Toast.makeText(getApplicationContext(), area_busqueda,
-				Toast.LENGTH_SHORT).show();
-		// FALTA HACER EL PHP para ordenar segun la distancia pasada
-
-	}
-
-	public void menuOrdenar(String ordenador_por) {
-
-		Toast.makeText(getApplicationContext(), ordenar_lista_por, Toast.LENGTH_SHORT)
-				.show();
-		// Falta hacer php para ordenar segun lo que le pases
-
 	}
 
 	@Override
@@ -663,7 +645,6 @@ public class AparkaYa extends ActionBarActivity implements
 			if (mapa == null) {
 				mapa = ((SupportMapFragment) getSupportFragmentManager()
 						.findFragmentById(R.id.map)).getMap();
-
 				// check if map is created successfully or not
 				if (mapa == null) {
 					Toast.makeText(getApplicationContext(),
@@ -965,17 +946,60 @@ public class AparkaYa extends ActionBarActivity implements
 	 * 
 	 */
 	public void reordenarLista() {
-		Collections.sort(listpoints, new Fecha_Comparator());
+		Comparator<WebPoint> comparator = new Id_punto_Comparator();
+		switch (ordenar_lista_por) {
+			case Constants.ORDENAR_LISTA_POR_OPCION_1: 
+				comparator = new Fecha_Comparator();
+				break;
+			case Constants.ORDENAR_LISTA_POR_OPCION_2:
+				if (mapa != null) 
+					if (mapa.getMyLocation() != null)
+						comparator = new Distancia_Comparator(
+								new LatLng(mapa.getMyLocation().getLatitude(), mapa.getMyLocation().getLongitude()));
+					else
+						Toast.makeText(getApplicationContext(), getResources().getString(R.string.GPS_no_detected),
+								Toast.LENGTH_SHORT).show();
+				break;
+			case Constants.ORDENAR_LISTA_POR_OPCION_3:
+				comparator = new User_Comparator();
+				break;
+			case Constants.ORDENAR_LISTA_POR_OPCION_4:
+				comparator = new Rep_Comparator();
+				break;
+			default:
+				break;
+		}
+		Collections.sort(listpoints, comparator);
 		adapter.notifyDataSetChanged();
+	}
+	
+	public double distanciaEntreCoordenadas(LatLng coord1, LatLng coord2){
+		return Math.abs(Math.sqrt(Math.pow(coord2.latitude - coord1.latitude, 2) + Math.pow(coord2.longitude - coord1.longitude, 2)));
 	}
 	
 	// -------------------------COMPARADORES------------------------- 
 	
-	class Id_punto_Comparator implements Comparator<WebPoint> {
+	class Fecha_Comparator implements Comparator<WebPoint> {
 		@Override
 		public int compare(WebPoint p1, WebPoint p2) {
-			return Integer.valueOf(p1.getId_punto()).compareTo(
-					Integer.valueOf(p2.getId_punto()));
+			int flag = Long.valueOf(p2.getFecha().getTime()).compareTo(
+					Long.valueOf(p1.getFecha().getTime()));
+			return flag;
+		}
+	}
+	
+	class Distancia_Comparator implements Comparator<WebPoint> {
+		
+		LatLng posicion;
+		
+		public Distancia_Comparator(LatLng posicion_actual){
+			super();
+			posicion = posicion_actual;
+		}
+		@Override
+		public int compare(WebPoint p1, WebPoint p2) {
+			return Double.valueOf(distanciaEntreCoordenadas(posicion, p1.getCords()))
+					.compareTo(Double.valueOf(distanciaEntreCoordenadas(posicion, p2.getCords())));
 		}
 	}
 
@@ -987,20 +1011,19 @@ public class AparkaYa extends ActionBarActivity implements
 		}
 	}
 
-	class Fecha_Comparator implements Comparator<WebPoint> {
-		@Override
-		public int compare(WebPoint p1, WebPoint p2) {
-			int flag = Long.valueOf(p2.getFecha().getTime()).compareTo(
-					Long.valueOf(p1.getFecha().getTime()));
-			return flag;
-		}
-	}
-
 	class Rep_Comparator implements Comparator<WebPoint> {
 		@Override
 		public int compare(WebPoint p1, WebPoint p2) {
-			return Integer.valueOf(p1.getReputacion()).compareTo(
-					Integer.valueOf(p2.getReputacion()));
+			return Integer.valueOf(p2.getReputacion()).compareTo(
+					Integer.valueOf(p1.getReputacion()));
+		}
+	}
+	
+	class Id_punto_Comparator implements Comparator<WebPoint> {
+		@Override
+		public int compare(WebPoint p1, WebPoint p2) {
+			return Integer.valueOf(p1.getId_punto()).compareTo(
+					Integer.valueOf(p2.getId_punto()));
 		}
 	}
 }

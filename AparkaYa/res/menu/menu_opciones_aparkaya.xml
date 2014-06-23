@@ -2,22 +2,35 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/t_refresco" android:title="@string/t_refresco">
         <menu>
-            <item android:id="@+id/t_refresco_5" android:title="@string/t_refresco_5"/>
-            <item android:id="@+id/t_refresco_10" android:title="@string/t_refresco_10"/>
-            <item android:id="@+id/t_refresco_15" android:title="@string/t_refresco_15"/>
+            <item android:id="@+id/t_refresco_op_1" android:title="@string/t_refresco_op_1"/>
+            <item android:id="@+id/t_refresco_op_2" android:title="@string/t_refresco_op_2"/>
+            <item android:id="@+id/t_refresco_op_3" android:title="@string/t_refresco_op_3"/>
+            <item android:id="@+id/t_refresco_op_4" android:title="@string/t_refresco_op_4"/>
         </menu>
     </item>
     <item android:id="@+id/area_busqueda" android:title="@string/area_busqueda">
         <menu>
-            <item android:id="@+id/area_500m" android:title="@string/area_500m"/>
-            <item android:id="@+id/area_1km" android:title="@string/area_1km"/>
+            <item android:id="@+id/area_busqueda_op_1" android:title="@string/area_busqueda_op_1"/>
+            <item android:id="@+id/area_busqueda_op_2" android:title="@string/area_busqueda_op_2"/>
+            <item android:id="@+id/area_busqueda_op_3" android:title="@string/area_busqueda_op_3"/>
+            <item android:id="@+id/area_busqueda_op_4" android:title="@string/area_busqueda_op_4"/>
         </menu>
     </item>
-    <item android:id="@+id/ordenar_por" android:title="@string/ordenar_por">
+    <item android:id="@+id/ordenar_lista_por" android:title="@string/ordenar_lista_por">
         <menu>
-            <item android:id="@+id/ordena_nombre" android:title="@string/ordena_nombre"/>
-            <item android:id="@+id/ordena_distancia" android:title="@string/ordena_distancia"/>
+            <item android:id="@+id/ordenar_lista_por_op_1" android:title="@string/ordenar_lista_por_op_1"/>
+            <item android:id="@+id/ordenar_lista_por_op_2" android:title="@string/ordenar_lista_por_op_2"/>
+            <item android:id="@+id/ordenar_lista_por_op_3" android:title="@string/ordenar_lista_por_op_3"/>
+            <item android:id="@+id/ordenar_lista_por_op_4" android:title="@string/ordenar_lista_por_op_4"/>
         </menu>
     </item>
-    <item android:id="@+id/info_cuenta" android:title="Prueba" android:icon="@drawable/ic_login" android:showAsAction="always"></item>
+    <item android:id="@+id/t_max_en_difusion" android:title="@string/t_max_en_difusion">
+        <menu>
+            <item android:id="@+id/t_max_en_difusion_op_1" android:title="@string/t_max_en_difusion_op_1"/>
+            <item android:id="@+id/t_max_en_difusion_op_2" android:title="@string/t_max_en_difusion_op_2"/>
+            <item android:id="@+id/t_max_en_difusion_op_3" android:title="@string/t_max_en_difusion_op_3"/>
+            <item android:id="@+id/t_max_en_difusion_op_4" android:title="@string/t_max_en_difusion_op_4"/>
+        </menu>
+    </item>
+    <item android:id="@+id/info_cuenta" android:title="@string/info_cuenta" android:icon="@drawable/ic_login" android:showAsAction="always"></item>
 </menu>

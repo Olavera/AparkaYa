@@ -49,7 +49,7 @@ public class LoginActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onStart();
 
-		prefs = getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
+		prefs = getSharedPreferences(Constants.MyPreferences, Context.MODE_PRIVATE);
 
 		nombre_usuario = prefs.getString(Constants.USUARIO_PREFS, "");
 		contrasenia_usuario = prefs.getString(Constants.CONTRASENIA_PREFS, "");
@@ -162,6 +162,11 @@ public class LoginActivity extends Activity {
 			if (result.equals("ok")) {
 				Toast.makeText(getApplicationContext(), "Login correcto",
 						Toast.LENGTH_SHORT).show();
+				SharedPreferences prefs = getSharedPreferences(Constants.MyPreferences, Context.MODE_PRIVATE);
+				SharedPreferences.Editor editor = prefs.edit();
+				editor.putString(Constants.USUARIO_PREFS, user);
+				editor.putString(Constants.CONTRASENIA_PREFS, pass);
+				editor.commit();
 
 				// Inicia la actividad
 				Intent i = new Intent(LoginActivity.this, AparkaYa.class);
