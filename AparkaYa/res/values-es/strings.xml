@@ -49,5 +49,6 @@
 	<string name="point_spread">Punto difundido</string>
 	<string name="err_cant_connect">No se pudo conectar con el servidor</string>
 	<string name="err_cant_find_user">Usuario no encontrado</string>
+	<string name="force_refresh">Forzando refresco</string>
 
 </resources>

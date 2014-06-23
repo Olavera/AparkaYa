@@ -228,8 +228,8 @@ public class AparkaYa extends ActionBarActivity implements
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.SECOND, 10);
 		Intent intt = new Intent(this, PointsRefreshService.class);
-		intt.putExtra("user", user);
-		intt.putExtra("pass", pass);
+		intt.putExtra(Constants.USER, user);
+		intt.putExtra(Constants.PASSWORD, pass);
 		PendingIntent pintent = PendingIntent.getService(this, 0, intt,
 				PendingIntent.FLAG_CANCEL_CURRENT);
 		AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -238,8 +238,9 @@ public class AparkaYa extends ActionBarActivity implements
 				pintent);
 
 		Intent intent = new Intent(this, PointsRefreshService.class);
-		intent.putExtra("user", user);
-		intent.putExtra("pass", pass);
+		intent.putExtra(Constants.USER, user);
+		intent.putExtra(Constants.PASSWORD, pass);
+		intent.putExtra(Constants.TIEMPO_MAXIMO_EN_DIFUSION, t_max_en_difusion);
 		bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	}
 
@@ -272,6 +273,8 @@ public class AparkaYa extends ActionBarActivity implements
 		unregisterReceiver(receiver);
 	}
 
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.menu_opciones_aparkaya, menu);
@@ -337,15 +340,19 @@ public class AparkaYa extends ActionBarActivity implements
 				return true;
 			case R.id.t_max_en_difusion_op_1:
 				t_max_en_difusion = Constants.TIEMPO_MAXIMO_EN_DIFUSION_OPCION_1;
+				localService.set_t_max_en_difusion(t_max_en_difusion);
 				return true;
 			case R.id.t_max_en_difusion_op_2:
 				t_max_en_difusion = Constants.TIEMPO_MAXIMO_EN_DIFUSION_OPCION_2;
+				localService.set_t_max_en_difusion(t_max_en_difusion);
 				return true;
 			case R.id.t_max_en_difusion_op_3:
 				t_max_en_difusion = Constants.TIEMPO_MAXIMO_EN_DIFUSION_OPCION_3;
+				localService.set_t_max_en_difusion(t_max_en_difusion);
 				return true;
 			case R.id.t_max_en_difusion_op_4:
 				t_max_en_difusion = Constants.TIEMPO_MAXIMO_EN_DIFUSION_OPCION_4;
+				localService.set_t_max_en_difusion(t_max_en_difusion);
 				return true;
 			default:
 				return super.onOptionsItemSelected(item);
@@ -379,7 +386,7 @@ public class AparkaYa extends ActionBarActivity implements
 	public class FragmentoMapa extends Fragment implements
 			OnMapLongClickListener, OnInfoWindowClickListener {
 
-		private ImageButton save, difundir;
+		private ImageButton btnRefresh, btnDifundir;
 
 		/**
 		 * The fragment argument representing the section number for this
@@ -396,11 +403,11 @@ public class AparkaYa extends ActionBarActivity implements
 
 			View rootView = inflater.inflate(R.layout.fragment_mapa, container,
 					false);
-			save = (ImageButton) rootView.findViewById(R.id.btnguardar);
-			save.setOnClickListener(new btnGuardarListener());
+			btnRefresh = (ImageButton) rootView.findViewById(R.id.btnrefresh);
+			btnRefresh.setOnClickListener(new btnRefreshListener());
 
-			difundir = (ImageButton) rootView.findViewById(R.id.btndifundir);
-			difundir.setOnClickListener(new btnDifundir());
+			btnDifundir = (ImageButton) rootView.findViewById(R.id.btndifundir);
+			btnDifundir.setOnClickListener(new btnDifundirListener());
 
 			initilizeMap();
 			return rootView;
@@ -456,24 +463,36 @@ public class AparkaYa extends ActionBarActivity implements
 			intent.putExtra(Constants.LONGITUD, p.getCords().longitude);
 			intent.putExtra(Constants.REPUTACION, p.getReputacion());
 			intent.putExtra(Constants.FECHA, dateFormat.format(p.getFecha()));
-			startActivity(intent);
+			startActivityForResult(intent, Constants.REQUEST_CODE_START_DETAILS_DIALOG);
+		}
+		
+		/**
+		 * Recoge la respuesta del StartActivityForResult con el que se lanza
+		 * la actividad DerailsDialog.
+		 * Si la actividad acabo ejecutando una modificacion dobre los datos
+		 * fuerza un refresco en el sercivio local.
+		 */
+		public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		    if (requestCode == Constants.REQUEST_CODE_START_DETAILS_DIALOG) {
+		        if(resultCode == Constants.RESULT_CODE_RETURN_DETAILS_DIALOG)
+		        {
+		        	try {
+						localService.forceRefresh();
+					} catch (Exception e1) {
+						Log.w(getClass().getName(), "Excepción forzando refresh", e1);
+					}
+		        }
+		    }
 		}
 
-		public class btnGuardarListener implements OnClickListener {
+		public class btnRefreshListener implements OnClickListener {
 			@Override
 			public void onClick(View v) {
-				/*
-				 * ParserXML_DOM parser = new ParserXML_DOM(
-				 * getApplicationContext());
-				 * 
-				 * parser.guardarPunto("Coche", new
-				 * LatLng(mapa.getCameraPosition().target.latitude,
-				 * mapa.getCameraPosition().target.longitude));
-				 * 
-				 * iniciarTask();
-				 */
 				try {
 					localService.forceRefresh();
+					Toast.makeText(getApplicationContext(),
+							getResources().getString(R.string.force_refresh), Toast.LENGTH_SHORT)
+							.show();
 				} catch (Exception e1) {
 					Log.w(getClass().getName(),
 							getResources()
@@ -482,7 +501,7 @@ public class AparkaYa extends ActionBarActivity implements
 			}
 		}
 
-		public class btnDifundir implements OnClickListener {
+		public class btnDifundirListener implements OnClickListener {
 			@Override
 			public void onClick(View v) {
 				if (mapa.getMyLocation() != null) {

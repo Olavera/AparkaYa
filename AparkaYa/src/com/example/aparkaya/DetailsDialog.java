@@ -18,6 +18,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -220,6 +221,8 @@ public class DetailsDialog extends Activity {
 			pDialog.dismiss();
 			if (result==Constants.RESULT_OK){
 				Toast.makeText(getApplicationContext(),"Punto actualizado", Toast.LENGTH_SHORT).show();
+				Intent returnIntent = new Intent();
+				setResult(Constants.RESULT_CODE_RETURN_DETAILS_DIALOG, returnIntent);
 				finish();
 			} 
 			else if(result==Constants.RESULT_FAILED_UPDATE_POINT){

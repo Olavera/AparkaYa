@@ -36,6 +36,7 @@ public class PointsRefreshService extends Service{
 	private String user, pass;
 	private ArrayList<WebPoint> points;
 	private HttpPostAux post;
+	private int t_max_en_difusion;
 	private final IBinder mBinder = new MyBinder();
 
 	public class MyBinder extends Binder {
@@ -48,8 +49,9 @@ public class PointsRefreshService extends Service{
 	public IBinder onBind(Intent intent) {
 		Bundle extras = intent.getExtras();
 		if (extras != null) {
-			user = extras.getString("user");
-			pass = extras.getString("pass");
+			user = extras.getString(Constants.USER);
+			pass = extras.getString(Constants.PASSWORD);
+			t_max_en_difusion = extras.getInt(Constants.TIEMPO_MAXIMO_EN_DIFUSION);
 		}
 		new asyncCallPoints().execute();	
 		return mBinder;
@@ -76,11 +78,23 @@ public class PointsRefreshService extends Service{
 		new asyncCallPoints().execute();
 	}
 	
+	public void set_t_max_en_difusion(int t){
+		t_max_en_difusion = t;
+	}
+	
 	private class asyncCallPoints extends AsyncTask< Void, String, Integer > {
 		
 		ArrayList<WebPoint> auxpoints = new ArrayList<WebPoint>();
 
 		protected Integer doInBackground(Void... params) {
+			long limitTime;
+			if(t_max_en_difusion!=0){
+				// Obtenemos la hora actual y la formateamos
+				Date date = new Date();
+				limitTime = date.getTime() - (t_max_en_difusion*1000);
+			}else{
+				limitTime = 0;
+			}
 
 			/*Creamos un ArrayList del tipo nombre valor para agregar los datos recibidos por los parametros anteriores
 			 * y enviarlo mediante POST a nuestro sistema para relizar la validacion*/ 
@@ -109,7 +123,8 @@ public class PointsRefreshService extends Service{
 						} catch (ParseException e) {
 							fecha = null;
 						}
-				        auxpoints.add(new WebPoint(jsonObject.getInt(Constants.ID_PUNTO),
+				        if (fecha.getTime()>limitTime)
+				        	auxpoints.add(new WebPoint(jsonObject.getInt(Constants.ID_PUNTO),
 				        							jsonObject.getString(Constants.USUARIO), 
 				        							new LatLng(jsonObject.getDouble(Constants.LATITUD), 
 				        									jsonObject.getDouble(Constants.LONGITUD)),

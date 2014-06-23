@@ -13,7 +13,7 @@
          class="com.google.android.gms.maps.SupportMapFragment" />
      
     <ImageButton
-        android:id="@+id/btnguardar"
+        android:id="@+id/btnrefresh"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_alignParentBottom="true"

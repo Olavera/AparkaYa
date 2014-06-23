@@ -45,10 +45,12 @@ public class Constants {
 	public static final String PASSWORD = "password";
 	public static final String ID = "id";
 	
-	
 	// Valores
 	public static final String RESULT = "result";
 	public static final String POINT_NO_MAPPED = "punto_no_mapeado";
+
+	public static final int REQUEST_CODE_START_DETAILS_DIALOG = 596;
+	public static final int RESULT_CODE_RETURN_DETAILS_DIALOG = 743;
 	
 	// Valores para las acciones de DetailsDialog
 	public static final int ACTION_PARK = 1;

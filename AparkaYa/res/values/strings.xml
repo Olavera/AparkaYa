@@ -60,6 +60,6 @@
 	<string name="point_spread">Point spread</string>
 	<string name="err_cant_connect">Failed to server connection</string>
 	<string name="err_cant_find_user">No user was found</string>
-	
+	<string name="force_refresh">Force refresh</string>
 	
 </resources>

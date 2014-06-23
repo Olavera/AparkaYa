@@ -23,15 +23,15 @@ import com.example.aparkaya.webService.HttpPostAux;
 
 public class InfoCuenta extends Activity {
 	// Objeto para la conexion http
-	HttpPostAux post;
+	private HttpPostAux post;
 	// Variables de sesion
-	String user, pass;
+	private String user, pass;
 	// Dialogo de progreso que se muestra cuando el usuario debe
 	// esperar un proceso del programa antes de seguir interactuando
 	private ProgressDialog pDialog;
 	// Textview correspondientes a los campos donde se muestra
 	// la informacion de la cuenta recuperada del servidor
-	TextView tvuser, tvemail, tvrep;
+	private TextView tvuser, tvemail, tvrep;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +53,7 @@ public class InfoCuenta extends Activity {
 			}
 		});
 
+		// Creamos el objeto HttpPostAux para las llamas al servidor web
 		post = new HttpPostAux();
 		user = getIntent().getExtras().getString(Constants.USER);
 		pass = getIntent().getExtras().getString(Constants.PASSWORD);
@@ -139,6 +140,7 @@ public class InfoCuenta extends Activity {
 		protected void onPostExecute(Integer result) {
 			pDialog.dismiss();
 			if (result == Constants.RESULT_OK) {
+				// Introducimos los campos recuperados de la base de datos en el dialog
 				tvuser.setText(user);
 				tvemail.setText(email);
 				tvrep.setText(Integer.toString(rep));
