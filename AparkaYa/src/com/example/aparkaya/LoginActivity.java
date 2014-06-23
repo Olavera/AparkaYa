@@ -43,6 +43,11 @@ public class LoginActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onSaveInstanceState(outState);
 	}
+	
+	/**
+	 * Al iniciar actividad miramos en las preferencias si existe 
+	 * un usario guardado previamente para recoger sus datos.
+	 */
 
 	@Override
 	protected void onStart() {
@@ -62,6 +67,10 @@ public class LoginActivity extends Activity {
 		}
 
 	}
+	
+	/**
+	 * Añadimos la vista a nuestra actividad y sus elementos
+	 */
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,12 +81,12 @@ public class LoginActivity extends Activity {
 		contrasenia = (EditText) findViewById(R.id.contrasenia);
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+	/**
+	 * Método invocado cuando se pincha el botón de Login
+	 * mostramos un ProgressDialog para que el usuario no mande varias
+	 * peticiones de eventos y ejecutamos el método asíncrono para 
+	 * validar el usuario 
+	 */
 
 	public void validarUsuario(View v) {
 		pDialog = new ProgressDialog(LoginActivity.this);
@@ -87,6 +96,12 @@ public class LoginActivity extends Activity {
 		new asynclogin().execute(usuario.getText().toString(), contrasenia
 					.getText().toString());
 	}
+	
+	/**
+	 * Método invocado cuando se pincha en el botón de Registro
+	 * que te envía mediante un Intent a otra Activity y en la que
+	 * pasamos con putExtra el usuario y la contreseña
+	 */
 
 	public void registrarUsuario(View v) {
 		Intent i = new Intent(this, RegisterActivity.class);
@@ -94,6 +109,10 @@ public class LoginActivity extends Activity {
 		i.putExtra("pass", contrasenia.getText().toString());
 		startActivity(i);
 	}
+	
+	/**
+	 * Método asíncrono en segundo plano que procesa el login
+	 */
 
 	private class asynclogin extends AsyncTask<String, Integer, String> {
 
@@ -155,6 +174,14 @@ public class LoginActivity extends Activity {
 			});
 			pDialog.show();
 		}
+		
+		/**
+		 * Método que devuelve el resultado del Post.
+		 * Si todo OK guardamos en las preferencias los valores
+		 * introducidos previamente por el usuario y lanzamos la
+		 * activity de AparkaYa. En caso de error mostramos un 
+		 * mensaje de error tipo Toast
+		 */
 
 		protected void onPostExecute(String result) {
 

@@ -25,8 +25,12 @@ import android.widget.Toast;
 
 public class RegisterActivity extends Activity {
 
+	//Campos del formulario para introducir el usuario
 	private EditText usuario, email, contrasenia1, contrasenia2;
-	HttpPostAux post;
+	// Objeto para la conexion http
+	private HttpPostAux post;
+	// Textview correspondientes a los campos donde se muestra
+	// la informacion de la cuenta recuperada del servidor
 	private ProgressDialog pDialog;
 
 	@Override
@@ -40,6 +44,10 @@ public class RegisterActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onSaveInstanceState(outState);
 	}
+	
+	/**
+	 * Al crear activity añadimos el contenido de la vista
+	 */
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +64,12 @@ public class RegisterActivity extends Activity {
 		contrasenia2 = (EditText) findViewById(R.id.contrasenia2_registro);
 
 	}
+	
+	/**
+	 * Método invocado al pulsar el botón Confirmar que comprueba las 
+	 * contraseñas introducidas, si son iguales mostramos ProgressDialog
+	 * y ejecutamos el método asícrono que realiza el registro
+	 */
 
 	public void Registra(View view) {
 		if (!contrasenia1.getText().toString().equals(contrasenia2.getText().toString())) {
@@ -72,6 +86,11 @@ public class RegisterActivity extends Activity {
 		}
 
 	}
+	
+	/**
+	 * Método asíncrono en segundo plano que ejecuta llamada Post para
+	 * recibir unos flags en formato JSON.
+	 */
 
 	private class asyncRegister extends AsyncTask<String, Integer, Integer> {
 		String email, user, pass;
@@ -135,6 +154,13 @@ public class RegisterActivity extends Activity {
 			});
 			pDialog.show();
 		}
+		
+		/**
+		 * Al realizar Post si el resultado si el resultado OK
+		 * guardamos en mis preferencias el usuario y la 
+		 * contraseña y lanzamos la actividad de AparkaYa.
+		 * Eliminamos el ProgressDialog
+		 */
 
 		protected void onPostExecute(Integer result) {
 

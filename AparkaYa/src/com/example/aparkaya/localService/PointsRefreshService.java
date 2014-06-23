@@ -82,6 +82,7 @@ public class PointsRefreshService extends Service{
 		t_max_en_difusion = t;
 	}
 	
+	
 	private class asyncCallPoints extends AsyncTask< Void, String, Integer > {
 		
 		ArrayList<WebPoint> auxpoints = new ArrayList<WebPoint>();

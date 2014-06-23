@@ -15,13 +15,20 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import android.util.Log;
+
 /*CLASE AUXILIAR PARA EL ENVIO DE PETICIONES A NUESTRO SISTEMA
  * Y MANEJO DE RESPUESTA.*/
+
 public class HttpPostAux{
 
 	InputStream is = null;
 	String result = "";
 
+	/**
+	 * Método que devuelve los datos en formato JSON invocando
+	 * a un servidor indicado con una url
+	 */
+	
 	public JSONArray getserverdata(ArrayList<NameValuePair> parameters, String urlwebserver ){
 
 		//conecta via http y envia un post.
@@ -38,7 +45,9 @@ public class HttpPostAux{
 	}
 
 
-	//peticion HTTP
+	/**
+	 * Método que establece la conexión ejecutando un POST
+	 */
 	private void httppostconnect(ArrayList<NameValuePair> parametros, String urlwebserver){
 
 		//
@@ -55,10 +64,13 @@ public class HttpPostAux{
 			Log.e("log_tag", "Error in http connection "+e.toString());
 		}
 	}
+	
+	/**
+	 * Convierte la respuesta respuesta String
+	 */
 
 	public void getpostresponse(){
 
-		//Convierte respuesta a String
 		try{
 			BufferedReader reader = new BufferedReader(new InputStreamReader(is,"iso-8859-1"),8);
 			StringBuilder sb = new StringBuilder();
@@ -74,6 +86,10 @@ public class HttpPostAux{
 			Log.e("log_tag", "Error converting result "+e.toString());
 		}
 	}
+	
+	/**
+	 *Devuelve en formato JSON el resultado enviado por el POST.
+	 */
 
 	public JSONArray getjsonarray(){
 		//parse json data
