@@ -1,9 +1,15 @@
 package com.example.aparkaya.model;
 
+/**
+ * Clase usada para el refresco de puntos
+ * Describe una accion que se va a ejecutar sobre el punto
+ */
 public class RefreshAction {
-	
+	// Punto
 	private WebPoint newPointInfo;
+	// Accion
 	private EnumTypeRefreshAction typeAction;
+	// Informacion adicional
 	private int franja;
 	private String textDate;
 	private String idMarker;

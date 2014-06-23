@@ -41,8 +41,6 @@ public class InfoCuenta extends Activity {
 	 * ejecutamos el método asíncrono que devuelve la información asociada
 	 * al usuario actual
 	 */
-	
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

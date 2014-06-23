@@ -31,12 +31,19 @@ import android.view.View.OnCreateContextMenuListener;
 import android.widget.Toast;
 
 public class PointsRefreshService extends Service{
-
+	// Constante para suscribirse a los mensajes de broadcast
 	public static final String NOTIFICATION = "com.example.aparkaya";
+	// Creedenciales del usuario registrado
 	private String user, pass;
+	// Lista de puntos que se refresca períodicamente del servidor web
 	private ArrayList<WebPoint> points;
+	// Clase para el manejo de HttpPOST y JSON
 	private HttpPostAux post;
+	// Variable de menu de opciones tiempo maximo desde
+	// que se difundio
 	private int t_max_en_difusion;
+	// Binder que se devuelve a la actividad al iniciar el servicio
+	// con onBind()
 	private final IBinder mBinder = new MyBinder();
 
 	public class MyBinder extends Binder {
@@ -49,10 +56,14 @@ public class PointsRefreshService extends Service{
 	public IBinder onBind(Intent intent) {
 		Bundle extras = intent.getExtras();
 		if (extras != null) {
+			// Recuperamos de extras los valores que necesitaremos
+			// para hacer las peticiones al servicio
 			user = extras.getString(Constants.USER);
 			pass = extras.getString(Constants.PASSWORD);
 			t_max_en_difusion = extras.getInt(Constants.TIEMPO_MAXIMO_EN_DIFUSION);
 		}
+		// Se ejecuta la primera llamada al servicio web
+		//para que refresque los puntos
 		new asyncCallPoints().execute();	
 		return mBinder;
 	}
@@ -63,18 +74,27 @@ public class PointsRefreshService extends Service{
 		super.onCreate();
 	}
 
+	/**
+	 * Se llama a este metodo cada vez que se intenta iniciar el servicio y ya esta creado
+	 */
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		// Pide refrescar al servicio web
 		new asyncCallPoints().execute();	
+		// Devolvemos este flag para que el servicio no intente regenerar llamadas 
+		// por su cuenta sino que se espere a alarm o a un refreco manual
 		return START_NOT_STICKY;
 	}
 	
+	/**
+	 * Devuelve la lista de puntos obtenida en la ultima llamada al servicio web
+	 */
 	public ArrayList<WebPoint> getArrayPoints()
 	{
 		return points;
 	}
 	
-	public void forceRefresh(){
+	public void manualRefresh(){
 		new asyncCallPoints().execute();
 	}
 	
@@ -88,6 +108,8 @@ public class PointsRefreshService extends Service{
 		ArrayList<WebPoint> auxpoints = new ArrayList<WebPoint>();
 
 		protected Integer doInBackground(Void... params) {
+			// Variable para calcular el tiempo limite para mostrar marcadores 
+			// en funcion de el tiempo de difusion maximo seleccionado
 			long limitTime;
 			if(t_max_en_difusion!=0){
 				// Obtenemos la hora actual y la formateamos
@@ -97,25 +119,29 @@ public class PointsRefreshService extends Service{
 				limitTime = 0;
 			}
 
-			/*Creamos un ArrayList del tipo nombre valor para agregar los datos recibidos por los parametros anteriores
-			 * y enviarlo mediante POST a nuestro sistema para relizar la validacion*/ 
+			// Creamos un ArrayList del tipo clave-valor y agregamos los valores necesarios
 			ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
 			postparameters2send.add(new BasicNameValuePair(Constants.USER, user));
 			postparameters2send.add(new BasicNameValuePair(Constants.PASSWORD, pass));
 			
-			//realizamos una peticion y como respuesta obtenes un array JSON
+			// Realiza una peticion enviando los datos mediante el metodo POST 
+			// y obtiene como respuesta un array JSON
 			JSONArray jdata=post.getserverdata(postparameters2send, Constants.php_obtenerPuntos);
 
-			//si lo que obtuvimos no es null
+			// Si no obtenemos una respuesta nula de la direccion parseamos la informacion
+			// En este caso la informacion devuelta sera solo un identificador con el resultado de la consulta
 			if (jdata!=null && jdata.length() > 0){
 
 				try {
+					// Obtenemos uno a uno los objetos JSON
 					for (int i = 0; i < jdata.length(); i++) {
 				        JSONObject jsonObject = jdata.getJSONObject(i);
 				        
+				        // Creamos una 
 				        String fechaString = jsonObject.getString(Constants.FECHA);
 				        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 				        Date fecha;
+				        //Intentamos parsear la fecha
 				        try{
 				        	if(!fechaString.equals("null"))
 				        		fecha = dateFormat.parse(fechaString);
@@ -124,6 +150,7 @@ public class PointsRefreshService extends Service{
 						} catch (ParseException e) {
 							fecha = null;
 						}
+				        // Añadimos el objeto si no excede el limite de tiempo
 				        if (fecha.getTime()>limitTime)
 				        	auxpoints.add(new WebPoint(jsonObject.getInt(Constants.ID_PUNTO),
 				        							jsonObject.getString(Constants.USUARIO), 
@@ -157,9 +184,12 @@ public class PointsRefreshService extends Service{
 		}
 
 		protected void onPostExecute(Integer result) {
+			// Si el servicio obtuvo la lista con existo remplaza la antigua por la nueva
 			if (result == Constants.RESULT_OK){
 				points = auxpoints;
 			}
+			// Notifica mediante broadcast que acaba ha terminado
+			// la llamada al servicio web y esta actualizado
 			Intent intent = new Intent(NOTIFICATION);
 			intent.putExtra(Constants.RESULT, result);
 			sendBroadcast(intent);

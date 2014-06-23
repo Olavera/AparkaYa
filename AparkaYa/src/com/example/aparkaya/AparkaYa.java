@@ -118,6 +118,7 @@ public class AparkaYa extends ActionBarActivity implements
 
 	private SharedPreferences prefs;
 
+	// Variable service connection que permite iniciar y hacer onBind al servicio
 	private MyServiceConnection mConnection;
 
 	public class MyServiceConnection implements ServiceConnection {
@@ -198,7 +199,6 @@ public class AparkaYa extends ActionBarActivity implements
 	 * PointRefreshService, iniciamosuna alarma que mandara peticiones 
 	 * al servicio cada 10 segundos y hacemos un bind al servicio
 	 */
-
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -259,7 +259,6 @@ public class AparkaYa extends ActionBarActivity implements
 	 * desconectamos del servicio y lo destruimos. Finalmente dejamos de recibir
 	 * intents con el BroadcastReceiver
 	 */
-
 	@Override
 	protected void onStop() {
 		super.onStop();
@@ -462,7 +461,7 @@ public class AparkaYa extends ActionBarActivity implements
 			starProgressDialog();
 			new asyncSendPoint().execute(puntoPulsado);
 			try {
-				localService.forceRefresh();
+				localService.manualRefresh();
 			} catch (Exception e1) {
 				Log.w(getClass().getName(), "Excepción forzando refresh", e1);
 			}
@@ -496,7 +495,7 @@ public class AparkaYa extends ActionBarActivity implements
 		        if(resultCode == Constants.RESULT_CODE_RETURN_DETAILS_DIALOG)
 		        {
 		        	try {
-						localService.forceRefresh();
+						localService.manualRefresh();
 					} catch (Exception e1) {
 						Log.w(getClass().getName(), "Excepción forzando refresh", e1);
 					}
@@ -508,7 +507,7 @@ public class AparkaYa extends ActionBarActivity implements
 			@Override
 			public void onClick(View v) {
 				try {
-					localService.forceRefresh();
+					localService.manualRefresh();
 					Toast.makeText(getApplicationContext(),
 							getResources().getString(R.string.force_refresh), Toast.LENGTH_SHORT)
 							.show();
@@ -529,7 +528,7 @@ public class AparkaYa extends ActionBarActivity implements
 							.getMyLocation().getLatitude(), mapa
 							.getMyLocation().getLongitude()));
 					try {
-						localService.forceRefresh();
+						localService.manualRefresh();
 					} catch (Exception e1) {
 						Log.w(getClass().getName(),
 								getResources().getString(
@@ -594,17 +593,15 @@ public class AparkaYa extends ActionBarActivity implements
 	 * y ejecuta el proceso de refresco si la lista se obtuvo correctamente
 	 */
 	private void repaintPoints(int result, ArrayList<WebPoint> auxpoints) {
-
+		
 		if (result == Constants.RESULT_OK) {
-			/*Toast.makeText(getApplicationContext(), "Strart refresh",
-					Toast.LENGTH_SHORT).show();*/
 			new asyncRefreshPoint().execute(auxpoints);
 		} else if (result == Constants.RESULT_NOTUSER) {
-			Toast.makeText(getApplicationContext(), "Usuario no reconocido",
+			Toast.makeText(getApplicationContext(), getResources().getString(R.string.err_cant_find_user),
 					Toast.LENGTH_SHORT).show();
 		} else if (result == Constants.RESULT_ERR) {
 			Toast.makeText(getApplicationContext(),
-					"Error al actualizar información", Toast.LENGTH_SHORT)
+					getResources().getString(R.string.err_cant_connect), Toast.LENGTH_SHORT)
 					.show();
 		}
 
@@ -651,19 +648,24 @@ public class AparkaYa extends ActionBarActivity implements
 	}
 	
 	// -------------------------- TAREAS ASINCRONAS --------------------------
-	
+	/**
+	 * Proceso asincrono que determina que puntos hayq ue modificar para adaptarse
+	 * a los cambios notificados por el servicio local
+	 */
 	private class asyncRefreshPoint extends
 	AsyncTask<ArrayList<WebPoint>, String, Integer> {
 
-		// Lista de acciones de refresco que se ejecutaran sobre los puntos del
-		// mapa
+		// Lista de acciones de refresco que se ejecutaran sobre los puntos del mapa
 		// en la fase de PostExecute
 		ArrayList<RefreshAction> refreshActions;
 
 		protected Integer doInBackground(ArrayList<WebPoint>... params) {
+			// Lista de puntos nuevos que hemos obtenido del servicio local
 			ArrayList<WebPoint> auxpoints = params[0];
+			// Lista de acciones de refresco que se va rellenando durante el metodo
 			refreshActions = new ArrayList<RefreshAction>();
 
+			// Formateadores para los formatos de hora y fecha
 			SimpleDateFormat dateFormat1 = new SimpleDateFormat("dd/MM",
 					Locale.getDefault());
 			SimpleDateFormat dateFormat2 = new SimpleDateFormat("HH:mm",
@@ -671,8 +673,9 @@ public class AparkaYa extends ActionBarActivity implements
 			Date datenow = new Date();
 			long timeUmbral = datenow.getTime() - Constants.TIME_UMBRAL;
 
+			// Copiamos en otra estructura axiliar "array_idPoint_idMarker" que contiene los
+			// puntos mapeados y sus referencias en la tabla hash
 			SparseArray<String> copyOf_idPoint_idMarker = new SparseArray<String>();
-
 			int key = 0;
 			for (int i = 0; i < array_idPoint_idMarker.size(); i++) {
 				key = array_idPoint_idMarker.keyAt(i);
@@ -680,6 +683,8 @@ public class AparkaYa extends ActionBarActivity implements
 						array_idPoint_idMarker.get(key));
 			}
 
+			// Para cada punto de la lista obtenida del servicio,
+			// se determina si ya existia o no y se incluyen como acciones
 			for (WebPoint punto : auxpoints) {
 				int franja = obtenerFranja(punto.getFecha());
 				String textDate = "No se obtuvo fecha";
@@ -701,13 +706,7 @@ public class AparkaYa extends ActionBarActivity implements
 					WebPoint oldP = hashmap_idMarker_WebPoint.get(idMarker);
 					Marker m = oldP.getMarker();
 					punto.setMarker(m);
-					if (/*
-					 * ((m.getPosition().latitude!=punto.getCords().latitude)
-					 * ||
-					 * (m.getPosition().longitude!=punto.getCords().longitude
-					 * )) ||
-					 */
-							(obtenerFranja(oldP.getFecha()) != franja)) {
+					if ((obtenerFranja(oldP.getFecha()) != franja)) {
 
 						refreshActions.add(new RefreshAction(punto,
 								EnumTypeRefreshAction.UPDATE, franja, textDate,
@@ -721,16 +720,15 @@ public class AparkaYa extends ActionBarActivity implements
 				}
 			}
 
+			// Los puntos que han quedado en la estructura significa que han sido eliminados
+			// del servicio web por lo que se incluyen como acciones remove
 			key = 0;
 			for (int i = 0; i < copyOf_idPoint_idMarker.size(); i++) {
 				key = copyOf_idPoint_idMarker.keyAt(i);
 				String idMarker = copyOf_idPoint_idMarker.get(key);
 				if (hashmap_idMarker_WebPoint.get(idMarker) != null)
 					refreshActions.add(new RefreshAction(
-							hashmap_idMarker_WebPoint.get(idMarker)// new
-							// WebPoint(key,
-							// "", null,
-							// 0, null)
+							hashmap_idMarker_WebPoint.get(idMarker)
 							, EnumTypeRefreshAction.REMOVE, 0, "",
 							array_idPoint_idMarker.get(key)));
 			}
@@ -739,7 +737,11 @@ public class AparkaYa extends ActionBarActivity implements
 		}
 
 		protected void onPostExecute(Integer result) {
+			/**
+			 * Recorre toda la lista de acciones generadas durante la fase background
+			 */
 			for (RefreshAction act : refreshActions) {
+				// Si es una accion de add tiene que añadir un nuevo puntoa la estructura de datos y el mapa
 				if (act.getTypeAction() == EnumTypeRefreshAction.ADD) {
 					Marker marker = mapa.addMarker(new MarkerOptions()
 					.position(act.getnewPointInfo().getCords())
@@ -754,12 +756,15 @@ public class AparkaYa extends ActionBarActivity implements
 					hashmap_idMarker_WebPoint.put(key, punto);
 					array_idPoint_idMarker.put(punto.getId_punto(), key);
 					listpoints.add(punto);
+				// Si es un update actualiza las referencias en la estructura de datos
+				// sin cambiar la referencia al marker solo actualizando sus valores
 				} else if (act.getTypeAction() == EnumTypeRefreshAction.UPDATE) {
 					WebPoint newP = act.getnewPointInfo();
 					Marker m = newP.getMarker();
 					m.setIcon(BitmapDescriptorFactory
 							.defaultMarker(obtenerIconoFranja(act.getFranja())));
 					m.setTitle(act.getTextDate());
+				// Una accion remove tiene que borrar el punto tanto del mapa como de la estructura de datos
 				} else if (act.getTypeAction() == EnumTypeRefreshAction.REMOVE) {
 					String idMarker = array_idPoint_idMarker.get(act
 							.getnewPointInfo().getId_punto());
