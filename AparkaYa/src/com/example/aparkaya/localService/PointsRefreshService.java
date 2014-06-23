@@ -57,13 +57,13 @@ public class PointsRefreshService extends Service{
 	@Override
 	public void onCreate() {
 		post = new HttpPostAux();
-		Toast.makeText(getApplicationContext(), "Service Created", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(getApplicationContext(), "Service Created", Toast.LENGTH_SHORT).show();
 		super.onCreate();
 	}
 
 	@Override
 	public void onDestroy() {
-		Toast.makeText(getApplicationContext(), "Service Destroy", Toast.LENGTH_SHORT).show();
+		//Toast.makeText(getApplicationContext(), "Service Destroy", Toast.LENGTH_SHORT).show();
 		super.onDestroy();
 	}
 
@@ -95,7 +95,7 @@ public class PointsRefreshService extends Service{
 			postparameters2send.add(new BasicNameValuePair("password",pass));
 			
 			//realizamos una peticion y como respuesta obtenes un array JSON
-			JSONArray jdata=post.getserverdata(postparameters2send, "http://aparkaya.webcindario.com/obtenerPuntos.php");
+			JSONArray jdata=post.getserverdata(postparameters2send, Constants.php_obtenerPuntos);
 
 			//si lo que obtuvimos no es null
 			if (jdata!=null && jdata.length() > 0){
@@ -151,7 +151,7 @@ public class PointsRefreshService extends Service{
 				points = auxpoints;
 			}
 			Intent intent = new Intent(NOTIFICATION);
-			intent.putExtra("RESULT", result);
+			intent.putExtra(Constants.RESULT, result);
 			sendBroadcast(intent);
 		}
 	}

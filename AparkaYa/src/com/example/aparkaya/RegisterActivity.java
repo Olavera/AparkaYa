@@ -58,7 +58,7 @@ public class RegisterActivity extends Activity {
 	}
 
 	public void Registra(View view) {
-		if (contrasenia1.getText().toString().equals(contrasenia2.getText().toString())) {
+		if (!contrasenia1.getText().toString().equals(contrasenia2.getText().toString())) {
 			Toast.makeText(getApplicationContext(),
 					"Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
 		} else {// pasamos los posibles filtros tambien podemos comprobar si el
@@ -96,8 +96,7 @@ public class RegisterActivity extends Activity {
 			postparameters2send.add(new BasicNameValuePair("password", pass));
 
 			// realizamos una peticion y como respuesta obtenes un array JSON
-			JSONArray jdata = post.getserverdata(postparameters2send,
-					"http://aparkaya.webcindario.com/registro.php");
+			JSONArray jdata = post.getserverdata(postparameters2send, Constants.php_registro);
 
 			// si lo que obtuvimos no es null
 			if (jdata != null && jdata.length() > 0) {
