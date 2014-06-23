@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/t_refresco" android:title="@string/t_refresco">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.aparkaya.MainActivity"
+     >
+    <item android:id="@+id/info_cuenta" android:title="@string/info_cuenta" android:icon="@android:drawable/ic_menu_info_details" android:showAsAction="always" android:orderInCategory="85"></item>
+    <item android:id="@+id/t_refresco" android:title="@string/t_refresco" android:icon="@android:drawable/ic_menu_rotate" android:showAsAction="ifRoom" android:orderInCategory="90">
         <menu>
             <item android:id="@+id/t_refresco_op_1" android:title="@string/t_refresco_op_1"/>
             <item android:id="@+id/t_refresco_op_2" android:title="@string/t_refresco_op_2"/>
@@ -8,7 +13,7 @@
             <item android:id="@+id/t_refresco_op_4" android:title="@string/t_refresco_op_4"/>
         </menu>
     </item>
-    <item android:id="@+id/area_busqueda" android:title="@string/area_busqueda">
+    <item android:id="@+id/area_busqueda" android:title="@string/area_busqueda" android:icon="@android:drawable/ic_menu_myplaces" android:showAsAction="ifRoom" android:orderInCategory="95">
         <menu>
             <item android:id="@+id/area_busqueda_op_1" android:title="@string/area_busqueda_op_1"/>
             <item android:id="@+id/area_busqueda_op_2" android:title="@string/area_busqueda_op_2"/>
@@ -16,7 +21,7 @@
             <item android:id="@+id/area_busqueda_op_4" android:title="@string/area_busqueda_op_4"/>
         </menu>
     </item>
-    <item android:id="@+id/ordenar_lista_por" android:title="@string/ordenar_lista_por">
+    <item android:id="@+id/ordenar_lista_por" android:title="@string/ordenar_lista_por" android:icon="@android:drawable/ic_menu_sort_by_size" android:showAsAction="ifRoom" android:orderInCategory="100">
         <menu>
             <item android:id="@+id/ordenar_lista_por_op_1" android:title="@string/ordenar_lista_por_op_1"/>
             <item android:id="@+id/ordenar_lista_por_op_2" android:title="@string/ordenar_lista_por_op_2"/>
@@ -24,7 +29,7 @@
             <item android:id="@+id/ordenar_lista_por_op_4" android:title="@string/ordenar_lista_por_op_4"/>
         </menu>
     </item>
-    <item android:id="@+id/t_max_en_difusion" android:title="@string/t_max_en_difusion">
+    <item android:id="@+id/t_max_en_difusion" android:title="@string/t_max_en_difusion" android:icon="@android:drawable/ic_menu_today" android:showAsAction="ifRoom" android:orderInCategory="105">
         <menu>
             <item android:id="@+id/t_max_en_difusion_op_1" android:title="@string/t_max_en_difusion_op_1"/>
             <item android:id="@+id/t_max_en_difusion_op_2" android:title="@string/t_max_en_difusion_op_2"/>
@@ -32,5 +37,5 @@
             <item android:id="@+id/t_max_en_difusion_op_4" android:title="@string/t_max_en_difusion_op_4"/>
         </menu>
     </item>
-    <item android:id="@+id/info_cuenta" android:title="@string/info_cuenta" android:icon="@drawable/ic_login" android:showAsAction="always"></item>
+    
 </menu>

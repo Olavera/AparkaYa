@@ -58,8 +58,7 @@ public class RegisterActivity extends Activity {
 	}
 
 	public void Registra(View view) {
-		if (contrasenia1.getText().equals(contrasenia2.getText())) {
-
+		if (contrasenia1.getText().toString().equals(contrasenia2.getText().toString())) {
 			Toast.makeText(getApplicationContext(),
 					"Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
 		} else {// pasamos los posibles filtros tambien podemos comprobar si el
