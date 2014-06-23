@@ -645,7 +645,7 @@ public class AparkaYa extends ActionBarActivity implements
 				int franja = obtenerFranja(punto.getFecha());
 				String textDate = "No se obtuvo fecha";
 				if (punto.getFecha().getTime() < timeUmbral)
-					textDate = "Difundido el: "
+					textDate = "Difundido el "
 							+ dateFormat1.format(punto.getFecha());
 				else {
 					textDate = "Difundido a las "
@@ -705,7 +705,7 @@ public class AparkaYa extends ActionBarActivity implements
 					Marker marker = mapa.addMarker(new MarkerOptions()
 					.position(act.getnewPointInfo().getCords())
 					.title(act.getTextDate())
-					.snippet(act.getnewPointInfo().getUsuario())
+					.snippet("por " + act.getnewPointInfo().getUsuario())
 					.icon(BitmapDescriptorFactory
 							.defaultMarker(obtenerIconoFranja(act
 									.getFranja()))));
